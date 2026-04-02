@@ -47,5 +47,10 @@
       <LastGenOutput>LanguageResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+
+	<Target Name="BuildTailwindCSS" BeforeTargets="BeforeBuild">
+		<Message Text="Building Tailwind CSS..." Importance="high" />
+		<Exec Command="tailwindcss-windows-x64.exe -i wwwroot/css/app-input.css -o wwwroot/css/app.css" />
+	</Target>
 	
 </Project>
