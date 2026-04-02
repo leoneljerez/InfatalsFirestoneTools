@@ -46,15 +46,15 @@ jobs:
 
       - name: Restore dependencies
         working-directory: InfatalsFirestoneTools
-        run: dotnet restore InfatalsFirestoneTools
+        run: dotnet restore InfatalsFirestoneTools.csproj
 
       - name: Restore workloads
         working-directory: InfatalsFirestoneTools
-        run: dotnet workload restore
+        run: dotnet workload restore InfatalsFirestoneTools.csproj
 
       - name: Publish app
         working-directory: InfatalsFirestoneTools
-        run: dotnet publish InfatalsFirestoneTools -c Release
+        run: dotnet publish InfatalsFirestoneTools.csproj -c Release
 
       - name: Rewrite base href
         uses: SteveSandersonMS/ghaction-rewrite-base-href@5b54862a8831e012d4f1a8b2660894415fdde8ec # v1.1.0
