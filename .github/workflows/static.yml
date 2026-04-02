@@ -45,12 +45,15 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Restore dependencies
+        working-directory: InfatalsFirestoneTools
         run: dotnet restore InfatalsFirestoneTools
 
       - name: Restore workloads
+        working-directory: InfatalsFirestoneTools
         run: dotnet workload restore
 
       - name: Publish app
+        working-directory: InfatalsFirestoneTools
         run: dotnet publish InfatalsFirestoneTools -c Release
 
       - name: Rewrite base href
