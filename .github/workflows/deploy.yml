@@ -1,37 +1,66 @@
-name: Deploy to GitHub Pages
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy static content to Pages
+env:
+  PUBLISH_DIR: BlazorWebAssemblyXrefGenerator/bin/Release/net10.0/publish/wwwroot
 
 on:
+  # Runs on pushes targeting the default branch for the app's folder path
   push:
-    branches: [ master ] 
+    paths:
+      - BlazorWebAssemblyXrefGenerator/**
+    branches:
+      - master
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  deploy-to-github-pages:
-    runs-on: ubuntu-latest
-    steps:
-      # 1. Checkout the code
-      - uses: actions/checkout@v4
+  # Single deploy job since we're just deploying
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
-      # 2. Setup .NET 10
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: Get latest .NET SDK
+        uses: actions/setup-dotnet@d4c94342e560b34958eacfc5d055d21461ed1c5d # v5.0.0
         with:
           dotnet-version: '10.0.x'
 
-      # 3. Publish the app
-      - name: Publish .NET Core Project
-        run: dotnet publish -c Release -o release
+      - name: Publish app
+        run: dotnet publish BlazorWebAssemblyXrefGenerator -c Release
 
-      # 4. Add .nojekyll to prevent GitHub from ignoring Blazor's underscore folders
-      - name: Add .nojekyll
-        run: touch release/wwwroot/.nojekyll
-
-      # 5. Fix 404s (The "Refresh" fix)
-      - name: Copy index.html to 404.html
-        run: cp release/wwwroot/index.html release/wwwroot/404.html
-
-      # 6. Deploy to GitHub Pages branch
-      - name: Commit and Push to gh-pages
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Rewrite base href
+        uses: SteveSandersonMS/ghaction-rewrite-base-href@5b54862a8831e012d4f1a8b2660894415fdde8ec # v1.1.0
         with:
-          folder: release/wwwroot # The folder the action should deploy
-          branch: gh-pages        # The branch the action should deploy to
+          html_path: ${{ env.PUBLISH_DIR }}/index.html
+          base_href: /blazor-samples/
+        
+      - name: Setup Pages
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
+        with:
+          path: ${{ env.PUBLISH_DIR }}
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
