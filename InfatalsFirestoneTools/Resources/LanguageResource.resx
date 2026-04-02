@@ -1,0 +1,954 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Ability" xml:space="preserve">
+    <value>Ability</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="AegisLabel" xml:space="preserve">
+    <value>Aegis</value>
+  </data>
+  <data name="All" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="AmunLabel" xml:space="preserve">
+    <value>Amun</value>
+  </data>
+  <data name="Angel" xml:space="preserve">
+    <value>Angel</value>
+  </data>
+  <data name="AnzoLabel" xml:space="preserve">
+    <value>Anzo</value>
+  </data>
+  <data name="Arena" xml:space="preserve">
+    <value>Arena</value>
+  </data>
+  <data name="ArenaPower" xml:space="preserve">
+    <value>Arena Power</value>
+  </data>
+  <data name="ArenaStats" xml:space="preserve">
+    <value>Arena Stats</value>
+  </data>
+  <data name="Armor" xml:space="preserve">
+    <value>Armor</value>
+  </data>
+  <data name="ArmorBPHighToLow" xml:space="preserve">
+    <value>Armor BP (High→Low)</value>
+  </data>
+  <data name="ArmorBPLowToHigh" xml:space="preserve">
+    <value>Armor BP (Low→High)</value>
+  </data>
+  <data name="ArmorHighToLow" xml:space="preserve">
+    <value>Armor (High→Low)</value>
+  </data>
+  <data name="ArmorLowToHigh" xml:space="preserve">
+    <value>Armor (Low→High)</value>
+  </data>
+  <data name="ArmorPercentage" xml:space="preserve">
+    <value>Armor Percentage</value>
+  </data>
+  <data name="ArtifactConfiguration" xml:space="preserve">
+    <value>Artifact Configuration</value>
+  </data>
+  <data name="ArtifactConfigurationDescription" xml:space="preserve">
+    <value>Configure artifacts by stat type and percentage tier.</value>
+  </data>
+  <data name="Artifacts" xml:space="preserve">
+    <value>Artifacts</value>
+  </data>
+  <data name="ArvieLabel" xml:space="preserve">
+    <value>Arvie</value>
+  </data>
+  <data name="AsmondaiLabel" xml:space="preserve">
+    <value>Asmondai</value>
+  </data>
+  <data name="AstridLabel" xml:space="preserve">
+    <value>Astrid</value>
+  </data>
+  <data name="AttackSpeed" xml:space="preserve">
+    <value>Attack Speed</value>
+  </data>
+  <data name="AttackStyle" xml:space="preserve">
+    <value>Attack Style</value>
+  </data>
+  <data name="BaseArmor" xml:space="preserve">
+    <value>Base Armor</value>
+  </data>
+  <data name="BaseDamage" xml:space="preserve">
+    <value>Base Damage</value>
+  </data>
+  <data name="BaseHealth" xml:space="preserve">
+    <value>Base Health</value>
+  </data>
+  <data name="BaseStats" xml:space="preserve">
+    <value>Base Stats</value>
+  </data>
+  <data name="BasicInformation" xml:space="preserve">
+    <value>Basic Information</value>
+  </data>
+  <data name="BattlePower" xml:space="preserve">
+    <value>Battle Power</value>
+  </data>
+  <data name="BattleStats" xml:space="preserve">
+    <value>Battle Stats</value>
+  </data>
+  <data name="BelienLabel" xml:space="preserve">
+    <value>Belien</value>
+  </data>
+  <data name="BenedictusLabel" xml:space="preserve">
+    <value>Benedictus</value>
+  </data>
+  <data name="BlazeLabel" xml:space="preserve">
+    <value>Blaze</value>
+  </data>
+  <data name="BlueprintLevels" xml:space="preserve">
+    <value>Blueprint Levels</value>
+  </data>
+  <data name="BorisLabel" xml:space="preserve">
+    <value>Boris</value>
+  </data>
+  <data name="BP_Armor" xml:space="preserve">
+    <value>BP Armor</value>
+  </data>
+  <data name="BP_Damage" xml:space="preserve">
+    <value>BP Damage</value>
+  </data>
+  <data name="BP_Health" xml:space="preserve">
+    <value>BP Health</value>
+  </data>
+  <data name="Bronze" xml:space="preserve">
+    <value>Bronze</value>
+  </data>
+  <data name="BulkEdit" xml:space="preserve">
+    <value>Bulk Edit</value>
+  </data>
+  <data name="BurtLabel" xml:space="preserve">
+    <value>Burt</value>
+  </data>
+  <data name="CalculateStrangeDustNeeded" xml:space="preserve">
+    <value>Calculate Strange Dust Needed</value>
+  </data>
+  <data name="Campaign" xml:space="preserve">
+    <value>Campaign</value>
+  </data>
+  <data name="CampaignProgression" xml:space="preserve">
+    <value>Campaign Progression</value>
+  </data>
+  <data name="Celestial" xml:space="preserve">
+    <value>Celestial</value>
+  </data>
+  <data name="ChaosRiftRank" xml:space="preserve">
+    <value>Chaos Rift Rank</value>
+  </data>
+  <data name="CiriloLabel" xml:space="preserve">
+    <value>Cirilo</value>
+  </data>
+  <data name="Class" xml:space="preserve">
+    <value>Class</value>
+  </data>
+  <data name="ClearFilters" xml:space="preserve">
+    <value>Clear Filters</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="CloudfistLabel" xml:space="preserve">
+    <value>Cloudfist</value>
+  </data>
+  <data name="Common" xml:space="preserve">
+    <value>Common</value>
+  </data>
+  <data name="ConfiguredFirst" xml:space="preserve">
+    <value>Configured First</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="CrewBonusPercentages" xml:space="preserve">
+    <value>Crew Bonus Percentages</value>
+  </data>
+  <data name="CritChance" xml:space="preserve">
+    <value>Crit Chance</value>
+  </data>
+  <data name="CritDamage" xml:space="preserve">
+    <value>Crit Damage</value>
+  </data>
+  <data name="Crown" xml:space="preserve">
+    <value>Crown</value>
+  </data>
+  <data name="Crowns" xml:space="preserve">
+    <value>Crowns</value>
+  </data>
+  <data name="CuratorLabel" xml:space="preserve">
+    <value>Curator</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>Current</value>
+  </data>
+  <data name="CurrentExp" xml:space="preserve">
+    <value>Current Exp</value>
+  </data>
+  <data name="CurrentPosition" xml:space="preserve">
+    <value>Current Position</value>
+  </data>
+  <data name="Damage" xml:space="preserve">
+    <value>Damage</value>
+  </data>
+  <data name="DamageBPHighToLow" xml:space="preserve">
+    <value>Damage BP (High→Low)</value>
+  </data>
+  <data name="DamageBPLowToHigh" xml:space="preserve">
+    <value>Damage BP (Low→High)</value>
+  </data>
+  <data name="DamageHighToLow" xml:space="preserve">
+    <value>Damage (High→Low)</value>
+  </data>
+  <data name="DamageLowToHigh" xml:space="preserve">
+    <value>Damage (Low→High)</value>
+  </data>
+  <data name="DamagePercentage" xml:space="preserve">
+    <value>Damage Percentage</value>
+  </data>
+  <data name="DanysaLabel" xml:space="preserve">
+    <value>Danysa</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value>Detail</value>
+  </data>
+  <data name="Diamond" xml:space="preserve">
+    <value>Diamond</value>
+  </data>
+  <data name="dmg_1x_150_Description" xml:space="preserve">
+    <value>Throws a fireball that deals 150% of its damage.</value>
+  </data>
+  <data name="dmg_1x_160_Description" xml:space="preserve">
+    <value>Activates an energy beam that deals 160% of its damage.</value>
+  </data>
+  <data name="dmg_1x_200_Description" xml:space="preserve">
+    <value>Launches a rocket that deals 200% of its damage.</value>
+  </data>
+  <data name="dmg_2x_60_Description" xml:space="preserve">
+    <value>Fires cannonballs at 2 random war machines that deal 60% of its damage.</value>
+  </data>
+  <data name="dmg_2x_130_Description" xml:space="preserve">
+    <value>Attack the last 2 war machines in the enemy formation with an energy beam that deals 130% of its damage.</value>
+  </data>
+  <data name="dmg_3x_120_Description" xml:space="preserve">
+    <value>Electrifies 3 random war machines for 120% of its damage.</value>
+  </data>
+  <data name="dmg_all_60_Description" xml:space="preserve">
+    <value>Launches rockets that deal 60% of its damage to all enemy war machines.</value>
+  </data>
+  <data name="dmg_all_80_Description" xml:space="preserve">
+    <value>Slams the ground and causes an earthquake that deals 80% of its damage to all enemy war machines.</value>
+  </data>
+  <data name="Dodge" xml:space="preserve">
+    <value>Dodge</value>
+  </data>
+  <data name="DPSHealer" xml:space="preserve">
+    <value>DPS / Healer</value>
+  </data>
+  <data name="Druid" xml:space="preserve">
+    <value>Druid</value>
+  </data>
+  <data name="EarthshattererLabel" xml:space="preserve">
+    <value>Earthshatterer</value>
+  </data>
+  <data name="Easy" xml:space="preserve">
+    <value>Easy</value>
+  </data>
+  <data name="Emerald" xml:space="preserve">
+    <value>Emerald</value>
+  </data>
+  <data name="Energy" xml:space="preserve">
+    <value>Energy</value>
+  </data>
+  <data name="Engineer" xml:space="preserve">
+    <value>Engineer</value>
+  </data>
+  <data name="EngineerLevel" xml:space="preserve">
+    <value>Engineer Level</value>
+  </data>
+  <data name="Epic" xml:space="preserve">
+    <value>Epic</value>
+  </data>
+  <data name="EvolutionAndRank" xml:space="preserve">
+    <value>Evolution &amp; Rank</value>
+  </data>
+  <data name="EvolutionPath" xml:space="preserve">
+    <value>Evolution Path</value>
+  </data>
+  <data name="Evolutions" xml:space="preserve">
+    <value>Evolution(s)</value>
+  </data>
+  <data name="EXPNeeded" xml:space="preserve">
+    <value>EXP Needed</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>Filters</value>
+  </data>
+  <data name="FiniLabel" xml:space="preserve">
+    <value>Fini</value>
+  </data>
+  <data name="FirecrackerLabel" xml:space="preserve">
+    <value>Firecracker</value>
+  </data>
+  <data name="ForEvolutions" xml:space="preserve">
+    <value>For Evolutions</value>
+  </data>
+  <data name="ForExperience" xml:space="preserve">
+    <value>For Experience</value>
+  </data>
+  <data name="Formation" xml:space="preserve">
+    <value>Formation</value>
+  </data>
+  <data name="FortressLabel" xml:space="preserve">
+    <value>Fortress</value>
+  </data>
+  <data name="GlobalBonuses" xml:space="preserve">
+    <value>Global Bonuses</value>
+  </data>
+  <data name="God" xml:space="preserve">
+    <value>God</value>
+  </data>
+  <data name="Gold" xml:space="preserve">
+    <value>Gold</value>
+  </data>
+  <data name="GoliathLabel" xml:space="preserve">
+    <value>Goliath</value>
+  </data>
+  <data name="Hard" xml:space="preserve">
+    <value>Hard</value>
+  </data>
+  <data name="HarvesterLabel" xml:space="preserve">
+    <value>Harvester</value>
+  </data>
+  <data name="Healer" xml:space="preserve">
+    <value>Healer</value>
+  </data>
+  <data name="Health" xml:space="preserve">
+    <value>Health</value>
+  </data>
+  <data name="HealthBPHighToLow" xml:space="preserve">
+    <value>Health BP (High→Low)</value>
+  </data>
+  <data name="HealthBPLowToHigh" xml:space="preserve">
+    <value>Health BP (Low→High)</value>
+  </data>
+  <data name="HealthHighToLow" xml:space="preserve">
+    <value>Health (High→Low)</value>
+  </data>
+  <data name="HealthLowToHigh" xml:space="preserve">
+    <value>Health (Low→High)</value>
+  </data>
+  <data name="HealthPercentage" xml:space="preserve">
+    <value>Health Percentage</value>
+  </data>
+  <data name="heal_all_150_Description" xml:space="preserve">
+    <value>Heals all your war machines for 150% of its damage.</value>
+  </data>
+  <data name="heal_lowest_1x_300_Description" xml:space="preserve">
+    <value>Heals the ally war machine with the lowest percentage of health for 300% of its damage.</value>
+  </data>
+  <data name="heal_random_2x_350_Description" xml:space="preserve">
+    <value>Heals 2 random ally war machines for 350% of its damage.</value>
+  </data>
+  <data name="heal_self_hp_10_Description" xml:space="preserve">
+    <value>Restores 10% of your maximum health.</value>
+  </data>
+  <data name="Hero" xml:space="preserve">
+    <value>Hero</value>
+  </data>
+  <data name="Heroes" xml:space="preserve">
+    <value>Heroes</value>
+  </data>
+  <data name="HeroList" xml:space="preserve">
+    <value>Hero List</value>
+  </data>
+  <data name="HeroScoringWeights" xml:space="preserve">
+    <value>Hero Scoring Weights</value>
+  </data>
+  <data name="HeroScoringWeightsDescription" xml:space="preserve">
+    <value>Controls how heroes are prioritized per role. Changes apply on the next optimization.</value>
+  </data>
+  <data name="HeroWeights" xml:space="preserve">
+    <value>Hero Weights</value>
+  </data>
+  <data name="HighestClear" xml:space="preserve">
+    <value>Highest Clear</value>
+  </data>
+  <data name="HongyuLabel" xml:space="preserve">
+    <value>Hongyu</value>
+  </data>
+  <data name="Hunter" xml:space="preserve">
+    <value>Hunter</value>
+  </data>
+  <data name="InaLabel" xml:space="preserve">
+    <value>Ina</value>
+  </data>
+  <data name="Insane" xml:space="preserve">
+    <value>Insane</value>
+  </data>
+  <data name="Inscription" xml:space="preserve">
+    <value>Inscription</value>
+  </data>
+  <data name="InscriptionCardLevel" xml:space="preserve">
+    <value>Inscription Card Level</value>
+  </data>
+  <data name="InvalidJSON" xml:space="preserve">
+    <value>Invalid JSON</value>
+  </data>
+  <data name="InvalidSaveData" xml:space="preserve">
+    <value>Invalid save data.</value>
+  </data>
+  <data name="IserisLabel" xml:space="preserve">
+    <value>Iseris</value>
+  </data>
+  <data name="JessLabel" xml:space="preserve">
+    <value>Jess</value>
+  </data>
+  <data name="JoeLabel" xml:space="preserve">
+    <value>Joe</value>
+  </data>
+  <data name="JudgementLabel" xml:space="preserve">
+    <value>Judgement</value>
+  </data>
+  <data name="KramatakLabel" xml:space="preserve">
+    <value>Kramatak</value>
+  </data>
+  <data name="LaylaLabel" xml:space="preserve">
+    <value>Layla</value>
+  </data>
+  <data name="LedraLabel" xml:space="preserve">
+    <value>Ledra</value>
+  </data>
+  <data name="Legendary" xml:space="preserve">
+    <value>Legendary</value>
+  </data>
+  <data name="LeoLabel" xml:space="preserve">
+    <value>Leo</value>
+  </data>
+  <data name="Level" xml:space="preserve">
+    <value>Level</value>
+  </data>
+  <data name="LevelHighToLow" xml:space="preserve">
+    <value>Level (High→Low)</value>
+  </data>
+  <data name="LevelLowToHigh" xml:space="preserve">
+    <value>Level (Low→High)</value>
+  </data>
+  <data name="LevelMustBeOneToNine" xml:space="preserve">
+    <value>Level must be 1-9</value>
+  </data>
+  <data name="LevelShort" xml:space="preserve">
+    <value>Lv.</value>
+  </data>
+  <data name="Load" xml:space="preserve">
+    <value>Load</value>
+  </data>
+  <data name="LuanaLabel" xml:space="preserve">
+    <value>Luana</value>
+  </data>
+  <data name="Machine" xml:space="preserve">
+    <value>Machine</value>
+  </data>
+  <data name="MachineList" xml:space="preserve">
+    <value>Machine List</value>
+  </data>
+  <data name="Machines" xml:space="preserve">
+    <value>Machines</value>
+  </data>
+  <data name="Mage" xml:space="preserve">
+    <value>Mage</value>
+  </data>
+  <data name="Mana" xml:space="preserve">
+    <value>Mana</value>
+  </data>
+  <data name="ManageProfiles" xml:space="preserve">
+    <value>Manage Profiles</value>
+  </data>
+  <data name="ManageProfilesDescription" xml:space="preserve">
+    <value>Profiles let you manage multiple accounts or builds independently.</value>
+  </data>
+  <data name="Melee" xml:space="preserve">
+    <value>Melee</value>
+  </data>
+  <data name="Mercenary" xml:space="preserve">
+    <value>Mercenary</value>
+  </data>
+  <data name="MigratedSave" xml:space="preserve">
+    <value>Migrated save from old format.</value>
+  </data>
+  <data name="MollyLabel" xml:space="preserve">
+    <value>Molly</value>
+  </data>
+  <data name="Monk" xml:space="preserve">
+    <value>Monk</value>
+  </data>
+  <data name="Multi" xml:space="preserve">
+    <value>Multi</value>
+  </data>
+  <data name="MurielLabel" xml:space="preserve">
+    <value>Muriel</value>
+  </data>
+  <data name="Mythic" xml:space="preserve">
+    <value>Mythic</value>
+  </data>
+  <data name="NameAtoZ" xml:space="preserve">
+    <value>Name (A→Z)</value>
+  </data>
+  <data name="NameZtoA" xml:space="preserve">
+    <value>Name (Z→A)</value>
+  </data>
+  <data name="NewProfilePlaceholder" xml:space="preserve">
+    <value>New profile name...</value>
+  </data>
+  <data name="Nightmare" xml:space="preserve">
+    <value>Nightmare</value>
+  </data>
+  <data name="NoArtifactsFound" xml:space="preserve">
+    <value>No artifacts found for</value>
+  </data>
+  <data name="NoCrewAssigned" xml:space="preserve">
+    <value>No Crew Assigned</value>
+  </data>
+  <data name="NoProfilesFound" xml:space="preserve">
+    <value>No profiles found.</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="NotFound" xml:space="preserve">
+    <value>Not Found</value>
+  </data>
+  <data name="NotFoundDescription" xml:space="preserve">
+    <value>Sorry, the content you are looking for does not exist.</value>
+  </data>
+  <data name="NotStarted" xml:space="preserve">
+    <value>Not Started</value>
+  </data>
+  <data name="Of" xml:space="preserve">
+    <value>of</value>
+  </data>
+  <data name="OptimizeForArena" xml:space="preserve">
+    <value>Optimize for Arena</value>
+  </data>
+  <data name="OptimizeForCampaign" xml:space="preserve">
+    <value>Optimize for Campaign</value>
+  </data>
+  <data name="Optimizer" xml:space="preserve">
+    <value>Optimizer</value>
+  </data>
+  <data name="Optimizing" xml:space="preserve">
+    <value>Optimizing...</value>
+  </data>
+  <data name="Paladin" xml:space="preserve">
+    <value>Paladin</value>
+  </data>
+  <data name="PankoLabel" xml:space="preserve">
+    <value>Panko</value>
+  </data>
+  <data name="PatchNotes" xml:space="preserve">
+    <value>Patch Notes</value>
+  </data>
+  <data name="PatchNotesDescription" xml:space="preserve">
+    <value>See what's new in the latest version.</value>
+  </data>
+  <data name="Pearl" xml:space="preserve">
+    <value>Pearl</value>
+  </data>
+  <data name="Platinum" xml:space="preserve">
+    <value>Platinum</value>
+  </data>
+  <data name="Position" xml:space="preserve">
+    <value>Position</value>
+  </data>
+  <data name="Priest" xml:space="preserve">
+    <value>Priest</value>
+  </data>
+  <data name="ProfileCreated" xml:space="preserve">
+    <value>Profile created.</value>
+  </data>
+  <data name="ProfileDeleted" xml:space="preserve">
+    <value>Profile deleted.</value>
+  </data>
+  <data name="ProfileRenamed" xml:space="preserve">
+    <value>Profile renamed.</value>
+  </data>
+  <data name="Profiles" xml:space="preserve">
+    <value>Profiles</value>
+  </data>
+  <data name="ProfileSwitched" xml:space="preserve">
+    <value>Profile switched. Reload to apply.</value>
+  </data>
+  <data name="Rage" xml:space="preserve">
+    <value>Rage</value>
+  </data>
+  <data name="RandalLabel" xml:space="preserve">
+    <value>Randal</value>
+  </data>
+  <data name="Ranged" xml:space="preserve">
+    <value>Ranged</value>
+  </data>
+  <data name="Rare" xml:space="preserve">
+    <value>Rare</value>
+  </data>
+  <data name="Rarity" xml:space="preserve">
+    <value>Rarity</value>
+  </data>
+  <data name="RarityHighToLow" xml:space="preserve">
+    <value>Rarity (High→Low)</value>
+  </data>
+  <data name="RarityLowToHigh" xml:space="preserve">
+    <value>Rarity (Low→High)</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="ResetAll" xml:space="preserve">
+    <value>Reset All</value>
+  </data>
+  <data name="ResetDefaults" xml:space="preserve">
+    <value>Reset to Defaults</value>
+  </data>
+  <data name="Resource" xml:space="preserve">
+    <value>Resource</value>
+  </data>
+  <data name="Results" xml:space="preserve">
+    <value>Results</value>
+  </data>
+  <data name="ResultsEmptyDescription" xml:space="preserve">
+    <value>Configure your machine and heroes, then click Optimize at the bottom to calculate the best formation.</value>
+  </data>
+  <data name="RickieLabel" xml:space="preserve">
+    <value>Rickie</value>
+  </data>
+  <data name="Rogue" xml:space="preserve">
+    <value>Rogue</value>
+  </data>
+  <data name="Ruby" xml:space="preserve">
+    <value>Ruby</value>
+  </data>
+  <data name="SacredCardLevel" xml:space="preserve">
+    <value>Sacred Card Level</value>
+  </data>
+  <data name="Sapphire" xml:space="preserve">
+    <value>Sapphire</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SaveDataEmpty" xml:space="preserve">
+    <value>Save data is empty.</value>
+  </data>
+  <data name="SaveLoad" xml:space="preserve">
+    <value>Save / Load</value>
+  </data>
+  <data name="SaveLoadConfiguration" xml:space="preserve">
+    <value>Save / Load Configuration</value>
+  </data>
+  <data name="SaveLoadConfigurationDescription" xml:space="preserve">
+    <value>Click Save and copy the JSON generated below to save your config, or paste a saved config and click Load.</value>
+  </data>
+  <data name="SaveLoadedSuccessfully" xml:space="preserve">
+    <value>Save loaded successfully.</value>
+  </data>
+  <data name="SaveLoadPlaceholder" xml:space="preserve">
+    <value>Generate a save or paste one here...</value>
+  </data>
+  <data name="Scarab" xml:space="preserve">
+    <value>Scarab</value>
+  </data>
+  <data name="ScarabLevel" xml:space="preserve">
+    <value>Scarab Level</value>
+  </data>
+  <data name="ScarabsGameInscriptionCards" xml:space="preserve">
+    <value>Scarab's Game (Inscription Cards)</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="SelectRank" xml:space="preserve">
+    <value>Select rank</value>
+  </data>
+  <data name="SelectRiftRank" xml:space="preserve">
+    <value>Select a rift rank...</value>
+  </data>
+  <data name="SelyLabel" xml:space="preserve">
+    <value>Sely</value>
+  </data>
+  <data name="SentinelLabel" xml:space="preserve">
+    <value>Sentinel</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="SettingsDescription" xml:space="preserve">
+    <value>Manage settings for your active profile.</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Settings have been saved.</value>
+  </data>
+  <data name="Shaman" xml:space="preserve">
+    <value>Shaman</value>
+  </data>
+  <data name="Silver" xml:space="preserve">
+    <value>Silver</value>
+  </data>
+  <data name="Single" xml:space="preserve">
+    <value>Single</value>
+  </data>
+  <data name="SolaineLabel" xml:space="preserve">
+    <value>Solaine</value>
+  </data>
+  <data name="SortBy" xml:space="preserve">
+    <value>Sort by...</value>
+  </data>
+  <data name="Specialization" xml:space="preserve">
+    <value>Specialization</value>
+  </data>
+  <data name="Spellcaster" xml:space="preserve">
+    <value>Spellcaster</value>
+  </data>
+  <data name="Star" xml:space="preserve">
+    <value>Star</value>
+  </data>
+  <data name="Starlight" xml:space="preserve">
+    <value>Starlight</value>
+  </data>
+  <data name="StarlightPlus" xml:space="preserve">
+    <value>Starlight Plus</value>
+  </data>
+  <data name="StarlightPlusWingsMachineMaxRank" xml:space="preserve">
+    <value>5 Starlight Plus Wings (Max)</value>
+  </data>
+  <data name="Stars" xml:space="preserve">
+    <value>Stars</value>
+  </data>
+  <data name="StrangeDustAlreadyAtLevelError" xml:space="preserve">
+    <value>Already at the desired level.</value>
+  </data>
+  <data name="StrangeDustCalculator" xml:space="preserve">
+    <value>Strange Dust Calculator</value>
+  </data>
+  <data name="StrangeDustCalculatorDescription" xml:space="preserve">
+    <value>Calculate Strange Dust needed to level up your Guardian.</value>
+  </data>
+  <data name="StrangeDustCrownToStarError" xml:space="preserve">
+    <value>Cannot go from a Crown rank back to a Star rank.</value>
+  </data>
+  <data name="StrangeDustCurrentHigherThanTargetError" xml:space="preserve">
+    <value>Target must be higher than current position.</value>
+  </data>
+  <data name="StrangeDustCurrentLevelError" xml:space="preserve">
+    <value>Current level must be between 1 and 10.</value>
+  </data>
+  <data name="StrangeDustCurrentLevelHigherThanTargetSameRank" xml:space="preserve">
+    <value>Target level must be higher than current level at the same rank.</value>
+  </data>
+  <data name="StrangeDustErrorLevel" xml:space="preserve">
+    <value>Level must be between 1 and 10.</value>
+  </data>
+  <data name="StrangeDustErrorNegativeEXP" xml:space="preserve">
+    <value>EXP cannot be negative.</value>
+  </data>
+  <data name="StrangeDustTargetLevelError" xml:space="preserve">
+    <value>Target level must be between 1 and 10.</value>
+  </data>
+  <data name="Switch" xml:space="preserve">
+    <value>Switch</value>
+  </data>
+  <data name="TaliaLabel" xml:space="preserve">
+    <value>Talia</value>
+  </data>
+  <data name="TalosLabel" xml:space="preserve">
+    <value>Talos</value>
+  </data>
+  <data name="Tank" xml:space="preserve">
+    <value>Tank</value>
+  </data>
+  <data name="TargetPosition" xml:space="preserve">
+    <value>Target Position</value>
+  </data>
+  <data name="TargetType" xml:space="preserve">
+    <value>Target Type</value>
+  </data>
+  <data name="Tavern" xml:space="preserve">
+    <value>Tavern</value>
+  </data>
+  <data name="TavernSacredCards" xml:space="preserve">
+    <value>Tavern (Sacred Cards)</value>
+  </data>
+  <data name="ThunderclapLabel" xml:space="preserve">
+    <value>Thunderclap</value>
+  </data>
+  <data name="Titan" xml:space="preserve">
+    <value>Titan</value>
+  </data>
+  <data name="TotalSquad" xml:space="preserve">
+    <value>Total Squad</value>
+  </data>
+  <data name="TotalStars" xml:space="preserve">
+    <value>Total Stars</value>
+  </data>
+  <data name="TotalStrangeDustNeeded" xml:space="preserve">
+    <value>Total Strange Dust Needed</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Uncommon" xml:space="preserve">
+    <value>Uncommon</value>
+  </data>
+  <data name="UnconfiguredFirst" xml:space="preserve">
+    <value>Unconfigured First</value>
+  </data>
+  <data name="UnknownSaveVersion" xml:space="preserve">
+    <value>Unknown save version</value>
+  </data>
+  <data name="ValeriusLabel" xml:space="preserve">
+    <value>Valerius</value>
+  </data>
+  <data name="VilonLabel" xml:space="preserve">
+    <value>Vilon</value>
+  </data>
+  <data name="Warlock" xml:space="preserve">
+    <value>Warlock</value>
+  </data>
+  <data name="Warrior" xml:space="preserve">
+    <value>Warrior</value>
+  </data>
+  <data name="YamanothLabel" xml:space="preserve">
+    <value>Yamanoth</value>
+  </data>
+  <data name="YavoLabel" xml:space="preserve">
+    <value>Yavo</value>
+  </data>
+  <data name="ZeleaLabel" xml:space="preserve">
+    <value>Zelea</value>
+  </data>
+  <data name="ZorukLabel" xml:space="preserve">
+    <value>Zoruk</value>
+  </data>
+</root>

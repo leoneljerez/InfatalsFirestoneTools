@@ -1,0 +1,154 @@
+﻿@using InfatalsFirestoneTools.Models
+@using InfatalsFirestoneTools.Resources
+@using InfatalsFirestoneTools.Services
+@inject ProfileService ProfileService
+@inject IStringLocalizer<LanguageResource> L
+
+<div class="space-y-3">
+
+    @if (_profiles.Count == 0)
+    {
+        <p class="text-sm text-muted-foreground text-center py-4">@L["NoProfilesFound"]</p>
+    }
+    else
+    {
+        <div class="space-y-2">
+            @foreach (var profile in _profiles)
+            {
+                <div class="flex items-center justify-between p-3 rounded-lg border @(profile.IsActive ? "bg-accent border-primary/30" : "")">
+                    <div class="flex items-center gap-2">
+                        @if (profile.IsActive)
+                        {
+                            <BbBadge Variant="BadgeVariant.Default">@L["Active"]</BbBadge>
+                        }
+                        @if (_editingId == profile.Id)
+                        {
+                            <BbInput @bind-Value="_editName" class="h-7 w-40" />
+                        }
+                        else
+                        {
+                            <span class="text-sm font-medium">@profile.Name</span>
+                        }
+                    </div>
+                    <div class="flex items-center gap-1">
+                        @if (_editingId == profile.Id)
+                        {
+                            <BbButton Size="ButtonSize.Small" OnClick="SaveRename">@L["Save"]</BbButton>
+                            <BbButton Size="ButtonSize.Small" Variant="ButtonVariant.Ghost" OnClick="CancelRename">@L["Cancel"]</BbButton>
+                        }
+                        else
+                        {
+                            @if (!profile.IsActive)
+                            {
+                                <BbButton Size="ButtonSize.Small" Variant="ButtonVariant.Outline" OnClick="() => SetActive(profile.Id)">
+                                    @L["Switch"]
+                                </BbButton>
+                            }
+                            <BbButton Size="ButtonSize.Small" Variant="ButtonVariant.Ghost" OnClick="() => StartRename(profile)">
+                                <LucideIcon Name="pencil" Size="14" />
+                            </BbButton>
+                            @if (_profiles.Count > 1)
+                            {
+                                <BbButton Size="ButtonSize.Small" Variant="ButtonVariant.Ghost" OnClick="() => DeleteProfile(profile.Id)">
+                                    <LucideIcon Name="trash-2" Size="14" Class="text-destructive" />
+                                </BbButton>
+                            }
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    @if (_profiles.Count < 5)
+    {
+        <div class="flex gap-2 pt-2 border-t">
+            <BbInput @bind-Value="_newName" Placeholder="New profile name..." class="flex-1" />
+            <BbButton OnClick="CreateProfile" Disabled="string.IsNullOrWhiteSpace(_newName)">
+                @L["Create"]
+            </BbButton>
+        </div>
+    }
+    else
+    {
+        <p class="text-xs text-muted-foreground text-center pt-2 border-t">
+            @L["MaximumProfilesReached"]
+        </p>
+    }
+
+    @if (_message is not null)
+    {
+        <p class="text-xs @(_success ? "text-green-500" : "text-destructive")">@_message</p>
+    }
+
+</div>
+
+@code {
+    private List<Profile> _profiles = [];
+    private string _newName = string.Empty;
+    private int? _editingId;
+    private string _editName = string.Empty;
+    private string? _message;
+    private bool _success;
+
+    protected override async Task OnInitializedAsync() =>
+        _profiles = await ProfileService.GetAllProfilesAsync();
+
+    private async Task CreateProfile()
+    {
+        if (string.IsNullOrWhiteSpace(_newName)) return;
+        await ProfileService.CreateProfileAsync(_newName.Trim());
+        _newName = string.Empty;
+        _profiles = await ProfileService.GetAllProfilesAsync();
+        SetMessage(LanguageResource.ProfileCreated, true);
+    }
+
+    private async Task SetActive(int id)
+    {
+        await ProfileService.SetActiveProfileAsync(id);
+        _profiles = await ProfileService.GetAllProfilesAsync();
+        SetMessage(LanguageResource.ProfileSwitched, true);
+    }
+
+    private void StartRename(Profile p)
+    {
+        _editingId = p.Id;
+        _editName = p.Name;
+    }
+
+    private void CancelRename()
+    {
+        _editingId = null;
+        _editName = string.Empty;
+    }
+
+    private async Task SaveRename()
+    {
+        if (_editingId is null || string.IsNullOrWhiteSpace(_editName)) return;
+        var profile = _profiles.FirstOrDefault(p => p.Id == _editingId);
+        if (profile is null) return;
+
+        profile.Name = _editName.Trim();
+        var loaded = await ProfileService.GetProfileAsync(profile.Id);
+        if (loaded is not null)
+            await ProfileService.SaveProfileAsync(profile, loaded.Value.Data);
+
+        _editingId = null;
+        _editName = string.Empty;
+        _profiles = await ProfileService.GetAllProfilesAsync();
+        SetMessage(LanguageResource.ProfileRenamed, true);
+    }
+
+    private async Task DeleteProfile(int id)
+    {
+        await ProfileService.DeleteProfileAsync(id);
+        _profiles = await ProfileService.GetAllProfilesAsync();
+        SetMessage(LanguageResource.ProfileDeleted, true);
+    }
+
+    private void SetMessage(string msg, bool success)
+    {
+        _message = msg;
+        _success = success;
+    }
+}

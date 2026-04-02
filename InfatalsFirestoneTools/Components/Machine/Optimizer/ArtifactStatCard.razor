@@ -1,0 +1,51 @@
+﻿@using InfatalsFirestoneTools.Models
+@using InfatalsFirestoneTools.Resources
+@inject IStringLocalizer<LanguageResource> L
+
+<BbCard>
+    <BbCardHeader class="flex flex-row items-center justify-between pb-2">
+        <BbCardTitle class="capitalize">@L[Stat.ToString()]</BbCardTitle>
+        <BbBadge>@L["Total"]: @_statArtifacts.Sum(a => a.Count)</BbBadge>
+    </BbCardHeader>
+    <BbCardContent>
+        @if (!_statArtifacts.Any())
+        {
+            <p class="text-xs text-muted-foreground">@L["NoArtifactFound"] @Stat.ToString().</p>
+        }
+        else
+        {
+            <div class="grid grid-cols-2 gap-2">
+                @foreach (var artifact in _statArtifacts)
+                {
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-muted-foreground w-12 shrink-0">
+                            @artifact.Percentage%
+                        </span>
+                        <BbNumericInput TValue="int" Min="0" Step="1" AllowNegative="false" Value="@artifact.Count" ValueChanged="async v => await HandleChanged(artifact, v)" DebounceInterval="300" ShowButtons="true" class="w-full" />
+                    </div>
+                }
+            </div>
+        }
+    </BbCardContent>
+</BbCard>
+
+@code {
+    [Parameter, EditorRequired] public ArtifactStat Stat { get; set; }
+    [Parameter, EditorRequired] public List<Artifact> Artifacts { get; set; } = [];
+    [Parameter, EditorRequired] public EventCallback OnChanged { get; set; }
+
+    private List<Artifact> _statArtifacts = [];
+
+    protected override void OnParametersSet()
+    {
+        _statArtifacts = Artifacts
+            .Where(a => a.Stat == Stat)
+            .ToList();
+    }
+
+    private async Task HandleChanged(Artifact artifact, int value)
+    {
+        artifact.Count = value;
+        await OnChanged.InvokeAsync();
+    }
+}

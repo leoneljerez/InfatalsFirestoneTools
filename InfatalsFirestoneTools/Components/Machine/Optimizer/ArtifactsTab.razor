@@ -1,0 +1,51 @@
+﻿@using InfatalsFirestoneTools.Models
+@using InfatalsFirestoneTools.Resources
+@inject IStringLocalizer<LanguageResource> L
+
+<div class="space-y-4">
+
+    <div class="flex justify-between items-center">
+        <div>
+            <h2 class="text-lg font-semibold">@L["ArtifactConfiguration"]</h2>
+            <p class="text-sm text-muted-foreground">
+                @L["ArtifactConfigurationDescription"]
+            </p>
+        </div>
+        <BbButton Variant="ButtonVariant.Destructive" Size="ButtonSize.Small" OnClick="ResetAll">
+            @L["ResetAll"]
+        </BbButton>
+    </div>
+
+    @if (!Data.Artifacts.Any())
+    {
+        <BbCard>
+            <BbCardContent class="py-8 text-center">
+                <p class="text-muted-foreground text-sm">@L["NoArtifactDataLoaded"]</p>
+            </BbCardContent>
+        </BbCard>
+    }
+    else
+    {
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 w-full">
+            @foreach (var stat in _stats)
+            {
+                <ArtifactStatCard Stat="stat" Artifacts="Data.Artifacts" OnChanged="OnChanged"></ArtifactStatCard>
+            }
+        </div>
+    }
+
+</div>
+
+@code {
+    [Parameter, EditorRequired] public OptimizerData Data { get; set; } = null!;
+    [Parameter, EditorRequired] public EventCallback OnChanged { get; set; }
+
+    private ArtifactStat[] _stats = Enum.GetValues<ArtifactStat>();
+
+    private async Task ResetAll()
+    {
+        foreach (var artifact in Data.Artifacts)
+            artifact.Count = 0;
+        await OnChanged.InvokeAsync();
+    }
+}

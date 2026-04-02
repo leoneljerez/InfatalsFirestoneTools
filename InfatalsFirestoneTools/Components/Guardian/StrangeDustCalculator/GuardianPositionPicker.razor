@@ -1,0 +1,154 @@
+﻿@using InfatalsFirestoneTools.Models
+@using InfatalsFirestoneTools.Resources
+@inject IStringLocalizer<LanguageResource> L
+
+<div class="relative" @ref="_container">
+    @* Trigger button *@
+    <button type="button" class="flex items-center justify-between w-full rounded-md border border-input bg-background px-3 h-10 text-sm  transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" @onclick="Toggle">
+        @if (Value is not null)
+        {
+            <span class="flex items-center gap-1.5">
+                <span class="flex items-center gap-0.5">
+                    @for (int i = 0; i < Value.IconCount; i++)
+                    {
+                        <picture>
+                            <source type="image/jxl" srcset="@($"{Value.IconPath}.jxl")" />
+                            <source type="image/avif" srcset="@($"{Value.IconPath}.avif")" />
+                            <source type="image/webp" srcset="@($"{Value.IconPath}.webp")" />
+                            <img src="@($"{Value.IconPath}.png")" alt="@Value.Rank.ToLabel()" class="w-4 h-4 object-contain" />
+                        </picture>
+                    }
+                </span>
+                <span>@Value.Label</span>
+            </span>
+        }
+        else
+        {
+            <span class="text-muted-foreground">@L["SelectRank"]</span>
+        }
+        <svg class="@($"w-4 h-4 text-muted-foreground ml-2 shrink-0 transition-transform {(_open ? "rotate-180" : "")}")" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m6 9 6 6 6-6" />
+        </svg>
+    </button>
+
+    @* Dropdown panel *@
+    @if (_open)
+    {
+        <div class="absolute z-50 mt-1 w-[580px] max-h-[440px] overflow-y-auto  border bg-popover shadow-md" style="left: 0;">
+            <div class="space-y-3 p-3">
+
+                @* Stars section *@
+                <p class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">@L["Stars"]</p>
+                <div class="rounded-md border overflow-hidden">
+                    <div class="grid bg-muted/40 border-b text-xs text-muted-foreground" style="grid-template-columns: 88px repeat(5, 1fr);">
+                        <div class="px-2 py-1.5"></div>
+                        @foreach (var rank in _starRanks)
+                        {
+                            <div class="flex justify-center py-1.5">@rank.StarCount()★</div>
+                        }
+                    </div>
+                    @foreach (var evo in _evolutions)
+                    {
+                        <div class="grid border-b last:border-b-0" style="grid-template-columns: 88px repeat(5, 1fr);">
+                            <div class="flex items-center px-2 py-1.5 border-r text-xs font-medium truncate">
+                                @evo.ToLabel()
+                            </div>
+                            @foreach (var rank in _starRanks)
+                            {
+                                var pos = new GuardianPosition(evo, rank);
+                                var isSelected = Value?.Evolution == evo && Value?.Rank == rank;
+                                var path = rank.RankIconPath(evo);
+                                var count = rank.StarCount();
+
+                                <button type="button" class="@CellClass(isSelected)" @onclick="() => SelectAndClose(pos)" title="@pos.Label">
+                                    <span class="flex items-center justify-center gap-0.5">
+                                        @for (int i = 0; i < count; i++)
+                                        {
+                                            <picture>
+                                                <source type="image/jxl" srcset="@($"{path}.jxl")" />
+                                                <source type="image/avif" srcset="@($"{path}.avif")" />
+                                                <source type="image/webp" srcset="@($"{path}.webp")" />
+                                                <img src="@($"{path}.png")" alt="@rank.ToLabel()" class="w-3.5 h-3.5 object-contain" />
+                                            </picture>
+                                        }
+                                    </span>
+                                </button>
+                            }
+                        </div>
+                    }
+                </div>
+
+                @* Crowns section *@
+                <p class="text-xs font-semibold text-muted-foreground uppercase tracking-wider pt-1">@L["Crowns"]</p>
+                <div class="rounded-md border overflow-hidden">
+                    <div class="grid bg-muted/40 border-b text-xs text-muted-foreground" style="grid-template-columns: 88px repeat(5, 1fr);">
+                        <div class="px-2 py-1.5"></div>
+                        @foreach (var rank in _crownRanks)
+                        {
+                            <div class="flex justify-center py-1.5">@rank.CrownCount()♛</div>
+                        }
+                    </div>
+                    @foreach (var evo in _evolutions)
+                    {
+                        <div class="grid border-b last:border-b-0" style="grid-template-columns: 88px repeat(5, 1fr);">
+                            <div class="flex items-center px-2 py-1.5 border-r text-xs font-medium truncate">
+                                @evo.ToLabel()
+                            </div>
+                            @foreach (var rank in _crownRanks)
+                            {
+                                var pos = new GuardianPosition(evo, rank);
+                                var isSelected = Value?.Evolution == evo && Value?.Rank == rank;
+                                var path = rank.RankIconPath(evo);
+                                var count = rank.CrownCount();
+
+                                <button type="button" class="@CellClass(isSelected)" @onclick="() => SelectAndClose(pos)" title="@pos.Label">
+                                    <span class="flex items-center justify-center gap-0.5">
+                                        @for (int i = 0; i < count; i++)
+                                        {
+                                            <picture>
+                                                <source type="image/jxl" srcset="@($"{path}.jxl")" />
+                                                <source type="image/avif" srcset="@($"{path}.avif")" />
+                                                <source type="image/webp" srcset="@($"{path}.webp")" />
+                                                <img src="@($"{path}.png")" alt="@rank.ToLabel()" class="w-3.5 h-3.5 object-contain" />
+                                            </picture>
+                                        }
+                                    </span>
+                                </button>
+                            }
+                        </div>
+                    }
+                </div>
+
+            </div>
+        </div>
+
+        @* Click-outside overlay *@
+        <div class="fixed inset-0 z-40" @onclick="Close"></div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public GuardianPosition? Value { get; set; }
+    [Parameter, EditorRequired] public EventCallback<GuardianPosition> ValueChanged { get; set; }
+
+    private static readonly GuardianEvolution[] _evolutions = Enum.GetValues<GuardianEvolution>();
+    private static readonly GuardianRank[] _starRanks = Enum.GetValues<GuardianRank>().Where(r => r.IsStar()).ToArray();
+    private static readonly GuardianRank[] _crownRanks = Enum.GetValues<GuardianRank>().Where(r => r.IsCrown()).ToArray();
+
+    private bool _open;
+    private ElementReference _container;
+
+    private void Toggle() => _open = !_open;
+    private void Close() => _open = false;
+
+    private async Task SelectAndClose(GuardianPosition pos)
+    {
+        _open = false;
+        await ValueChanged.InvokeAsync(pos);
+    }
+
+    private static string CellClass(bool selected) => selected
+        ? "w-full py-2 bg-primary/20 border-l border-primary/40 transition-colors"
+        : "w-full py-2 hover:bg-accent/60 border-l transition-colors";
+
+}

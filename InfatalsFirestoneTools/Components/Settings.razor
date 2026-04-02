@@ -1,0 +1,174 @@
+﻿@using InfatalsFirestoneTools.Components.Machine.Optimizer
+@using InfatalsFirestoneTools.Models
+@using InfatalsFirestoneTools.Services
+@using InfatalsFirestoneTools.Resources
+@inject ProfileService ProfileService
+@inject IStringLocalizer<LanguageResource> L
+
+<div class="space-y-6">
+    @if (_loading)
+    {
+        <div class="flex items-center justify-center py-24">
+            <BbSpinner Size="SpinnerSize.Large" />
+        </div>
+    }
+    else if (_data is null)
+    {
+        <BbAlert Variant="AlertVariant.Warning">
+            <BbAlertDescription>
+                @L["NoActiveProfileFound"]
+            </BbAlertDescription>
+        </BbAlert>
+    }
+    else
+    {
+        <div class="flex gap-6">
+
+            @* Left nav *@
+            <div class="shrink-0 w-48 space-y-1">
+                <p class="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2 pb-1">
+                    @L["Settings"]
+                </p>
+                @foreach (var item in _navItems)
+                {
+                    <button class="@NavItemClass(item.Key)" @onclick="() => _active = item.Key">
+                        <LucideIcon Name="@item.Icon" Size="15" Class="shrink-0" />
+                        <span class="text-sm">@item.Label</span>
+                    </button>
+                }
+            </div>
+
+            <BbSeparator Orientation="SeparatorOrientation.Vertical" Class="h-auto" />
+
+            @* Right panel *@
+            <div class="flex-1">
+                @if (_active == "weights")
+                {
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-sm font-semibold">@L["HeroScoringWeights"]</p>
+                            <p class="text-xs text-muted-foreground mt-0.5">
+                                @L["HeroScoringWeightsDescription"]
+                            </p>
+                        </div>
+
+                        <BbTabs DefaultValue="campaign">
+                            <BbTabsList Class="w-full">
+                                <BbTabsTrigger Value="campaign" Class="flex-1">@L["Campaign"]</BbTabsTrigger>
+                                <BbTabsTrigger Value="arena" Class="flex-1">@L["Arena"]</BbTabsTrigger>
+                            </BbTabsList>
+
+                            <BbTabsContent Value="campaign">
+                                <div class="space-y-3 pt-3">
+                                    <WeightEditor Label="@L["Tank"]"
+                                                  Damage="@_data.HeroWeights.CampaignTankDamage"
+                                                  Health="@_data.HeroWeights.CampaignTankHealth"
+                                                  Armor="@_data.HeroWeights.CampaignTankArmor"
+                                                  DamageChanged="v => _data.HeroWeights.CampaignTankDamage = v"
+                                                  HealthChanged="v => _data.HeroWeights.CampaignTankHealth = v"
+                                                  ArmorChanged="v => _data.HeroWeights.CampaignTankArmor = v" />
+                                    <WeightEditor Label="@L["DPSHealer"]"
+                                                  Damage="@_data.HeroWeights.CampaignDpsDamage"
+                                                  Health="@_data.HeroWeights.CampaignDpsHealth"
+                                                  Armor="@_data.HeroWeights.CampaignDpsArmor"
+                                                  DamageChanged="v => _data.HeroWeights.CampaignDpsDamage = v"
+                                                  HealthChanged="v => _data.HeroWeights.CampaignDpsHealth = v"
+                                                  ArmorChanged="v => _data.HeroWeights.CampaignDpsArmor = v" />
+                                </div>
+                            </BbTabsContent>
+
+                            <BbTabsContent Value="arena">
+                                <div class="space-y-3 pt-3">
+                                    <WeightEditor Label="@L["Tank"]"
+                                                  Damage="@_data.HeroWeights.ArenaTankDamage"
+                                                  Health="@_data.HeroWeights.ArenaTankHealth"
+                                                  Armor="@_data.HeroWeights.ArenaTankArmor"
+                                                  DamageChanged="v => _data.HeroWeights.ArenaTankDamage = v"
+                                                  HealthChanged="v => _data.HeroWeights.ArenaTankHealth = v"
+                                                  ArmorChanged="v => _data.HeroWeights.ArenaTankArmor = v" />
+                                    <WeightEditor Label="@L["DPSHealer"]"
+                                                  Damage="@_data.HeroWeights.ArenaDpsDamage"
+                                                  Health="@_data.HeroWeights.ArenaDpsHealth"
+                                                  Armor="@_data.HeroWeights.ArenaDpsArmor"
+                                                  DamageChanged="v => _data.HeroWeights.ArenaDpsDamage = v"
+                                                  HealthChanged="v => _data.HeroWeights.ArenaDpsHealth = v"
+                                                  ArmorChanged="v => _data.HeroWeights.ArenaDpsArmor = v" />
+                                </div>
+                            </BbTabsContent>
+                        </BbTabs>
+
+                        <BbSeparator />
+
+                        <div class="flex gap-2">
+                            <BbButton Class="flex-1" OnClick="Save">@L["Save"]</BbButton>
+                            <BbButton Class="flex-1" Variant="ButtonVariant.Outline" OnClick="Reset">
+                                @L["ResetDefaults"]
+                            </BbButton>
+                        </div>
+
+                        @if (_saved)
+                        {
+                            <p class="text-xs text-green-500 text-center">@L["SettingsSaved"]</p>
+                        }
+                    </div>
+                }
+            </div>
+
+        </div>
+    }
+
+</div>
+
+@code {
+    private OptimizerData? _data;
+    private Profile? _profile;
+    private bool _loading = true;
+    private bool _saved;
+    private string _active = "weights";
+
+    private static readonly (string Key, string Label, string Icon)[] _navItems =
+    [
+        ("weights", LanguageResource.HeroWeights, "sliders-horizontal"),
+    ];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await ProfileService.GetActiveProfileAsync();
+        if (result is not null)
+        {
+            _profile = result.Value.Profile;
+            _data = result.Value.Data;
+        }
+        _loading = false;
+    }
+
+    private async Task Save()
+    {
+        if (_profile is null || _data is null) return;
+
+        await ProfileService.SaveProfileAsync(_profile, _data);
+
+        _saved = true;
+        _ = HideSavedMessage();
+    }
+
+    private async Task HideSavedMessage()
+    {
+        await Task.Delay(2000);
+        _saved = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task Reset()
+    {
+        if (_data is null) return;
+        _data.HeroWeights = new HeroWeights();
+        await Save();
+    }
+
+    private string NavItemClass(string key) =>
+        key == _active
+            ? "flex items-center gap-2 w-full px-2 py-1.5 rounded-md bg-accent text-accent-foreground"
+            : "flex items-center gap-2 w-full px-2 py-1.5 rounded-md text-muted-foreground " +
+              "hover:bg-accent/50 hover:text-foreground transition-colors";
+}

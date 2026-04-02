@@ -1,0 +1,222 @@
+﻿@using BlazorBlueprint.Components
+@using BlazorBlueprint.Icons.Lucide.Components
+@using BlazorBlueprint.Primitives.Services
+@using InfatalsFirestoneTools.Components
+@using InfatalsFirestoneTools.Components.Machine.Optimizer
+@using InfatalsFirestoneTools.Models
+@using InfatalsFirestoneTools.Resources
+@using InfatalsFirestoneTools.Services
+@using Toolbelt.Blazor.PWA.Updater
+@inherits LayoutComponentBase
+@inject ProfileService ProfileService
+@inject IStringLocalizer<LanguageResource> L
+
+<BbSidebarProvider>
+    <BbSidebar>
+
+        <BbSidebarHeader>
+            <BbSidebarMenu>
+                <BbSidebarMenuItem>
+                    <BbSidebarMenuButton Size="SidebarMenuButtonSize.Large" Tooltip="Infatal's Firestone Tools">
+                        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shrink-0">
+                            <LucideIcon Name="cog" Size="16" />
+                        </div>
+                        <span class="font-semibold text-sm leading-tight truncate">
+                            Infatal's Firestone Tools
+                        </span>
+                    </BbSidebarMenuButton>
+                </BbSidebarMenuItem>
+            </BbSidebarMenu>
+        </BbSidebarHeader>
+
+        <BbSidebarContent>
+            <BbSidebarGroup>
+                <BbSidebarGroupLabel>@L["Machine"]</BbSidebarGroupLabel>
+                <BbSidebarMenu>
+                    <BbSidebarMenuItem>
+                        <BbSidebarMenuButton Href="/" Tooltip="@L["Optimizer"]">
+                            <LucideIcon Name="cpu" Size="16" />
+                            <span>@L["Optimizer"]</span>
+                        </BbSidebarMenuButton>
+                    </BbSidebarMenuItem>
+                </BbSidebarMenu>
+            </BbSidebarGroup>
+            <BbSidebarGroup>
+                <BbSidebarGroupLabel>@L["Guardian"]</BbSidebarGroupLabel>
+                <BbSidebarMenu>
+                    <BbSidebarMenuItem>
+                        <BbSidebarMenuButton Href="/strangedust" Tooltip="@L["StrangeDustCalculator"]">
+                            <LucideIcon Name="sparkles" Size="16" />
+                            <span>@L["StrangeDustCalculator"]</span>
+                        </BbSidebarMenuButton>
+                    </BbSidebarMenuItem>
+                </BbSidebarMenu>
+            </BbSidebarGroup>
+        </BbSidebarContent>
+
+        <BbSidebarFooter>
+            <BbSidebarMenu>
+                <BbSidebarMenuItem>
+                    <BbSidebarMenuButton Tooltip="Save / Load" OnClick="() => _saveLoadOpen = true">
+                        <LucideIcon Name="save" Size="16" />
+                        <span>@L["SaveLoad"]</span>
+                    </BbSidebarMenuButton>
+                </BbSidebarMenuItem>
+                <BbSidebarMenuItem>
+                    <BbSidebarMenuButton Tooltip="Manage Profiles" OnClick="() => _profilesOpen = true">
+                        <LucideIcon Name="circle-user" Size="16" />
+                        <span>@L["Profiles"]</span>
+                    </BbSidebarMenuButton>
+                </BbSidebarMenuItem>
+                <BbSidebarMenuItem>
+                    <BbSidebarMenuButton Tooltip="Settings" OnClick="() => _settingsOpen = true">
+                        <LucideIcon Name="settings" Size="16" />
+                        <span>@L["Settings"]</span>
+                    </BbSidebarMenuButton>
+                </BbSidebarMenuItem>
+            </BbSidebarMenu>
+            <div class="px-3 pb-2 pt-2 border-t flex items-center justify-between">
+                <button class="text-xs text-muted-foreground hover:text-foreground transition-colors underline-offset-2 hover:underline" @onclick="() => _patchNotesOpen = true">
+                    @($"v{PatchNotes.Current.Version}")
+                </button>
+            </div>
+            <BbDarkModeToggle Variant="ButtonVariant.Ghost" Size="ButtonSize.Small" />
+        </BbSidebarFooter>
+
+    </BbSidebar>
+
+    <BbSidebarInset>
+        <header class="flex h-12 items-center gap-2 px-4 shrink-0">
+            <BbSidebarTrigger Class="-ml-1" />
+        </header>
+        <main class="flex-1 p-6">
+            <div class="mx-auto max-w-6xl w-full">
+                @Body
+            </div>
+        </main>
+    </BbSidebarInset>
+
+</BbSidebarProvider>
+
+<BbPortalHost />
+
+@* PWA update banner — fires automatically when service worker detects a new version /// State="PWAUpdater.States.Showing" *@
+<PWAUpdater>
+    <span class="text-sm">
+        @L["NewVersionAvailable"] —
+        <button class="underline font-medium" @onclick="() => _patchNotesOpen = true">
+            @L["SeeWhatsNew"]
+        </button>
+    </span>
+</PWAUpdater>
+
+@* Save / Load *@
+<BbDialog @bind-Open="_saveLoadOpen">
+    <BbDialogContent>
+        <BbDialogHeader>
+            <BbDialogTitle>@L["SaveLoadConfiguration"]</BbDialogTitle>
+            <BbDialogDescription>
+                @L["SaveLoadConfigurationDescription"]
+            </BbDialogDescription>
+        </BbDialogHeader>
+        <BbTextarea @bind-Value="_saveLoadJson" Rows="10" Placeholder="@L["SaveLoadPlaceholder"]" class="font-mono text-xs max-h-96" />
+        @if (_saveLoadMessage is not null)
+        {
+            <BbAlert Variant="@(_saveLoadSuccess ? AlertVariant.Default : AlertVariant.Warning)" class="mt-2">
+                <BbAlertDescription>@_saveLoadMessage</BbAlertDescription>
+            </BbAlert>
+        }
+        <BbDialogFooter>
+            <BbButton Variant="ButtonVariant.Outline" OnClick="GenerateSave">@L["Save"]</BbButton>
+            <BbButton OnClick="LoadSave">@L["Load"]</BbButton>
+            <BbDialogClose AsChild>
+                <BbButton Variant="ButtonVariant.Ghost">@L["Close"]</BbButton>
+            </BbDialogClose>
+        </BbDialogFooter>
+    </BbDialogContent>
+</BbDialog>
+
+@* Profiles *@
+<BbDialog @bind-Open="_profilesOpen">
+    <BbDialogContent>
+        <BbDialogHeader>
+            <BbDialogTitle>@L["ManageProfiles"]</BbDialogTitle>
+            <BbDialogDescription>
+                @L["ManageProfilesDescription"]
+            </BbDialogDescription>
+        </BbDialogHeader>
+        <ProfileManager />
+        <BbDialogFooter>
+            <BbDialogClose AsChild>
+                <BbButton Variant="ButtonVariant.Ghost">@L["Close"]</BbButton>
+            </BbDialogClose>
+        </BbDialogFooter>
+    </BbDialogContent>
+</BbDialog>
+
+@* Settings *@
+<BbDialog @bind-Open="_settingsOpen">
+    <BbDialogContent class="sm:min-w-2xl">
+        <BbDialogHeader>
+            <BbDialogTitle>@L["Settings"]</BbDialogTitle>
+            <BbDialogDescription>
+                @L["SettingsDescription"]
+            </BbDialogDescription>
+        </BbDialogHeader>
+        <Settings />
+        <BbDialogFooter>
+            <BbDialogClose AsChild>
+                <BbButton Variant="ButtonVariant.Ghost">@L["Close"]</BbButton>
+            </BbDialogClose>
+        </BbDialogFooter>
+    </BbDialogContent>
+</BbDialog>
+
+@* Patch Notes *@
+<BbDialog @bind-Open="_patchNotesOpen">
+    <BbDialogContent>
+        <BbDialogHeader>
+            <BbDialogTitle>@L["PatchNotes"]</BbDialogTitle>
+            <BbDialogDescription>
+                @L["PatchNotesDescription"]
+            </BbDialogDescription>
+        </BbDialogHeader>
+        <PatchNotesDialog />
+        <BbDialogFooter>
+            <BbDialogClose AsChild>
+                <BbButton Variant="ButtonVariant.Ghost">@L["Close"]</BbButton>
+            </BbDialogClose>
+        </BbDialogFooter>
+    </BbDialogContent>
+</BbDialog>
+
+@code {
+    private bool _saveLoadOpen;
+    private bool _profilesOpen;
+    private bool _settingsOpen;
+    private bool _patchNotesOpen;
+    private string _saveLoadJson = string.Empty;
+    private string? _saveLoadMessage;
+    private bool _saveLoadSuccess;
+
+    private async Task GenerateSave()
+    {
+        var result = await ProfileService.GetActiveProfileAsync();
+        if (result is null) return;
+        _saveLoadJson = SaveLoadService.Export(result.Value.Data);
+        _saveLoadMessage = null;
+    }
+
+    private async Task LoadSave()
+    {
+        var result = await ProfileService.GetActiveProfileAsync();
+        if (result is null) return;
+
+        var import = SaveLoadService.Import(_saveLoadJson, result.Value.Data);
+        _saveLoadSuccess = import.Success;
+        _saveLoadMessage = import.Message;
+
+        if (import.Success)
+            await ProfileService.SaveProfileAsync(result.Value.Profile, result.Value.Data);
+    }
+}

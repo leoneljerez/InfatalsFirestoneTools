@@ -1,0 +1,119 @@
+﻿@page "/"
+@using InfatalsFirestoneTools.Components.Machine.Optimizer
+@using InfatalsFirestoneTools.Models
+@using InfatalsFirestoneTools.Resources
+@using InfatalsFirestoneTools.Services
+@inject ProfileService ProfileService
+@inject OptimizerService OptimizerService
+@inject IStringLocalizer<LanguageResource> L
+
+<div class="flex flex-col h-full">
+
+    @if (_data is null)
+    {
+        <div class="flex flex-col items-center justify-center gap-4 py-24">
+            <BbSpinner Size="SpinnerSize.Large" />
+            <p class="text-sm text-muted-foreground">Loading your profile...</p>
+        </div>
+    }
+    else
+    {
+        <div class="flex-1 min-h-0">
+            <BbTabs @bind-Value="_activeTab">
+                <BbTabsList class="w-full justify-start">
+                    <BbTabsTrigger Value="machines">@L["Machines"]</BbTabsTrigger>
+                    <BbTabsTrigger Value="tavern">@L["Tavern"]</BbTabsTrigger>
+                    <BbTabsTrigger Value="heroes">@L["Heroes"]</BbTabsTrigger>
+                    <BbTabsTrigger Value="artifacts">@L["Artifacts"]</BbTabsTrigger>
+                    <BbTabsTrigger Value="results">@L["Results"]</BbTabsTrigger>
+                </BbTabsList>
+
+                <BbTabsContent Value="machines">
+                    <MachinesTab Data="_data" OnChanged="SaveAsync" />
+                </BbTabsContent>
+                <BbTabsContent Value="tavern">
+                    <TavernTab Data="_data" OnChanged="SaveAsync" />
+                </BbTabsContent>
+                <BbTabsContent Value="heroes">
+                    <HeroesTab Data="_data" OnChanged="SaveAsync" />
+                </BbTabsContent>
+                <BbTabsContent Value="artifacts">
+                    <ArtifactsTab Data="_data" OnChanged="SaveAsync" />
+                </BbTabsContent>
+                <BbTabsContent Value="results">
+                    <ResultsTab Result="_result" IsLoading="_optimizing" />
+                </BbTabsContent>
+            </BbTabs>
+        </div>
+
+        <!-- Sticky optimize bar — always visible regardless of active tab -->
+        <div class="sticky bottom-0 border-t bg-background/95 backdrop-blur py-4 mt-4">
+            <div class="flex flex-col items-center gap-3">
+                <div class="flex items-center gap-2 rounded-lg border bg-muted p-1">
+                    <BbToggleGroup TValue="OptimizeMode" @bind-Value="_optimizeMode" Type="ToggleGroupType.Single">
+                        <BbToggleGroupItem Value="@(OptimizeMode.Campaign)">
+                            @L["Campaign"]
+                        </BbToggleGroupItem>
+                        <BbToggleGroupItem Value="@(OptimizeMode.Arena)">
+                            @L["Arena"]
+                        </BbToggleGroupItem>
+                    </BbToggleGroup>
+                </div>
+                <BbButton Size="ButtonSize.Large" class="px-10 py-3 text-base font-semibold" Disabled="_optimizing" OnClick="RunOptimize">
+                    @if (_optimizing)
+                    {
+                        <BbSpinner Size="SpinnerSize.Small" class="mr-2" />
+                        <span>@L["Optimizing"]</span>
+                    }
+                    else
+                    {
+                        <span>@(_optimizeMode == OptimizeMode.Arena ? L["OptimizeForArena"] : L["OptimizeForCampaign"])</span>
+                    }
+                </BbButton>
+            </div>
+        </div>
+    }
+
+</div>
+
+@code {
+    private Profile? _profile;
+    private OptimizerData? _data;
+    private string _activeTab = "machines";
+    private OptimizeMode _optimizeMode;
+    private bool _optimizing;
+    private OptimizationResult? _result;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ProfileService.EnsureDefaultProfileAsync();
+        var result = await ProfileService.GetActiveProfileAsync();
+        if (result is not null)
+        {
+            _profile = result.Value.Profile;
+            _data = result.Value.Data;
+        }
+    }
+
+    private async Task SaveAsync()
+    {
+        if (_profile is not null && _data is not null)
+            await ProfileService.SaveProfileAsync(_profile, _data);
+    }
+
+    private async Task RunOptimize()
+    {
+        if (_data is null || _optimizing) return;
+
+        _optimizing = true;
+        _activeTab = "results";
+        StateHasChanged();
+
+        _data.OptimizeMode = _optimizeMode;
+
+        _result = await OptimizerService.RunAsync(_data);
+
+        _optimizing = false;
+        StateHasChanged();
+    }
+}

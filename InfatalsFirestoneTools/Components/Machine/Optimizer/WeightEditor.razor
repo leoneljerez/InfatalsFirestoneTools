@@ -1,0 +1,35 @@
+﻿@using InfatalsFirestoneTools.Models
+@using InfatalsFirestoneTools.Resources
+@inject IStringLocalizer<LanguageResource> L
+
+<BbCard Class="border bg-muted/30">
+    <BbCardHeader Class="pb-2">
+        <BbCardTitle Class="text-sm">@Label</BbCardTitle>
+    </BbCardHeader>
+    <BbCardContent Class="pt-0">
+        <div class="grid grid-cols-3 gap-3">
+            <div class="space-y-1">
+                <BbLabel Class="text-xs text-muted-foreground">@L["Damage"]</BbLabel>
+                <BbNumericInput TValue="double" Min="0" Step="0.1" AllowNegative="false" ShowButtons="true" Value="@Damage" ValueChanged="v => DamageChanged(v)" DebounceInterval="300" Class="w-full" />
+            </div>
+            <div class="space-y-1">
+                <BbLabel Class="text-xs text-muted-foreground">@L["Health"]</BbLabel>
+                <BbNumericInput TValue="double" Min="0" Step="0.1" AllowNegative="false" ShowButtons="true" Value="@Health" ValueChanged="v => HealthChanged(v)" DebounceInterval="300" Class="w-full" />
+            </div>
+            <div class="space-y-1">
+                <BbLabel Class="text-xs text-muted-foreground">@L["Armor"]</BbLabel>
+                <BbNumericInput TValue="double" Min="0" Step="0.1" AllowNegative="false" ShowButtons="true" Value="@Armor" ValueChanged="v => ArmorChanged(v)" DebounceInterval="300" Class="w-full" />
+            </div>
+        </div>
+    </BbCardContent>
+</BbCard>
+
+@code {
+    [Parameter, EditorRequired] public string Label { get; set; } = string.Empty;
+    [Parameter, EditorRequired] public double Damage { get; set; }
+    [Parameter, EditorRequired] public double Health { get; set; }
+    [Parameter, EditorRequired] public double Armor { get; set; }
+    [Parameter, EditorRequired] public Action<double> DamageChanged { get; set; } = null!;
+    [Parameter, EditorRequired] public Action<double> HealthChanged { get; set; } = null!;
+    [Parameter, EditorRequired] public Action<double> ArmorChanged { get; set; } = null!;
+}

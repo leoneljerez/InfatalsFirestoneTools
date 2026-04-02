@@ -1,0 +1,54 @@
+﻿@using InfatalsFirestoneTools.Models
+@using InfatalsFirestoneTools.Resources
+@using InfatalsFirestoneTools.Services
+@inject MachineService MachineService
+@inject IStringLocalizer<LanguageResource> L
+
+<div class="space-y-4">
+
+    <div class="flex justify-center">
+        <BbToggleGroup TValue="string" @bind-Value="_mode" Type="ToggleGroupType.Single" Class="rounded-lg border bg-muted p-1">
+            <BbToggleGroupItem Value="@("sacred")">@L["TavernSacredCards"]</BbToggleGroupItem>
+            <BbToggleGroupItem Value="@("inscription")">@L["ScarabsGameInscriptionCards"]</BbToggleGroupItem>
+        </BbToggleGroup>
+    </div>
+
+    <div class="flex justify-end">
+        <BbButton Variant="ButtonVariant.Destructive" Size="ButtonSize.Small" OnClick="ResetAll">
+            @L["ResetAll"]
+        </BbButton>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        @foreach (var machine in Data.Machines.OrderByDescending(IsConfigured))
+        {
+            var m = machine;
+            var mStatic = MachineService.Machines.FirstOrDefault(s => s.Id == m.Id);
+            if (mStatic is null) continue;
+
+            <TavernMachineCard Machine="m" Static="mStatic" Mode="@_mode" OnChanged="OnChanged" />
+        }
+    </div>
+
+</div>
+
+@code {
+    [Parameter, EditorRequired] public OptimizerData Data { get; set; } = null!;
+    [Parameter, EditorRequired] public EventCallback OnChanged { get; set; }
+
+    private string _mode = "sacred";
+
+    private static bool IsConfigured(Machine m) =>
+        m.Level > 0 || m.DamageBlueprint > 0 || m.HealthBlueprint > 0 ||
+        m.ArmorBlueprint > 0 || m.Rarity is not MachineRarity.Common;
+
+    private async Task ResetAll()
+    {
+        foreach (var m in Data.Machines)
+        {
+            if (_mode == "sacred") m.SacredLevel = 0;
+            else m.InscriptionLevel = 0;
+        }
+        await OnChanged.InvokeAsync();
+    }
+}

@@ -1,0 +1,536 @@
+﻿@using InfatalsFirestoneTools.Models
+@using InfatalsFirestoneTools.Services
+@using InfatalsFirestoneTools.Resources
+@inject HeroService HeroService
+@inject IStringLocalizer<LanguageResource> L
+
+<div class="space-y-4">
+
+    <div class="flex items-center gap-1 rounded-lg border bg-muted p-1 w-fit">
+        <BbToggleGroup TValue="string" @bind-Value="_viewMode" Type="ToggleGroupType.Single">
+            <BbToggleGroupItem Value="@("detail")">
+                <LucideIcon Name="layout-panel-left" Size="14" Class="mr-1.5" />
+                @L["Detail"]
+            </BbToggleGroupItem>
+            <BbToggleGroupItem Value="@("bulk")">
+                <LucideIcon Name="table" Size="14" Class="mr-1.5" />
+                @L["BulkEdit"]
+            </BbToggleGroupItem>
+        </BbToggleGroup>
+    </div>
+
+    @if (_viewMode == "detail")
+    {
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 w-full">
+            <div class="lg:col-span-1">
+                <BbCard>
+                    <BbCardHeader>
+                        <BbCardTitle>@L["HeroList"]</BbCardTitle>
+                    </BbCardHeader>
+                    <BbCardContent Class="p-0">
+                        <div class="p-3 border-b space-y-2">
+                            <BbInput Placeholder="@L["Search"]" Value="@_search" class="w-full" @oninput="e => _search = e.Value?.ToString() ?? string.Empty" />
+                            <div class="flex gap-2">
+                                <BbSelect TValue="SortOptionsHero" @bind-Value="_detailSort" Class="flex-1">
+                                    <BbSelectTrigger Class="h-8 text-xs flex-1">
+                                        <BbSelectValue Placeholder="@L["SortBy"]" />
+                                    </BbSelectTrigger>
+                                    <BbSelectContent>
+                                        @foreach (var opt in Enum.GetValues<SortOptionsHero>())
+                                        {
+                                            <BbSelectItem Value="@opt">@L[opt.ToString()]</BbSelectItem>
+                                        }
+                                    </BbSelectContent>
+                                </BbSelect>
+                                <div class="relative">
+                                    <BbButton Variant="@(_hasDetailFilter? ButtonVariant.Default: ButtonVariant.Outline)" Size="ButtonSize.Small" Class="h-8 px-2 gap-1" OnClick="() => _detailFilterOpen = !_detailFilterOpen">
+                                        <LucideIcon Name="sliders-horizontal" Size="14" />
+                                    </BbButton>
+
+                                    @if (_detailFilterOpen)
+                                    {
+                                        <div class="absolute right-0 top-full mt-1 z-50 w-56 rounded-md border bg-popover shadow-md p-3 space-y-3">
+
+                                            @* Type Filter *@
+                                            <div class="space-y-1">
+                                                <p class="text-xs font-medium">@L["Type"]</p>
+                                                <BbSelect TValue="HeroType?" Value="@_filterType" ValueChanged="v => _filterType = v" Class="w-full">
+                                                    <BbSelectTrigger Class="h-8 text-xs w-full">
+                                                        <BbSelectValue Placeholder="@L["All"]" />
+                                                    </BbSelectTrigger>
+                                                    <BbSelectContent>
+                                                        <BbSelectItem Value="@((HeroType?)null)">All</BbSelectItem>
+                                                        @foreach (var t in Enum.GetValues<HeroType>())
+                                                        {
+                                                            <BbSelectItem Value="@((HeroType?)t)">@L[t.ToString()]</BbSelectItem>
+                                                        }
+                                                    </BbSelectContent>
+                                                </BbSelect>
+                                            </div>
+
+                                            @* Class Filter *@
+                                            <div class="space-y-1">
+                                                <p class="text-xs font-medium">@L["Class"]</p>
+                                                <BbSelect TValue="HeroClass?" Value="@_filterClass" ValueChanged="v => _filterClass = v" Class="w-full">
+                                                    <BbSelectTrigger Class="h-8 text-xs w-full">
+                                                        <BbSelectValue Placeholder="@L["All"]" />
+                                                    </BbSelectTrigger>
+                                                    <BbSelectContent>
+                                                        <BbSelectItem Value="@((HeroClass?)null)">@L["All"]</BbSelectItem>
+                                                        @foreach (var c in Enum.GetValues<HeroClass>())
+                                                        {
+                                                            <BbSelectItem Value="@((HeroClass?)c)">@L[c.ToString()]</BbSelectItem>
+                                                        }
+                                                    </BbSelectContent>
+                                                </BbSelect>
+                                            </div>
+
+                                            @* Attack Style Filter *@
+                                            <div class="space-y-1">
+                                                <p class="text-xs font-medium">@L["AttackStyle"]</p>
+                                                <BbSelect TValue="HeroAttackStyle?" Value="@_filterAttackStyle" ValueChanged="v => _filterAttackStyle = v" Class="w-full">
+                                                    <BbSelectTrigger Class="h-8 text-xs w-full">
+                                                        <BbSelectValue Placeholder="@L["All"]" />
+                                                    </BbSelectTrigger>
+                                                    <BbSelectContent>
+                                                        <BbSelectItem Value="@((HeroAttackStyle?)null)">@L["All"]</BbSelectItem>
+                                                        @foreach (var a in Enum.GetValues<HeroAttackStyle>())
+                                                        {
+                                                            <BbSelectItem Value="@((HeroAttackStyle?)a)">@L[a.ToString()]</BbSelectItem>
+                                                        }
+                                                    </BbSelectContent>
+                                                </BbSelect>
+                                            </div>
+
+                                            @* Specialization Filter *@
+                                            <div class="space-y-1">
+                                                <p class="text-xs font-medium">@L["Specialization"]</p>
+                                                <BbSelect TValue="HeroSpecialization?" Value="@_filterSpec" ValueChanged="v => _filterSpec = v" Class="w-full">
+                                                    <BbSelectTrigger Class="h-8 text-xs w-full">
+                                                        <BbSelectValue Placeholder="@L["All"]" />
+                                                    </BbSelectTrigger>
+                                                    <BbSelectContent>
+                                                        <BbSelectItem Value="@((HeroSpecialization?)null)">@L["All"]</BbSelectItem>
+                                                        @foreach (var s in Enum.GetValues<HeroSpecialization>())
+                                                        {
+                                                            <BbSelectItem Value="@((HeroSpecialization?)s)">@L[s.ToString()]</BbSelectItem>
+                                                        }
+                                                    </BbSelectContent>
+                                                </BbSelect>
+                                            </div>
+
+                                            @* Resource Filter *@
+                                            <div class="space-y-1">
+                                                <p class="text-xs font-medium">@L["Resource"]</p>
+                                                <BbSelect TValue="HeroResource?" Value="@_filterResource" ValueChanged="v => _filterResource = v" Class="w-full">
+                                                    <BbSelectTrigger Class="h-8 text-xs w-full">
+                                                        <BbSelectValue Placeholder="@L["All"]" />
+                                                    </BbSelectTrigger>
+                                                    <BbSelectContent>
+                                                        <BbSelectItem Value="@((HeroResource?)null)">@L["All"]</BbSelectItem>
+                                                        @foreach (var r in Enum.GetValues<HeroResource>())
+                                                        {
+                                                            <BbSelectItem Value="@((HeroResource?)r)">@L[r.ToString()]</BbSelectItem>
+                                                        }
+                                                    </BbSelectContent>
+                                                </BbSelect>
+                                            </div>
+
+                                            <button class="text-xs text-muted-foreground hover:text-foreground" @onclick="ClearDetailFilters">
+                                                @L["ClearFilters"]
+                                            </button>
+                                        </div>
+
+                                        <div class="fixed inset-0 z-40" @onclick="() => _detailFilterOpen = false"></div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="overflow-y-auto" style="max-height: 480px;">
+                            @foreach (var h in SortedFilteredDetailHeroes)
+                            {
+                                var hStatic = StaticOf(h);
+                                if (hStatic is null) continue;
+
+                                <button class="@HeroItemClass(h)" @onclick="() => _selected = h">
+                                    <picture>
+                                        <source type="image/jxl" srcset="@($"{hStatic.Image}.jxl")" />
+                                        <source type="image/avif" srcset="@($"{hStatic.Image}.avif")" />
+                                        <source type="image/webp" srcset="@($"{hStatic.Image}.webp")" />
+                                        <img src="@($"{hStatic.Image}.png")" alt="@L[hStatic.Name]" class="w-10 h-10 object-scale-down rounded shrink-0" />
+                                    </picture>
+                                    <div class="flex-1 min-w-0 text-left">
+                                        <p class="text-sm font-medium truncate">@L[hStatic.Name]</p>
+                                        <p class="text-xs text-muted-foreground truncate">
+                                            @L[hStatic.Specialization.ToString()] · @L[hStatic.Class.ToString()]
+                                        </p>
+                                    </div>
+                                    @if (IsConfigured(h))
+                                    {
+                                        <LucideIcon Name="circle-check" Size="16" Class="text-green-500 shrink-0" />
+                                    }
+                                    else
+                                    {
+                                        <LucideIcon Name="circle" Size="16" Class="text-muted-foreground shrink-0" />
+                                    }
+                                </button>
+                            }
+                        </div>
+                    </BbCardContent>
+                </BbCard>
+            </div>
+
+            <div class="lg:col-span-2">
+                @if (_selected is not null)
+                {
+                    <HeroDetailCard Hero="_selected" OnChanged="OnChanged" />
+                }
+                else
+                {
+                    <BbCard>
+                        <BbCardContent Class="flex items-center justify-center py-24">
+                            <p class="text-muted-foreground text-sm">@L["SelectAHeroToEdit"]</p>
+                        </BbCardContent>
+                    </BbCard>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        @* Bulk Edit Section *@
+        <BbCard>
+            <BbCardContent Class="p-0">
+                <div class="flex items-center gap-2 p-3 border-b flex-wrap">
+                    <BbInput Placeholder="@L["Search"]" Value="@_bulkSearch" class="flex-1 min-w-40" @oninput="e => _bulkSearch = e.Value?.ToString() ?? string.Empty" />
+                    <div class="relative">
+                        <BbButton Variant="@(_hasBulkFilter? ButtonVariant.Default: ButtonVariant.Outline)" Size="ButtonSize.Small" Class="h-9 px-3 gap-1.5" OnClick="() => _bulkFilterOpen = !_bulkFilterOpen">
+                            <LucideIcon Name="sliders-horizontal" Size="14" />
+                            <span class="text-xs">@L["Filters"]</span>
+                        </BbButton>
+
+                        @if (_bulkFilterOpen)
+                        {
+                            <div class="absolute right-0 top-full mt-1 z-50 w-56 rounded-md border bg-popover shadow-md p-3 space-y-3">
+
+                                @* Type Filter *@
+                                <div class="space-y-1">
+                                    <p class="text-xs font-medium">@L["Type"]</p>
+                                    <BbSelect TValue="HeroType?" Value="@_bulkFilterType" ValueChanged="v => _bulkFilterType = v" Class="w-full">
+                                        <BbSelectTrigger Class="h-8 text-xs w-full">
+                                            <BbSelectValue Placeholder="@L["All"]" />
+                                        </BbSelectTrigger>
+                                        <BbSelectContent>
+                                            <BbSelectItem Value="@((HeroType?)null)">@L["All"]</BbSelectItem>
+                                            @foreach (var t in Enum.GetValues<HeroType>())
+                                            {
+                                                <BbSelectItem Value="@((HeroType?)t)">@L[t.ToString()]</BbSelectItem>
+                                            }
+                                        </BbSelectContent>
+                                    </BbSelect>
+                                </div>
+
+                                @* Class Filter *@
+                                <div class="space-y-1">
+                                    <p class="text-xs font-medium">@L["Class"]</p>
+                                    <BbSelect TValue="HeroClass?" Value="@_bulkFilterClass" ValueChanged="v => _bulkFilterClass = v" Class="w-full">
+                                        <BbSelectTrigger Class="h-8 text-xs w-full">
+                                            <BbSelectValue Placeholder="@L["All"]" />
+                                        </BbSelectTrigger>
+                                        <BbSelectContent>
+                                            <BbSelectItem Value="@((HeroClass?)null)">@L["All"]</BbSelectItem>
+                                            @foreach (var c in Enum.GetValues<HeroClass>())
+                                            {
+                                                <BbSelectItem Value="@((HeroClass?)c)">@L[c.ToString()]</BbSelectItem>
+                                            }
+                                        </BbSelectContent>
+                                    </BbSelect>
+                                </div>
+
+                                @* Attack Style Filter *@
+                                <div class="space-y-1">
+                                    <p class="text-xs font-medium">@L["AttackStyle"]</p>
+                                    <BbSelect TValue="HeroAttackStyle?" Value="@_bulkFilterAttackStyle" ValueChanged="v => _bulkFilterAttackStyle = v" Class="w-full">
+                                        <BbSelectTrigger Class="h-8 text-xs w-full">
+                                            <BbSelectValue Placeholder="@L["All"]" />
+                                        </BbSelectTrigger>
+                                        <BbSelectContent>
+                                            <BbSelectItem Value="@((HeroAttackStyle?)null)">@L["All"]</BbSelectItem>
+                                            @foreach (var a in Enum.GetValues<HeroAttackStyle>())
+                                            {
+                                                <BbSelectItem Value="@((HeroAttackStyle?)a)">@L[a.ToString()]</BbSelectItem>
+                                            }
+                                        </BbSelectContent>
+                                    </BbSelect>
+                                </div>
+
+                                @* Specialization Filter *@
+                                <div class="space-y-1">
+                                    <p class="text-xs font-medium">@L["Specialization"]</p>
+                                    <BbSelect TValue="HeroSpecialization?" Value="@_bulkFilterSpec" ValueChanged="v => _bulkFilterSpec = v" Class="w-full">
+                                        <BbSelectTrigger Class="h-8 text-xs w-full">
+                                            <BbSelectValue Placeholder="@L["All"]" />
+                                        </BbSelectTrigger>
+                                        <BbSelectContent>
+                                            <BbSelectItem Value="@((HeroSpecialization?)null)">@L["All"]</BbSelectItem>
+                                            @foreach (var s in Enum.GetValues<HeroSpecialization>())
+                                            {
+                                                <BbSelectItem Value="@((HeroSpecialization?)s)">@L[s.ToString()]</BbSelectItem>
+                                            }
+                                        </BbSelectContent>
+                                    </BbSelect>
+                                </div>
+
+                                @* Resource Filter *@
+                                <div class="space-y-1">
+                                    <p class="text-xs font-medium">@L["Resource"]</p>
+                                    <BbSelect TValue="HeroResource?" Value="@_bulkFilterResource" ValueChanged="v => _bulkFilterResource = v" Class="w-full">
+                                        <BbSelectTrigger Class="h-8 text-xs w-full">
+                                            <BbSelectValue Placeholder="@L["All"]" />
+                                        </BbSelectTrigger>
+                                        <BbSelectContent>
+                                            <BbSelectItem Value="@((HeroResource?)null)">@L["All"]</BbSelectItem>
+                                            @foreach (var r in Enum.GetValues<HeroResource>())
+                                            {
+                                                <BbSelectItem Value="@((HeroResource?)r)">@L[r.ToString()]</BbSelectItem>
+                                            }
+                                        </BbSelectContent>
+                                    </BbSelect>
+                                </div>
+
+                                <button class="text-xs text-muted-foreground hover:text-foreground" @onclick="ClearBulkFilters">
+                                    @L["ClearFilters"]
+                                </button>
+
+                            </div>
+                            <div class="fixed inset-0 z-40" @onclick="() => _bulkFilterOpen = false"></div>
+                        }
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="border-b bg-muted/50">
+                            <tr>
+                                <th class="px-3 py-2 text-left w-56">
+                                    <button class="flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground transition-colors" @onclick="() => ToggleBulkSort(SortOptionsHero.NameAtoZ, SortOptionsHero.NameZtoA)">
+                                        @L["Hero"] @ColIcon(SortOptionsHero.NameAtoZ, SortOptionsHero.NameZtoA)
+                                    </button>
+                                </th>
+                                <th class="px-3 py-2 text-left w-28">
+                                    <button class="flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground transition-colors" @onclick="() => ToggleBulkSort(SortOptionsHero.DamageHighToLow, SortOptionsHero.DamageLowToHigh)">
+                                        @L["Damage"] % @ColIcon(SortOptionsHero.DamageHighToLow, SortOptionsHero.DamageLowToHigh)
+                                    </button>
+                                </th>
+                                <th class="px-3 py-2 text-left w-28">
+                                    <button class="flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground transition-colors" @onclick="() => ToggleBulkSort(SortOptionsHero.HealthHighToLow, SortOptionsHero.HealthLowToHigh)">
+                                        @L["Health"] % @ColIcon(SortOptionsHero.HealthHighToLow, SortOptionsHero.HealthLowToHigh)
+                                    </button>
+                                </th>
+                                <th class="px-3 py-2 text-left w-28">
+                                    <button class="flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground transition-colors" @onclick="() => ToggleBulkSort(SortOptionsHero.ArmorHighToLow, SortOptionsHero.ArmorLowToHigh)">
+                                        @L["Armor"] % @ColIcon(SortOptionsHero.ArmorHighToLow, SortOptionsHero.ArmorLowToHigh)
+                                    </button>
+                                </th>
+                                <th class="px-3 py-2 w-8" title="@L["Configured"]">
+                                    <button class="flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground transition-colors" @onclick="() => ToggleBulkSort(SortOptionsHero.ConfiguredFirst, SortOptionsHero.UnconfiguredFirst)">
+                                        @ColIcon(SortOptionsHero.ConfiguredFirst, SortOptionsHero.UnconfiguredFirst)
+                                    </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var h in SortedFilteredBulkHeroes)
+                            {
+                                var hStatic = StaticOf(h);
+                                if (hStatic is null) continue;
+
+                                <tr class="border-b last:border-b-0 hover:bg-muted/20 transition-colors">
+                                    <td class="px-3 py-2">
+                                        <div class="flex items-center gap-2">
+                                            <picture>
+                                                <source type="image/jxl" srcset="@($"{hStatic.Image}.jxl")" />
+                                                <source type="image/avif" srcset="@($"{hStatic.Image}.avif")" />
+                                                <source type="image/webp" srcset="@($"{hStatic.Image}.webp")" />
+                                                <img src="@($"{hStatic.Image}.png")" alt="@L[hStatic.Name]" class="w-8 h-8 object-scale-down rounded shrink-0" />
+                                            </picture>
+                                            <div class="min-w-0">
+                                                <p class="font-medium truncate">@L[hStatic.Name]</p>
+                                                <p class="text-xs text-muted-foreground truncate">
+                                                    @L[hStatic.Specialization.ToString()] · @L[hStatic.Class.ToString()]
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-3 py-2">
+                                        <BbNumericInput TValue="int" Min="0" Step="20" AllowNegative="false" ShowButtons="false" Value="h.DamagePercentage" ValueChanged="async v => { h.DamagePercentage = v; await OnChanged.InvokeAsync(); }" DebounceInterval="500" Class="w-full h-8 text-xs" />
+                                    </td>
+                                    <td class="px-3 py-2">
+                                        <BbNumericInput TValue="int" Min="0" Step="20" AllowNegative="false" ShowButtons="false" Value="h.HealthPercentage" ValueChanged="async v => { h.HealthPercentage = v; await OnChanged.InvokeAsync(); }" DebounceInterval="500" Class="w-full h-8 text-xs" />
+                                    </td>
+                                    <td class="px-3 py-2">
+                                        <BbNumericInput TValue="int" Min="0" Step="20" AllowNegative="false" ShowButtons="false" Value="h.ArmorPercentage" ValueChanged="async v => { h.ArmorPercentage = v; await OnChanged.InvokeAsync(); }" DebounceInterval="500" Class="w-full h-8 text-xs" />
+                                    </td>
+                                    <td class="px-3 py-2 text-center">
+                                        @if (IsConfigured(h))
+                                        {
+                                            <LucideIcon Name="circle-check" Size="16" Class="text-green-500" />
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </BbCardContent>
+        </BbCard>
+    }
+
+</div>
+
+@code {
+    [Parameter, EditorRequired] public OptimizerData Data { get; set; } = null!;
+    [Parameter, EditorRequired] public EventCallback OnChanged { get; set; }
+
+    private string _viewMode = "detail";
+    private string _search = string.Empty;
+    private string _bulkSearch = string.Empty;
+    private bool _detailFilterOpen = false;
+    private bool _bulkFilterOpen = false;
+    private Hero? _selected;
+
+    private SortOptionsHero _detailSort = SortOptionsHero.Default;
+    private SortOptionsHero _bulkSort = SortOptionsHero.Default;
+    private HeroType? _filterType = null;
+    private HeroClass? _filterClass = null;
+    private HeroAttackStyle? _filterAttackStyle = null;
+    private HeroSpecialization? _filterSpec = null;
+    private HeroResource? _filterResource = null;
+    private HeroType? _bulkFilterType = null;
+    private HeroClass? _bulkFilterClass = null;
+    private HeroAttackStyle? _bulkFilterAttackStyle = null;
+    private HeroSpecialization? _bulkFilterSpec = null;
+    private HeroResource? _bulkFilterResource = null;
+
+    private bool _hasDetailFilter =>
+        _filterType is not null || _filterClass is not null ||
+        _filterAttackStyle is not null || _filterSpec is not null ||
+        _filterResource is not null;
+
+    private bool _hasBulkFilter =>
+        _bulkFilterType is not null || _bulkFilterClass is not null ||
+        _bulkFilterAttackStyle is not null || _bulkFilterSpec is not null ||
+        _bulkFilterResource is not null;
+
+    protected override void OnParametersSet()
+    {
+        _selected ??= Data.Heroes.FirstOrDefault();
+    }
+
+    private static bool IsConfigured(Hero h) =>
+        h.DamagePercentage > 0 || h.HealthPercentage > 0 || h.ArmorPercentage > 0;
+
+    private HeroStatic? StaticOf(Hero h) =>
+        HeroService.Heroes.FirstOrDefault(s => s.Id == h.Id);
+
+    private string NameOf(Hero h) => StaticOf(h)?.Name ?? string.Empty;
+
+    private void ClearDetailFilters() =>
+        (_filterType, _filterClass, _filterAttackStyle, _filterSpec, _filterResource)
+            = (null, null, null, null, null);
+
+    private void ClearBulkFilters() =>
+        (_bulkFilterType, _bulkFilterClass, _bulkFilterAttackStyle, _bulkFilterSpec, _bulkFilterResource)
+            = (null, null, null, null, null);
+
+    private IEnumerable<Hero> SortedFilteredDetailHeroes =>
+        ApplySort(ApplyDetailFilters(Data.Heroes), _detailSort);
+
+    private IEnumerable<Hero> SortedFilteredBulkHeroes =>
+        ApplySort(ApplyBulkFilters(Data.Heroes), _bulkSort);
+
+    private IEnumerable<Hero> ApplyDetailFilters(IEnumerable<Hero> src)
+    {
+        if (!string.IsNullOrWhiteSpace(_search))
+        {
+            var s = _search;
+            src = src.Where(h =>
+                NameOf(h).Contains(s, StringComparison.OrdinalIgnoreCase) ||
+                (StaticOf(h)?.Class.ToString().Contains(s, StringComparison.OrdinalIgnoreCase) ?? false));
+        }
+        if (_filterType is not null) src = src.Where(h => StaticOf(h)?.Type == _filterType);
+        if (_filterClass is not null) src = src.Where(h => StaticOf(h)?.Class == _filterClass);
+        if (_filterAttackStyle is not null) src = src.Where(h => StaticOf(h)?.AttackStyle == _filterAttackStyle);
+        if (_filterSpec is not null) src = src.Where(h => StaticOf(h)?.Specialization == _filterSpec);
+        if (_filterResource is not null) src = src.Where(h => StaticOf(h)?.Resource == _filterResource);
+        return src;
+    }
+
+    private IEnumerable<Hero> ApplyBulkFilters(IEnumerable<Hero> src)
+    {
+        if (!string.IsNullOrWhiteSpace(_bulkSearch))
+        {
+            var s = _bulkSearch;
+            src = src.Where(h =>
+                NameOf(h).Contains(s, StringComparison.OrdinalIgnoreCase) ||
+                (StaticOf(h)?.Class.ToString().Contains(s, StringComparison.OrdinalIgnoreCase) ?? false));
+        }
+        if (_bulkFilterType is not null) src = src.Where(h => StaticOf(h)?.Type == _bulkFilterType);
+        if (_bulkFilterClass is not null) src = src.Where(h => StaticOf(h)?.Class == _bulkFilterClass);
+        if (_bulkFilterAttackStyle is not null) src = src.Where(h => StaticOf(h)?.AttackStyle == _bulkFilterAttackStyle);
+        if (_bulkFilterSpec is not null) src = src.Where(h => StaticOf(h)?.Specialization == _bulkFilterSpec);
+        if (_bulkFilterResource is not null) src = src.Where(h => StaticOf(h)?.Resource == _bulkFilterResource);
+        return src;
+    }
+
+    private IEnumerable<Hero> ApplySort(IEnumerable<Hero> src, SortOptionsHero sort) => sort switch
+    {
+        SortOptionsHero.Default => src,
+        SortOptionsHero.NameZtoA => src.OrderByDescending(NameOf),
+        SortOptionsHero.DamageHighToLow => src.OrderByDescending(h => h.DamagePercentage),
+        SortOptionsHero.DamageLowToHigh => src.OrderBy(h => h.DamagePercentage),
+        SortOptionsHero.HealthHighToLow => src.OrderByDescending(h => h.HealthPercentage),
+        SortOptionsHero.HealthLowToHigh => src.OrderBy(h => h.HealthPercentage),
+        SortOptionsHero.ArmorHighToLow => src.OrderByDescending(h => h.ArmorPercentage),
+        SortOptionsHero.ArmorLowToHigh => src.OrderBy(h => h.ArmorPercentage),
+        SortOptionsHero.ConfiguredFirst => src.OrderByDescending(IsConfigured),
+        SortOptionsHero.UnconfiguredFirst => src.OrderBy(IsConfigured),
+        _ => src.OrderBy(NameOf),
+    };
+
+    private void ToggleBulkSort(SortOptionsHero asc, SortOptionsHero desc) =>
+        _bulkSort = _bulkSort == asc ? desc : asc;
+
+    private RenderFragment ColIcon(SortOptionsHero asc, SortOptionsHero desc) => __builder =>
+    {
+        var active = _bulkSort == asc || _bulkSort == desc;
+        var isAsc = _bulkSort == asc;
+        if (!active)
+        {
+            <svg class="w-3 h-3 opacity-30 inline" xmlns="http://www.w3.org/2000/svg"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m7 15 5 5 5-5M7 9l5-5 5 5" />
+            </svg>
+        }
+        else if (isAsc)
+        {
+            <svg class="w-3 h-3 inline" xmlns="http://www.w3.org/2000/svg"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m18 15-6-6-6 6" />
+            </svg>
+        }
+        else
+        {
+            <svg class="w-3 h-3 inline" xmlns="http://www.w3.org/2000/svg"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m6 9 6 6 6-6" />
+            </svg>
+        }
+    };
+
+    private string HeroItemClass(Hero h) =>
+        h == _selected
+            ? "flex items-center gap-3 w-full px-3 py-2 bg-accent text-accent-foreground"
+            : "flex items-center gap-3 w-full px-3 py-2 hover:bg-accent/50 transition-colors";
+}

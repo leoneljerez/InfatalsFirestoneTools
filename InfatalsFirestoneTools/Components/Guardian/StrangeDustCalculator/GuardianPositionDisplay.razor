@@ -1,0 +1,24 @@
+﻿@using InfatalsFirestoneTools.Models
+
+@*
+Renders N repeated rank icons beside the label.
+e.g. 3 Star Bronze → three star1Bronze images + "3 Stars Bronze"
+*@
+<span class="flex items-center gap-1.5">
+    <span class="flex items-center gap-0.5">
+        @for (int i = 0; i < Position.IconCount; i++)
+        {
+            <picture>
+                <source type="image/jxl" srcset="@($"{Position.IconPath}.jxl")" />
+                <source type="image/avif" srcset="@($"{Position.IconPath}.avif")" />
+                <source type="image/webp" srcset="@($"{Position.IconPath}.webp")" />
+                <img src="@($"{Position.IconPath}.png")" alt="@Position.Rank.ToLabel()" class="w-4 h-4 object-contain" />
+            </picture>
+        }
+    </span>
+    <span class="text-sm">@Position.Label</span>
+</span>
+
+@code {
+    [Parameter, EditorRequired] public GuardianPosition Position { get; set; } = null!;
+}

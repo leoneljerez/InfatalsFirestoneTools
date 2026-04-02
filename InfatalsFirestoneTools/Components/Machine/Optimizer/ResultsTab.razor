@@ -1,0 +1,198 @@
+﻿@using BreakEternity
+@using InfatalsFirestoneTools.Models
+@using InfatalsFirestoneTools.Resources
+@using InfatalsFirestoneTools.Services
+@using InfatalsFirestoneTools.Services.Optimizer
+@using System.Text.RegularExpressions
+@inject IStringLocalizer<LanguageResource> L
+
+<div class="space-y-4">
+
+    @if (IsLoading)
+    {
+        <div class="flex flex-col items-center justify-center gap-4 py-24">
+            <BbSpinner Size="SpinnerSize.Large" />
+            <p class="text-sm text-muted-foreground">@L["Optimizing"]</p>
+        </div>
+    }
+    else if (Result is null)
+    {
+        <BbCard>
+            <BbCardContent class="py-12 text-center">
+                <p class="text-muted-foreground">
+                    @L["ResultsEmptyDescription"]
+                </p>
+            </BbCardContent>
+        </BbCard>
+    }
+    else
+    {
+        <div class="flex flex-wrap gap-4 align-items-stretch">
+            @if (!Result.IsArena)
+            {
+                <div class="flex-1" style="min-width: min(160px, 100%);">
+                    <BbCard>
+                        <BbCardContent class="pt-4 text-center">
+                            <p class="text-xs text-muted-foreground">@L["TotalStars"]</p>
+                            <p class="text-3xl font-bold text-yellow-400">@Result.TotalStars</p>
+                            <p class="text-xs text-muted-foreground">@L["Of"] @_maxStars</p>
+                        </BbCardContent>
+                    </BbCard>
+                </div>
+
+                <div class="flex-1" style="min-width: min(160px, 100%);">
+                    <BbCard>
+                        <BbCardContent class="pt-4 text-center">
+                            <p class="text-xs text-muted-foreground">@L["HighestClear"]</p>
+                            <p class="text-3xl font-bold">@HighestClear</p>
+                            <p class="text-xs text-muted-foreground">@L[HighestDifficulty.ToString()]</p>
+                        </BbCardContent>
+                    </BbCard>
+                </div>
+            }
+
+            <div class="flex-1" style="min-width: min(160px, 100%);">
+                <BbCard>
+                    <BbCardContent class="pt-4 text-center">
+                        <p class="text-xs text-muted-foreground">
+                            @(_statsMode == "battle" ? L["BattlePower"] : L["ArenaPower"])
+                        </p>
+                        <p class="text-3xl font-bold text-primary">
+                            @FormatPower(_statsMode == "battle" ? Result.BattlePower : Result.ArenaPower)
+                        </p>
+                        <p class="text-xs text-muted-foreground">@L["TotalSquad"]</p>
+                    </BbCardContent>
+                </BbCard>
+            </div>
+        </div>
+
+        @if (!Result.IsArena && Result.LastCleared.Any())
+        {
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle>@L["CampaignProgression"]</BbCardTitle>
+                </BbCardHeader>
+                <BbCardContent class="space-y-3">
+                    @foreach (var diff in Enum.GetValues<CampaignDifficulty>().OrderBy(d => d))
+                    {
+                        var cleared = Result.LastCleared.TryGetValue(diff, out var val) ? val : 0;
+
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="font-medium">@L[diff.ToString()]</span>
+                                <span class="text-muted-foreground">
+                                    @(cleared > 0 ? $"{cleared} / {_maxStarsPerDifficulty}" : L["NotStarted"])
+                                </span>
+                            </div>
+                            <BbProgress Value="@cleared" class="h-2" Max="_maxStarsPerDifficulty" />
+                        </div>
+                    }
+                </BbCardContent>
+            </BbCard>
+        }
+
+        <BbCard>
+            <BbCardHeader class="flex flex-row items-center justify-between flex-wrap gap-2">
+                <BbCardTitle>@L["Formation"]</BbCardTitle>
+                <BbToggleGroup TValue="string" Value="_statsMode" ValueChanged="OnStatsModeChanged" Type="ToggleGroupType.Single">
+                    <BbToggleGroupItem Value="@("battle")">
+                        @L["BattleStats"]
+                    </BbToggleGroupItem>
+                    <BbToggleGroupItem Value="@("arena")">
+                        @L["ArenaStats"]
+                    </BbToggleGroupItem>
+                </BbToggleGroup>
+            </BbCardHeader>
+            <BbCardContent>
+                @{
+                    var formation = Result?.Formation ?? new List<ComputedMachine>();
+
+                    var rightColumn = formation.Take(2).ToList();        // index 0,1
+                    var leftColumn = formation.Skip(2).Take(3).ToList(); // index 2,3,4
+
+                    rightColumn.Reverse(); // bottom -> top
+                    leftColumn.Reverse();  // bottom -> top
+                }
+
+                <!-- Mobile -->
+                <div class="flex flex-col items-center gap-4 md:hidden">
+                    @foreach (var machine in formation)
+                    {
+                        <FormationMachineCard Machine="machine" StatsMode="@_statsMode" />
+                    }
+                </div>
+
+                <!-- Desktop -->
+                <div class="hidden md:flex justify-center gap-8">
+
+                    <!-- LEFT COLUMN (3 max, bottom aligned) -->
+                    <div class="flex flex-col justify-end gap-4">
+                        @foreach (var machine in leftColumn)
+                        {
+                            <FormationMachineCard Machine="machine" StatsMode="@_statsMode" />
+                        }
+                    </div>
+
+                    <!-- RIGHT COLUMN (2 max, vertically centered) -->
+                    <div class="flex flex-col justify-center gap-4">
+                        @foreach (var machine in rightColumn)
+                        {
+                            <FormationMachineCard Machine="machine" StatsMode="@_statsMode" />
+                        }
+                    </div>
+
+                </div>
+            </BbCardContent>
+        </BbCard>
+    }
+
+</div>
+
+@code {
+    [Parameter] public OptimizationResult? Result { get; set; }
+    [Parameter] public bool IsLoading { get; set; }
+
+    private string _statsMode = "battle";
+
+    private static readonly int _maxStarsPerDifficulty = 90;
+    private static readonly int _maxStars = _maxStarsPerDifficulty * Enum.GetValues<CampaignDifficulty>().Length;
+
+    private string HighestClear
+    {
+        get
+        {
+            if (Result is null) return "None";
+
+            return Result.LastCleared
+                .Where(kv => kv.Value > 0)
+                .OrderByDescending(kv => kv.Key)
+                .Select(kv => kv.Value.ToString())
+                .FirstOrDefault() ?? "None";
+        }
+    }
+
+    private CampaignDifficulty HighestDifficulty
+    {
+        get
+        {
+            if (Result is null) return CampaignDifficulty.Easy;
+            var highest = Result.LastCleared
+                .Where(kv => kv.Value > 0)
+                .OrderByDescending(kv => kv.Key)
+                .Select(kv => (CampaignDifficulty?)kv.Key)
+                .FirstOrDefault();
+            return highest ?? CampaignDifficulty.Easy;
+        }
+    }
+
+    private void OnStatsModeChanged(string? mode)
+    {
+        _statsMode = string.IsNullOrEmpty(mode) ? "battle" : mode;
+    }
+
+    private static string FormatPower(BigDouble value)
+    {
+        var returnedString = value.toExponential(2);
+        return Regex.Replace(returnedString, @"([eE][\+\-])0+(\d)", "$1$2");
+    }
+}

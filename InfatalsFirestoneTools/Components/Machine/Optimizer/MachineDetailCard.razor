@@ -1,0 +1,126 @@
+﻿@using InfatalsFirestoneTools.Models
+@using InfatalsFirestoneTools.Services
+@using InfatalsFirestoneTools.Resources
+@inject MachineService MachineService
+@inject IStringLocalizer<LanguageResource> L
+
+@if (_static is not null)
+{
+    <BbCard>
+        <BbCardHeader Class="flex flex-row items-center gap-4 pb-4 border-b">
+            <picture>
+                <source type="image/jxl" srcset="@($"{_static.Image}.jxl")" />
+                <source type="image/avif" srcset="@($"{_static.Image}.avif")" />
+                <source type="image/webp" srcset="@($"{_static.Image}.webp")" />
+                <img src="@($"{_static.Image}.png")" alt="@L[_static.Name]" class="w-20 h-20 object-scale-down rounded-xl" />
+            </picture>
+            <div class="flex-1">
+                <BbCardTitle Class="text-xl">@L[_static.Name]</BbCardTitle>
+                <div class="flex gap-2 mt-1 flex-wrap">
+                    <BbBadge Variant="@SpecBadgeVariant">@L[_static.Specialization.ToString()]</BbBadge>
+                    <BbBadge Variant="BadgeVariant.Outline">@L[_static.TargetType.ToString()]</BbBadge>
+                </div>
+                @if (_static.Ability is not null)
+                {
+                    <p class="text-xs text-muted-foreground mt-2">@L[_static.Ability.Description]</p>
+                }
+            </div>
+            <BbButton Variant="ButtonVariant.Destructive" Size="ButtonSize.Small" OnClick="Reset">
+                @L["Reset"]
+            </BbButton>
+        </BbCardHeader>
+
+        <BbCardContent Class="space-y-6 pt-4">
+
+            <div class="grid grid-cols-3 gap-3 p-3 rounded-lg bg-muted/50 border text-center text-sm">
+                <div>
+                    <p class="text-xs text-muted-foreground">@L["BaseDamage"]</p>
+                    <p class="font-semibold">@_static.BaseDamage.ToString("N0")</p>
+                </div>
+                <div>
+                    <p class="text-xs text-muted-foreground">@L["BaseHealth"]</p>
+                    <p class="font-semibold">@_static.BaseHealth.ToString("N0")</p>
+                </div>
+                <div>
+                    <p class="text-xs text-muted-foreground">@L["BaseArmor"]</p>
+                    <p class="font-semibold">@_static.BaseArmor.ToString("N0")</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-2">
+                    <BbLabel>@L["Rarity"]</BbLabel>
+                    <BbSelect TValue="MachineRarity" Value="@Machine.Rarity" ValueChanged="HandleRarityChanged" Class="w-full">
+                        <BbSelectTrigger Class="w-full">
+                            <BbSelectValue Placeholder="Select a rarity" />
+                        </BbSelectTrigger>
+                        <BbSelectContent>
+                            @foreach (var rarity in Enum.GetValues<MachineRarity>())
+                            {
+                                <BbSelectItem Value="@rarity">@L[rarity.ToString()]</BbSelectItem>
+                            }
+                        </BbSelectContent>
+                    </BbSelect>
+                </div>
+                <div class="space-y-2">
+                    <BbLabel>@L["Level"]</BbLabel>
+                    <BbNumericInput TValue="int" Min="0" Step="1" AllowNegative="false" ShowButtons="true" Value="@Machine.Level" ValueChanged="HandleLevelChanged" DebounceInterval="300" Class="w-full" />
+                </div>
+            </div>
+
+            <div>
+                <p class="text-sm font-semibold mb-3">@L["BlueprintLevels"]</p>
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="space-y-2">
+                        <BbLabel Class="text-xs">@L["Damage"]</BbLabel>
+                        <BbNumericInput TValue="int" Min="0" Step="1" AllowNegative="false" ShowButtons="true" Value="@Machine.DamageBlueprint" ValueChanged="HandleDamageBlueprintChanged" DebounceInterval="300" Class="w-full" />
+                    </div>
+                    <div class="space-y-2">
+                        <BbLabel Class="text-xs">@L["Health"]</BbLabel>
+                        <BbNumericInput TValue="int" Min="0" Step="1" AllowNegative="false" ShowButtons="true" Value="@Machine.HealthBlueprint" ValueChanged="HandleHealthBlueprintChanged" DebounceInterval="300" Class="w-full" />
+                    </div>
+                    <div class="space-y-2">
+                        <BbLabel Class="text-xs">@L["Armor"]</BbLabel>
+                        <BbNumericInput TValue="int" Min="0" Step="1" AllowNegative="false" ShowButtons="true" Value="@Machine.ArmorBlueprint" ValueChanged="HandleArmorBlueprintChanged" DebounceInterval="300" Class="w-full" />
+                    </div>
+                </div>
+            </div>
+
+        </BbCardContent>
+    </BbCard>
+}
+
+@code {
+    [Parameter, EditorRequired] public Machine Machine { get; set; } = null!;
+    [Parameter, EditorRequired] public EventCallback OnChanged { get; set; }
+
+    private MachineStatic? _static;
+
+    protected override void OnParametersSet()
+    {
+        _static = MachineService.Machines.FirstOrDefault(s => s.Id == Machine.Id);
+    }
+
+    private BadgeVariant SpecBadgeVariant => _static?.Specialization switch
+    {
+        MachineSpecialization.Tank => BadgeVariant.Default,
+        MachineSpecialization.Healer => BadgeVariant.Secondary,
+        _ => BadgeVariant.Destructive,
+    };
+
+    private async Task HandleRarityChanged(MachineRarity v) { Machine.Rarity = v; await OnChanged.InvokeAsync(); }
+    private async Task HandleLevelChanged(int v) { Machine.Level = v; await OnChanged.InvokeAsync(); }
+    private async Task HandleDamageBlueprintChanged(int v) { Machine.DamageBlueprint = v; await OnChanged.InvokeAsync(); }
+    private async Task HandleHealthBlueprintChanged(int v) { Machine.HealthBlueprint = v; await OnChanged.InvokeAsync(); }
+    private async Task HandleArmorBlueprintChanged(int v) { Machine.ArmorBlueprint = v; await OnChanged.InvokeAsync(); }
+
+    private async Task Reset()
+    {
+        Machine.Rarity = MachineRarity.Common;
+        Machine.Level = 0;
+        Machine.DamageBlueprint = 0;
+        Machine.HealthBlueprint = 0;
+        Machine.ArmorBlueprint = 0;
+        await OnChanged.InvokeAsync();
+    }
+}

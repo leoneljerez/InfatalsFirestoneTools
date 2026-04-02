@@ -1,0 +1,38 @@
+﻿@using InfatalsFirestoneTools.Models
+@using InfatalsFirestoneTools.Resources
+@inject IStringLocalizer<LanguageResource> L
+
+<BbCard Class="flex flex-col items-center p-4 gap-3">
+    <picture>
+        <source type="image/jxl" srcset="@($"{Static.Image}.jxl")" />
+        <source type="image/avif" srcset="@($"{Static.Image}.avif")" />
+        <source type="image/webp" srcset="@($"{Static.Image}.webp")" />
+        <img src="@($"{Static.Image}.png")" alt="@L[Static.Name]" class="w-20 h-20 object-scale-down rounded-lg" />
+    </picture>
+
+    <p class="text-sm font-semibold text-center">@L[Static.Name]</p>
+
+    <div class="w-full space-y-1">
+        <BbLabel Class="text-xs text-muted-foreground">
+            @(Mode == "sacred" ? L["SacredCardLevel"] : L["InscriptionCardLevel"])
+        </BbLabel>
+        <BbNumericInput @key="@($"{Machine.Id}_{Mode}")" TValue="int" Min="0" Step="1" AllowNegative="false" ShowButtons="true" Value="@CurrentValue" ValueChanged="HandleValueChanged" DebounceInterval="500" Class="w-full" />
+    </div>
+</BbCard>
+
+@code {
+    [Parameter, EditorRequired] public Machine Machine { get; set; } = null!;
+    [Parameter, EditorRequired] public MachineStatic Static { get; set; } = null!;
+    [Parameter, EditorRequired] public string Mode { get; set; } = "sacred";
+    [Parameter, EditorRequired] public EventCallback OnChanged { get; set; }
+
+    private int CurrentValue =>
+        Mode == "sacred" ? Machine.SacredLevel : Machine.InscriptionLevel;
+
+    private async Task HandleValueChanged(int value)
+    {
+        if (Mode == "sacred") Machine.SacredLevel = value;
+        else Machine.InscriptionLevel = value;
+        await OnChanged.InvokeAsync();
+    }
+}

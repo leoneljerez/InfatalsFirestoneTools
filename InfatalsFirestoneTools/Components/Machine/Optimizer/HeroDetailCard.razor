@@ -1,0 +1,114 @@
+﻿@using InfatalsFirestoneTools.Models
+@using InfatalsFirestoneTools.Services
+@using InfatalsFirestoneTools.Resources 
+@inject HeroService HeroService
+@inject IStringLocalizer<LanguageResource> L
+
+@if (_static is not null)
+{
+    <BbCard>
+        <BbCardHeader Class="flex flex-row items-center gap-4 pb-4 border-b">
+            <picture>
+                <source type="image/jxl" srcset="@($"{_static.Image}.jxl")" />
+                <source type="image/avif" srcset="@($"{_static.Image}.avif")" />
+                <source type="image/webp" srcset="@($"{_static.Image}.webp")" />
+                <img src="@($"{_static.Image}.png")" alt="@L[_static.Name]" class="w-20 h-20 object-scale-down rounded-xl" />
+            </picture>
+            <div class="flex-1">
+                <BbCardTitle Class="text-xl">@L[_static.Name]</BbCardTitle>
+                <div class="flex gap-2 mt-1 flex-wrap">
+                    <BbBadge Variant="@SpecBadgeVariant">@L[_static.Specialization.ToString()]</BbBadge>
+                    <BbBadge Variant="BadgeVariant.Outline">@L[_static.Class.ToString()]</BbBadge>
+                    <BbBadge Variant="BadgeVariant.Outline">@L[_static.AttackStyle.ToString()]</BbBadge>
+                    <BbBadge Variant="BadgeVariant.Secondary">@L[_static.Type.ToString()]</BbBadge>
+                </div>
+            </div>
+            <BbButton Variant="ButtonVariant.Destructive" Size="ButtonSize.Small" OnClick="Reset">
+                @L["Reset"]
+            </BbButton>
+        </BbCardHeader>
+
+        <BbCardContent Class="space-y-6 pt-4">
+
+            <div class="grid grid-cols-4 gap-3 p-3 rounded-lg bg-muted/50 border text-center text-sm">
+                <div>
+                    <p class="text-xs text-muted-foreground">@L["BaseDamage"]</p>
+                    <p class="font-semibold">@_static.BaseDamage</p>
+                </div>
+                <div>
+                    <p class="text-xs text-muted-foreground">@L["BaseHealth"]</p>
+                    <p class="font-semibold">@_static.BaseHealth</p>
+                </div>
+                <div>
+                    <p class="text-xs text-muted-foreground">@L["BaseArmor"]</p>
+                    <p class="font-semibold">@_static.BaseArmor</p>
+                </div>
+                <div>
+                    <p class="text-xs text-muted-foreground">@L["AttackSpeed"]</p>
+                    <p class="font-semibold">@_static.AttackSpeed</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 p-3 rounded-lg bg-muted/50 border text-center text-sm">
+                <div>
+                    <p class="text-xs text-muted-foreground">@L["CritChance"]</p>
+                    <p class="font-semibold">@_static.CriticalChance.ToString("P0")</p>
+                </div>
+                <div>
+                    <p class="text-xs text-muted-foreground">@L["CritDamage"]</p>
+                    <p class="font-semibold">@_static.CriticalDamage.ToString("P0")</p>
+                </div>
+                <div>
+                    <p class="text-xs text-muted-foreground">@L["Dodge"]</p>
+                    <p class="font-semibold">@_static.DodgeChance.ToString("P0")</p>
+                </div>
+            </div>
+
+            <div>
+                <p class="text-sm font-semibold mb-3">@L["CrewBonusPercentages"]</p>
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="space-y-2">
+                        <BbLabel Class="text-xs">@L["DamagePercentage"]</BbLabel>
+                        <BbNumericInput TValue="int" Min="0" Step="20" AllowNegative="false" ShowButtons="true" Value="@Hero.DamagePercentage" ValueChanged="async v => { Hero.DamagePercentage = v; await OnChanged.InvokeAsync(); }" DebounceInterval="300" Class="w-full" />
+                    </div>
+                    <div class="space-y-2">
+                        <BbLabel Class="text-xs">@L["HealthPercentage"]</BbLabel>
+                        <BbNumericInput TValue="int" Min="0" Step="20" AllowNegative="false" ShowButtons="true" Value="@Hero.HealthPercentage" ValueChanged="async v => { Hero.HealthPercentage = v; await OnChanged.InvokeAsync(); }" DebounceInterval="300" Class="w-full" />
+                    </div>
+                    <div class="space-y-2">
+                        <BbLabel Class="text-xs">@L["ArmorPercentage"]</BbLabel>
+                        <BbNumericInput TValue="int" Min="0" Step="20" AllowNegative="false" ShowButtons="true" Value="@Hero.ArmorPercentage" ValueChanged="async v => { Hero.ArmorPercentage = v; await OnChanged.InvokeAsync(); }" DebounceInterval="300" Class="w-full" />
+                    </div>
+                </div>
+            </div>
+
+        </BbCardContent>
+    </BbCard>
+}
+
+@code {
+    [Parameter, EditorRequired] public Hero Hero { get; set; } = null!;
+    [Parameter, EditorRequired] public EventCallback OnChanged { get; set; }
+
+    private HeroStatic? _static;
+
+    protected override void OnParametersSet()
+    {
+        _static = HeroService.Heroes.FirstOrDefault(s => s.Id == Hero.Id);
+    }
+
+    private BadgeVariant SpecBadgeVariant => _static?.Specialization switch
+    {
+        HeroSpecialization.Tank => BadgeVariant.Default,
+        HeroSpecialization.Healer => BadgeVariant.Secondary,
+        _ => BadgeVariant.Destructive,
+    };
+
+    private async Task Reset()
+    {
+        Hero.DamagePercentage = 0;
+        Hero.HealthPercentage = 0;
+        Hero.ArmorPercentage = 0;
+        await OnChanged.InvokeAsync();
+    }
+}

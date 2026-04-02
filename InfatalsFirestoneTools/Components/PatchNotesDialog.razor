@@ -1,0 +1,40 @@
+﻿@using InfatalsFirestoneTools.Models
+@using InfatalsFirestoneTools.Resources
+@inject IStringLocalizer<LanguageResource> L
+
+<div class="space-y-6 py-2 max-h-[30vh] overflow-y-auto">
+    @foreach (var (note, index) in PatchNotes.All.Select((n, i) => (n, i)))
+    {
+        <div class="space-y-2">
+            <div class="flex items-center gap-3">
+                <BbBadge Variant="@(index == 0 ? BadgeVariant.Default : BadgeVariant.Secondary)">
+                    @($"v{note.Version}")
+                </BbBadge>
+                <span class="text-xs text-muted-foreground">
+                    @note.Date.ToString("MMMM d, yyyy")
+                </span>
+                @if (index == 0)
+                {
+                    <BbBadge Variant="BadgeVariant.Outline" Class="text-xs">@L["Current"]</BbBadge>
+                }
+            </div>
+            <ul class="space-y-1 pl-1">
+                @foreach (var change in note.Changes)
+                {
+                    <li class="flex items-start gap-2 text-sm">
+                        <span class="text-muted-foreground mt-0.5 shrink-0">•</span>
+                        <span>@change</span>
+                    </li>
+                }
+            </ul>
+        </div>
+        @if (index < PatchNotes.All.Count - 1)
+        {
+            <BbSeparator />
+        }
+    }
+</div>
+
+@code {
+
+}

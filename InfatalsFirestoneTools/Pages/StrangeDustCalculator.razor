@@ -1,0 +1,193 @@
+﻿@page "/strangedust"
+@using InfatalsFirestoneTools.Components.Guardian.StrangeDustCalculator
+@using InfatalsFirestoneTools.Models
+@using InfatalsFirestoneTools.Resources
+@using InfatalsFirestoneTools.Services
+@using System.ComponentModel.DataAnnotations
+@inject IStringLocalizer<LanguageResource> L
+
+<div class="space-y-6 max-w-2xl mx-auto">
+
+    <div>
+        <h1 class="text-2xl font-bold">@L["StrangeDustCalculator"]</h1>
+        <p class="text-sm text-muted-foreground">
+            @L["StrangeDustCalculatorDescription"]
+        </p>
+    </div>
+
+    <EditForm Model="_form" OnValidSubmit="Calculate">
+        <DataAnnotationsValidator />
+        <div class="space-y-4">
+
+            @* Current position *@
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle>@L["CurrentPosition"]</BbCardTitle>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                        <div class="sm:col-span-2 space-y-2">
+                            <BbLabel>@L["EvolutionAndRank"]</BbLabel>
+                            <GuardianPositionPicker Value="@_form.CurrentPosition" ValueChanged="p => { _form.CurrentPosition = p; _result = null; }" />
+                        </div>
+
+                        <div class="space-y-2">
+                            <BbLabel For="curLevel">@L["Level"] (1–10)</BbLabel>
+                            <BbNumericInput id="curLevel" TValue="int" @bind-Value="_form.CurrentLevel" Min="1" Max="10" Step="1" ShowButtons="true" Class="w-full" />
+                            <ValidationMessage For="() => _form.CurrentLevel" Class="text-xs text-destructive" />
+                        </div>
+
+                        <div class="space-y-2">
+                            <BbLabel For="curExp">@L["CurrentExp"]</BbLabel>
+                            <BbNumericInput id="curExp" TValue="int" @bind-Value="_form.CurrentExp" Min="0" Step="1" ShowButtons="true" Class="w-full" />
+                            <ValidationMessage For="() => _form.CurrentExp" Class="text-xs text-destructive" />
+                        </div>
+
+                    </div>
+                </BbCardContent>
+            </BbCard>
+
+            @* Target position *@
+            <BbCard>
+                <BbCardHeader>
+                    <BbCardTitle>@L["TargetPosition"]</BbCardTitle>
+                </BbCardHeader>
+                <BbCardContent Class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                        <div class="sm:col-span-2 space-y-2">
+                            <BbLabel>@L["EvolutionAndRank"]</BbLabel>
+                            <GuardianPositionPicker Value="_form.TargetPosition" ValueChanged="p => { _form.TargetPosition = p; _result = null; }" />
+                        </div>
+
+                        <div class="space-y-2">
+                            <BbLabel For="tgtLevel">@L["Level"] (1–10)</BbLabel>
+                            <BbNumericInput id="tgtLevel" TValue="int" @bind-Value="_form.TargetLevel" Min="1" Max="10" Step="1" ShowButtons="true" Class="w-full" />
+                            <ValidationMessage For="() => _form.TargetLevel" Class="text-xs text-destructive" />
+                        </div>
+
+                    </div>
+                </BbCardContent>
+            </BbCard>
+
+            @if (_validationError is not null)
+            {
+                <BbAlert Variant="AlertVariant.Warning">
+                    <BbAlertDescription>@_validationError</BbAlertDescription>
+                </BbAlert>
+            }
+
+            <BbButton Type="ButtonType.Submit" Class="w-full" Size="ButtonSize.Large">
+                @L["CalculateStrangeDustNeeded"]
+            </BbButton>
+
+        </div>
+    </EditForm>
+
+    @* Results *@
+    @if (_result is not null && _result.Error is null)
+    {
+        <BbCard Class="bg-primary/10 border-primary/20">
+            <BbCardHeader Class="text-center pb-2">
+                <BbCardTitle Class="text-primary">@L["TotalStrangeDustNeeded"]</BbCardTitle>
+                <p class="text-5xl font-bold text-primary pt-2">
+                    @_result.TotalStrangeDust.ToString("N0")
+                </p>
+            </BbCardHeader>
+            <BbCardContent Class="space-y-4 mt-4">
+
+                <div class="grid grid-cols-2 gap-4">
+                    <BbCard>
+                        <BbCardContent Class="pt-4">
+                            <p class="text-xs text-muted-foreground">@L["ForExperience"]</p>
+                            <p class="text-2xl font-semibold">
+                                @_result.StrangeDustForExp.ToString("N0")
+                            </p>
+                            <p class="text-xs text-muted-foreground">
+                                @_result.ExpNeeded.ToString("N0") @L["EXPNeeded"]
+                            </p>
+                        </BbCardContent>
+                    </BbCard>
+                    <BbCard>
+                        <BbCardContent Class="pt-4">
+                            <p class="text-xs text-muted-foreground">@L["ForEvolutions"]</p>
+                            <p class="text-2xl font-semibold">
+                                @_result.StrangeDustForEvolutions.ToString("N0")
+                            </p>
+                            <p class="text-xs text-muted-foreground">
+                                @_result.Evolutions.Count @L["Evolutions"]
+                            </p>
+                        </BbCardContent>
+                    </BbCard>
+                </div>
+
+                @if (_result.Evolutions.Count > 0)
+                {
+                    <BbSeparator />
+                    <p class="text-sm font-semibold">@L["EvolutionPath"]</p>
+                    <div class="space-y-1.5 max-h-72 overflow-y-auto pr-1">
+                        @foreach (var step in _result.Evolutions)
+                        {
+                            <div class="flex items-center justify-between gap-2 text-sm rounded-lg border px-3 py-2 bg-muted/30">
+                                <span class="text-muted-foreground truncate">@step.From</span>
+                                <LucideIcon Name="arrow-right" Size="14" Class="text-muted-foreground shrink-0" />
+                                <span class="font-medium truncate">@step.To</span>
+                                <BbBadge Variant="BadgeVariant.Secondary" Class="shrink-0 ml-auto">
+                                    @step.Cost.ToString("N0")
+                                </BbBadge>
+                            </div>
+                        }
+                    </div>
+                }
+
+            </BbCardContent>
+        </BbCard>
+    }
+
+</div>
+
+@code {
+    private readonly StardustForm _form = new();
+    private GuardianCalculatorService.CalcResult? _result;
+    private string? _validationError;
+
+    private void Calculate()
+    {
+        _validationError = null;
+
+        // Cross-field validation that DataAnnotations can't express
+        var error = GuardianCalculatorService.Validate(
+            _form.CurrentPosition, _form.CurrentLevel, _form.CurrentExp,
+            _form.TargetPosition, _form.TargetLevel);
+
+        if (error is not null)
+        {
+            _validationError = error;
+            _result = null;
+            return;
+        }
+
+        _result = GuardianCalculatorService.Calculate(
+            _form.CurrentPosition, _form.CurrentLevel, _form.CurrentExp,
+            _form.TargetPosition, _form.TargetLevel);
+    }
+
+    private sealed class StardustForm
+    {
+        public GuardianPosition CurrentPosition { get; set; } =
+            GuardianPosition.AllPositions[0]; // Bronze 1 Star
+
+        [Range(1, 10, ErrorMessageResourceType = typeof(LanguageResource), ErrorMessageResourceName = nameof(LanguageResource.StrangeDustErrorLevel))]
+        public int CurrentLevel { get; set; } = 1;
+
+        [Range(0, int.MaxValue, ErrorMessageResourceType = typeof(LanguageResource), ErrorMessageResourceName = nameof(LanguageResource.StrangeDustErrorNegativeEXP))]
+        public int CurrentExp { get; set; } = 0;
+
+        public GuardianPosition TargetPosition { get; set; } =
+            GuardianPosition.AllPositions[1]; // Bronze 2 Stars
+
+        [Range(1, 10, ErrorMessageResourceType = typeof(LanguageResource), ErrorMessageResourceName = nameof(LanguageResource.StrangeDustErrorLevel))]
+        public int TargetLevel { get; set; } = 1;
+    }
+}

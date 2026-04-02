@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="InfatalsFiresToneTools.Tests/InfatalsFirestoneTools.Tests.csproj" Id="322eb46d-a7d1-47f4-8be5-71b61260af00" />
+  <Project Path="InfatalsFirestoneTools/InfatalsFirestoneTools.csproj" />
+</Solution>
