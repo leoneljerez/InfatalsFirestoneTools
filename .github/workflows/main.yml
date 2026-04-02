@@ -19,4 +19,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./InfatalsFirestoneTools/bin/Release/net10.0/browser-wasm/publish/wwwroot  # The folder you want to move
-          publish_branch: gh-pages             # The target branch
+          publish_branch: gh-pages 
