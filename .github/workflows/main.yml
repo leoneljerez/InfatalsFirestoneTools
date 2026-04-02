@@ -12,10 +12,10 @@ jobs:
       contents: write
     steps:
       - name: Checkout code
-        uses: [actions/checkout@v4](https://github.com/actions/checkout)
+        uses: actions/checkout@v4
 
       - name: Deploy Subfolder
-        uses: [peaceiris/actions-gh-pages@v3](https://github.com)
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./InfatalsFirestoneTools/bin/Release/net10.0/browser-wasm/publish/wwwroot  # The folder you want to move
