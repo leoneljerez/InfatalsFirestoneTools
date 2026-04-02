@@ -366,5 +366,5 @@ FodyWeavers.xsd
 *.exe
 
 # Don't ignore the build I made
-!bin/Release/net10.0/publish/wwwroot/
-!bin/Release/net10.0/publish/wwwroot/**
+!bin/Release/net10.0/browser-wasm/publish/wwwroot/
+!bin/Release/net10.0/browser-wasm/publish/wwwroot/**
