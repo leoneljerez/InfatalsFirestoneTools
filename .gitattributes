@@ -61,3 +61,12 @@
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
 #*.RTF   diff=astextplain
+
+# .gitattributes
+*.dll binary
+*.wasm binary
+*.blat binary
+*.dat binary
+*.js text eol=lf
+*.css text eol=lf
+*.html text eol=lf
