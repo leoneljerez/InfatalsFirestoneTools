@@ -18,6 +18,7 @@
 	<BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
 	<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 	<PublishAot>False</PublishAot>
+	  <StaticWebAssetBasePath>InfatalsFirestoneTools</StaticWebAssetBasePath>
   </PropertyGroup>
 
   <ItemGroup>
