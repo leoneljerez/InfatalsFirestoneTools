@@ -1222,6 +1222,15 @@ namespace InfatalsFirestoneTools.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hunter.
+        /// </summary>
+        public static string HunterLabel {
+            get {
+                return ResourceManager.GetString("HunterLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ina.
         /// </summary>
         public static string InaLabel {
@@ -1569,6 +1578,15 @@ namespace InfatalsFirestoneTools.Resources {
         public static string NameZtoA {
             get {
                 return ResourceManager.GetString("NameZtoA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New profile name....
+        /// </summary>
+        public static string NewProfileName {
+            get {
+                return ResourceManager.GetString("NewProfileName", resourceCulture);
             }
         }
         

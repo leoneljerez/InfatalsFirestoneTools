@@ -504,6 +504,9 @@
   <data name="Hunter" xml:space="preserve">
     <value>Hunter</value>
   </data>
+  <data name="HunterLabel" xml:space="preserve">
+    <value>Hunter</value>
+  </data>
   <data name="InaLabel" xml:space="preserve">
     <value>Ina</value>
   </data>
@@ -620,6 +623,9 @@
   </data>
   <data name="NameZtoA" xml:space="preserve">
     <value>Name (Z→A)</value>
+  </data>
+  <data name="NewProfileName" xml:space="preserve">
+    <value>New profile name...</value>
   </data>
   <data name="NewProfilePlaceholder" xml:space="preserve">
     <value>New profile name...</value>
