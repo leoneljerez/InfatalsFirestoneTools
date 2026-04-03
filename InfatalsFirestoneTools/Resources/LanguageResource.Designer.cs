@@ -1825,7 +1825,7 @@ namespace InfatalsFirestoneTools.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Profile switched. Reload to apply..
+        ///   Looks up a localized string similar to Profile switched..
         /// </summary>
         public static string ProfileSwitched {
             get {

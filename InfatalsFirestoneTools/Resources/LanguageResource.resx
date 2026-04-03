@@ -706,7 +706,7 @@
     <value>Profiles</value>
   </data>
   <data name="ProfileSwitched" xml:space="preserve">
-    <value>Profile switched. Reload to apply.</value>
+    <value>Profile switched.</value>
   </data>
   <data name="Rage" xml:space="preserve">
     <value>Rage</value>

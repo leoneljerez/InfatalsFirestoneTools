@@ -8,6 +8,7 @@
 @using InfatalsFirestoneTools.Services
 @inherits LayoutComponentBase
 @inject ProfileService ProfileService
+@inject AppState AppState
 @inject IStringLocalizer<LanguageResource> L
 
 <BbSidebarProvider>
@@ -206,6 +207,9 @@
         _saveLoadMessage = import.Message;
 
         if (import.Success)
+        {
             await ProfileService.SaveProfileAsync(result.Value.Profile, result.Value.Data);
+            AppState.NotifyProfileChanged();
+        }
     }
 }

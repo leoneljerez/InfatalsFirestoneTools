@@ -17,6 +17,7 @@ builder.Services.AddSingleton<AbilityService>();
 builder.Services.AddSingleton<HeroService>();
 builder.Services.AddSingleton<ArtifactService>();
 builder.Services.AddSingleton<OptimizerDataFactory>();
+builder.Services.AddSingleton<AppState>();
 
 // Dynamic
 //builder.Services.AddScoped<ThemeService>();

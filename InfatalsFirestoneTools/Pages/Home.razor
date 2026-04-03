@@ -5,7 +5,9 @@
 @using InfatalsFirestoneTools.Services
 @inject ProfileService ProfileService
 @inject OptimizerService OptimizerService
+@inject AppState AppState
 @inject IStringLocalizer<LanguageResource> L
+@implements IDisposable
 
 <div class="flex flex-col h-full">
 
@@ -86,13 +88,31 @@
 
     protected override async Task OnInitializedAsync()
     {
+        AppState.OnProfileChanged += OnProfileChanged;
+
         await ProfileService.EnsureDefaultProfileAsync();
+        await LoadActiveProfileAsync();
+    }
+
+    public void Dispose()
+    {
+        AppState.OnProfileChanged -= OnProfileChanged;
+    }
+
+    private async void OnProfileChanged()
+    {
+        await LoadActiveProfileAsync();
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task LoadActiveProfileAsync()
+    {
         var result = await ProfileService.GetActiveProfileAsync();
-        if (result is not null)
-        {
-            _profile = result.Value.Profile;
-            _data = result.Value.Data;
-        }
+        if (result is null) return;
+
+        _profile = result.Value.Profile;
+        _data = result.Value.Data;
+        _result = null;
     }
 
     private async Task SaveAsync()

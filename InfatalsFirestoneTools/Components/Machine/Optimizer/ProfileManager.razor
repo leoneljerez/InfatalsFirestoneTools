@@ -2,6 +2,7 @@
 @using InfatalsFirestoneTools.Resources
 @using InfatalsFirestoneTools.Services
 @inject ProfileService ProfileService
+@inject AppState AppState
 @inject IStringLocalizer<LanguageResource> L
 
 <div class="space-y-3">
@@ -63,7 +64,7 @@
     @if (_profiles.Count < 5)
     {
         <div class="flex gap-2 pt-2 border-t">
-            <BbInput @bind-Value="_newName" Placeholder="@L["NewProfileName"]" class="flex-1" />
+            <BbInput @bind-Value="_newName" Placeholder="@L["NewProfileName"]" UpdateTiming="UpdateTiming.Immediate" class="flex-1" />
             <BbButton OnClick="CreateProfile" Disabled="string.IsNullOrWhiteSpace(_newName)">
                 @L["Create"]
             </BbButton>
@@ -107,6 +108,7 @@
     {
         await ProfileService.SetActiveProfileAsync(id);
         _profiles = await ProfileService.GetAllProfilesAsync();
+        AppState.NotifyProfileChanged();
         SetMessage(LanguageResource.ProfileSwitched, true);
     }
 
