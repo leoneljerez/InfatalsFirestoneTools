@@ -63,7 +63,7 @@
     @if (_profiles.Count < 5)
     {
         <div class="flex gap-2 pt-2 border-t">
-            <BbInput @bind-Value="_newName" @bind-Value:event="oninput" Placeholder="@L["NewProfileName"]" class="flex-1" />
+            <BbInput @bind-Value="_newName" Placeholder="@L["NewProfileName"]" class="flex-1" />
             <BbButton OnClick="CreateProfile" Disabled="string.IsNullOrWhiteSpace(_newName)">
                 @L["Create"]
             </BbButton>
