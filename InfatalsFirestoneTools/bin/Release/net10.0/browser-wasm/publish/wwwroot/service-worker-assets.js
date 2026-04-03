@@ -1,8 +1,8 @@
 self.assetsManifest = {
-  "version": "7gpO5o5x",
+  "version": "43ZtRHBu",
   "assets": [
     {
-      "hash": "sha256-sD3q7I+tUnc3/FVtC2MAXvE21Hn3IK42Az0Q3EQMZ04=",
+      "hash": "sha256-prIkJBv3SUNXQpWSA+i9O+zJYQG2T6TkZouVaPF+eMc=",
       "url": "404.html"
     },
     {
@@ -330,8 +330,8 @@ self.assetsManifest = {
       "url": "_framework/HtmlSanitizer.mxd05zyszv.wasm"
     },
     {
-      "hash": "sha256-8F/wZvXCNln67EViBxgSg9c2iIuAnIamawCiFYR2iOw=",
-      "url": "_framework/InfatalsFirestoneTools.43iy867z62.wasm"
+      "hash": "sha256-eyiqKU7c+661NrJveW3v1nPA0b7MPRqc6JT8C1/i4KI=",
+      "url": "_framework/InfatalsFirestoneTools.1xqhp7oaqj.wasm"
     },
     {
       "hash": "sha256-sN5s0Ql23LRNaH0eDgV8NJrj2JFjRM7yfe3bAgW5Srw=",
@@ -574,20 +574,20 @@ self.assetsManifest = {
       "url": "_framework/blazor.webassembly.66stpp682q.js"
     },
     {
-      "hash": "sha256-biuY0UhLIQQ7y69kEMNRtU8AwZaKcL8CbAbeZ7k8/sM=",
-      "url": "_framework/dotnet.native.my1uar3szd.wasm"
+      "hash": "sha256-Um3TrGsksN8NSAQTAlfv0qwcO01lanv84FG8Q4PSBQc=",
+      "url": "_framework/dotnet.native.auhoxfiitm.wasm"
     },
     {
       "hash": "sha256-r258+NEGOriKbOWGic1i8AnrKBnONYnzD/uUVJq0qFY=",
       "url": "_framework/dotnet.native.xkqfppie35.js"
     },
     {
-      "hash": "sha256-cajUr4vA/MpLPWj3omULUOwEQw3i8CE2n8AmDheqWBM=",
-      "url": "_framework/dotnet.runtime.peu2mfb29t.js"
+      "hash": "sha256-dXTt+tRX6iuMraIZJCbBQCzJOWP/+0d+mt+0iCXlZng=",
+      "url": "_framework/dotnet.nlwyis7ozo.js"
     },
     {
-      "hash": "sha256-ZbaHJ/lzJ1p29QJNym7psrtTMnx8UZnB8J0CxM9mYvI=",
-      "url": "_framework/dotnet.xtvhz62kfs.js"
+      "hash": "sha256-cajUr4vA/MpLPWj3omULUOwEQw3i8CE2n8AmDheqWBM=",
+      "url": "_framework/dotnet.runtime.peu2mfb29t.js"
     },
     {
       "hash": "sha256-tO5O5YzMTVSaKBboxAqezOQL9ewmupzV2JrB5Rkc8a4=",
@@ -2018,7 +2018,7 @@ self.assetsManifest = {
       "url": "img/ui/wmOverdrive.webp"
     },
     {
-      "hash": "sha256-sD3q7I+tUnc3/FVtC2MAXvE21Hn3IK42Az0Q3EQMZ04=",
+      "hash": "sha256-prIkJBv3SUNXQpWSA+i9O+zJYQG2T6TkZouVaPF+eMc=",
       "url": "index.html"
     },
     {
