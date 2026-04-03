@@ -47,7 +47,7 @@
                             <BbButton Size="ButtonSize.Small" Variant="ButtonVariant.Ghost" OnClick="() => StartRename(profile)">
                                 <LucideIcon Name="pencil" Size="14" />
                             </BbButton>
-                            @if (_profiles.Count > 1)
+                            @if (_profiles.Count > 1 && !profile.IsActive)
                             {
                                 <BbButton Size="ButtonSize.Small" Variant="ButtonVariant.Ghost" OnClick="() => DeleteProfile(profile.Id)">
                                     <LucideIcon Name="trash-2" Size="14" Class="text-destructive" />
