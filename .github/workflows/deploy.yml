@@ -26,11 +26,13 @@ jobs:
         run: dotnet restore
 
       - name: Publish .NET Core Project
-        run: dotnet publish -c Release -o release
+        run: dotnet publish InfatalsFirestoneTools/InfatalsFirestoneTools.csproj -c Release -o release
+
+      - name: Add .nojekyll file
+        run: touch release/wwwroot/.nojekyll
 
       - name: Commit wwwroot to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4.8.0
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           branch: gh-pages
           folder: release/wwwroot
