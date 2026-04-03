@@ -6,7 +6,6 @@
 @using InfatalsFirestoneTools.Models
 @using InfatalsFirestoneTools.Resources
 @using InfatalsFirestoneTools.Services
-@using Toolbelt.Blazor.PWA.Updater
 @inherits LayoutComponentBase
 @inject ProfileService ProfileService
 @inject IStringLocalizer<LanguageResource> L
@@ -99,16 +98,6 @@
 </BbSidebarProvider>
 
 <BbPortalHost />
-
-@* PWA update banner // State="PWAUpdater.States.Showing" to test the banner *@
-<PWAUpdater>
-    <span class="text-sm">
-        @L["NewVersionAvailable"] —
-        <button class="underline font-medium" @onclick="() => _patchNotesOpen = true">
-            @L["SeeWhatsNew"]
-        </button>
-    </span>
-</PWAUpdater>
 
 @* Save / Load *@
 <BbDialog @bind-Open="_saveLoadOpen">

@@ -4,7 +4,6 @@ using InfatalsFirestoneTools.Services;
 using Magic.IndexedDb;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Toolbelt.Blazor.Extensions.DependencyInjection;
 
 WebAssemblyHostBuilder builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -27,7 +26,6 @@ builder.Services.AddScoped<OptimizerService>();
 // Language Detection / UI
 builder.Services.AddLocalization();
 builder.Services.AddBlazorBlueprintComponents();
-builder.Services.AddPWAUpdater();
 builder.Services.AddMagicBlazorDB(BlazorInteropMode.WASM, builder.HostEnvironment.IsProduction());
 
 await builder.Build().RunAsync();
