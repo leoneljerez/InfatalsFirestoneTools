@@ -20,13 +20,13 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        @foreach (var machine in Data.Machines.OrderByDescending(IsConfigured))
+        @foreach (var machine in Data.Machines
+            .Select(m => new { Dynamic = m, Static = MachineService.Machines.FirstOrDefault(s => s.Id == m.Id) })
+            .Where(x => x.Static != null)
+            .OrderByDescending(x => IsConfigured(x.Dynamic))
+            .ThenBy(x => x.Static!.Name))
         {
-            var m = machine;
-            var mStatic = MachineService.Machines.FirstOrDefault(s => s.Id == m.Id);
-            if (mStatic is null) continue;
-
-            <TavernMachineCard Machine="m" Static="mStatic" Mode="@_mode" OnChanged="OnChanged" />
+            <TavernMachineCard Machine="machine.Dynamic" Static="machine.Static" Mode="@_mode" OnChanged="OnChanged" />
         }
     </div>
 
