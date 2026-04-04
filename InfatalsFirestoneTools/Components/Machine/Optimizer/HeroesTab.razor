@@ -425,7 +425,10 @@
 
     protected override void OnParametersSet()
     {
-        _selected ??= Data.Heroes.FirstOrDefault();
+        _selected = _selected is null
+            ? Data.Heroes.FirstOrDefault()
+            : Data.Heroes.FirstOrDefault(h => h.Id == _selected.Id)
+              ?? Data.Heroes.FirstOrDefault();
     }
 
     private static bool IsConfigured(Hero h) =>
