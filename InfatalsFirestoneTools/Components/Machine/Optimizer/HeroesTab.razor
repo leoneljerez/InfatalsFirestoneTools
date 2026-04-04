@@ -489,7 +489,7 @@
 
     private IEnumerable<Hero> ApplySort(IEnumerable<Hero> src, SortOptionsHero sort) => sort switch
     {
-        SortOptionsHero.Default => src,
+        SortOptionsHero.Default => src.OrderBy(h => (int)(StaticOf(h)?.Type ?? HeroType.Hero)).ThenBy(h => h.Id),
         SortOptionsHero.NameZtoA => src.OrderByDescending(NameOf),
         SortOptionsHero.DamageHighToLow => src.OrderByDescending(h => h.DamagePercentage),
         SortOptionsHero.DamageLowToHigh => src.OrderBy(h => h.DamagePercentage),
