@@ -175,11 +175,16 @@
     [Parameter] public bool IsLoading { get; set; }
     [Parameter] public OptimizerData? Data { get; set; }
 
-    private string _statsMode = "battle";
+    private string _statsMode = string.Empty;
     private bool _showSuggestions;
 
     private static readonly int _maxStarsPerDifficulty = 90;
     private static readonly int _maxStars = _maxStarsPerDifficulty * Enum.GetValues<CampaignDifficulty>().Length;
+
+    protected override void OnParametersSet()
+    {
+        _statsMode = Result?.IsArena == true ? "arena" : "battle";
+    }
 
     private string HighestClear
     {
