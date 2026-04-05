@@ -1,0 +1,144 @@
+﻿@using InfatalsFirestoneTools.Models
+@using InfatalsFirestoneTools.Resources
+@using InfatalsFirestoneTools.Services
+@using InfatalsFirestoneTools.Services.Optimizer
+@inject UpgradeSuggestionService SuggestionService
+@inject IStringLocalizer<LanguageResource> L
+
+@if (_loading)
+{
+    <div class="flex items-center justify-center py-8">
+        <BbSpinner Size="SpinnerSize.Small" />
+        <span class="ml-2 text-sm text-muted-foreground">@L["CalculatingSuggestions"]</span>
+    </div>
+}
+else if (_suggestion is not null)
+{
+    <div class="space-y-4">
+
+        @* Target mission header *@
+        <div class="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border">
+            <LucideIcon Name="target" Size="16" Class="text-primary shrink-0" />
+            <p class="text-sm">
+                @L["TargetMission"]
+                <span class="font-semibold">@L[_suggestion.TargetDifficulty.ToString()] @L["Mission"] @_suggestion.TargetMission</span>
+            </p>
+        </div>
+
+        @* Composition warning *@
+        @if (!_suggestion.HasCorrectComposition && _suggestion.CompositionWarning is not null)
+        {
+            <BbAlert Variant="AlertVariant.Warning">
+                <LucideIcon Name="triangle-alert" Size="16" Class="shrink-0 mt-0.5" />
+                <BbAlertDescription>@_suggestion.CompositionWarning</BbAlertDescription>
+            </BbAlert>
+        }
+
+        @* No changes needed *@
+        @if (_suggestion.Suggestions.Count == 0)
+        {
+            <BbAlert Variant="AlertVariant.Default">
+                <BbAlertDescription>
+                    @L["UpgradeSuggestionNoChanges"]
+                </BbAlertDescription>
+            </BbAlert>
+        }
+        else
+        {
+            @* Suggestion cards *@
+            @foreach (var s in _suggestion.Suggestions)
+            {
+                <BbCard>
+                    <BbCardHeader Class="flex flex-row items-center gap-3 pb-3">
+                        <picture>
+                            <source type="image/jxl" srcset="@($"{s.MachineImage}.jxl")" />
+                            <source type="image/avif" srcset="@($"{s.MachineImage}.avif")" />
+                            <source type="image/webp" srcset="@($"{s.MachineImage}.webp")" />
+                            <img src="@($"{s.MachineImage}.png")"
+                                 alt="@L[s.MachineName]"
+                                 class="w-10 h-10 object-scale-down rounded" />
+                        </picture>
+                        <div>
+                            <BbCardTitle Class="text-sm">@L[s.MachineName]</BbCardTitle>
+                            <BbCardDescription>
+                                @L[s.Specialization.ToString()]
+                            </BbCardDescription>
+                        </div>
+                    </BbCardHeader>
+
+                    <BbCardContent Class="space-y-3">
+
+                        @* Level row *@
+                        @if (s.SuggestedLevel != s.CurrentLevel)
+                        {
+                            <div class="flex items-center justify-between text-sm">
+                                <div class="flex items-center gap-1.5 text-muted-foreground">
+                                    <LucideIcon Name="arrow-big-up" Size="14" />
+                                    <span>@L["Level"]</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-muted-foreground">@s.CurrentLevel</span>
+                                    <LucideIcon Name="arrow-right" Size="12" Class="text-muted-foreground" />
+                                    <span class="font-semibold text-primary">@s.SuggestedLevel</span>
+                                    <BbBadge Variant="BadgeVariant.Destructive" Class="text-xs">
+                                        +@(s.SuggestedLevel - s.CurrentLevel) @L["Levels"]
+                                    </BbBadge>
+                                </div>
+                            </div>
+                        }
+
+                        @* Blueprint rows *@
+                        @foreach (var bp in GetBlueprintRows(s))
+                        {
+                            @if (bp.Suggested != bp.Current)
+                            {
+                                <div class="flex items-center justify-between text-sm">
+                                    <div class="flex items-center gap-1.5 text-muted-foreground">
+                                        <LucideIcon Name="layers" Size="14" />
+                                        <span>@bp.Label</span>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-muted-foreground">@bp.Current</span>
+                                        <LucideIcon Name="arrow-right" Size="12" Class="text-muted-foreground" />
+                                        <span class="font-semibold text-primary">@bp.Suggested</span>
+                                        <BbBadge Variant="BadgeVariant.Secondary" Class="text-xs">
+                                            +@(bp.Suggested - bp.Current)
+                                        </BbBadge>
+                                    </div>
+                                </div>
+                            }
+                        }
+
+                    </BbCardContent>
+                </BbCard>
+            }
+        }
+    </div>
+}
+
+@code {
+    [Parameter, EditorRequired] public OptimizationResult Result { get; set; } = null!;
+    [Parameter, EditorRequired] public OptimizerData Data { get; set; } = null!;
+    [Parameter, EditorRequired] public EventCallback OnDismiss { get; set; }
+
+    private UpgradeSuggestionResult? _suggestion;
+    private bool _loading;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _loading = true;
+        _suggestion = await SuggestionService.GetSuggestionsAsync(Result, Data);
+        _loading = false;
+    }
+
+    private async Task Dismiss() => await OnDismiss.InvokeAsync();
+
+    private record BlueprintRow(string Label, int Current, int Suggested);
+
+    private static IEnumerable<BlueprintRow> GetBlueprintRows(UpgradeSuggestion s) =>
+    [
+        new(LanguageResource.BP_Damage, s.CurrentDamageBlueprint, s.SuggestedDamageBlueprint),
+        new(LanguageResource.BP_Health, s.CurrentHealthBlueprint, s.SuggestedHealthBlueprint),
+        new(LanguageResource.BP_Armor,  s.CurrentArmorBlueprint,  s.SuggestedArmorBlueprint),
+    ];
+}

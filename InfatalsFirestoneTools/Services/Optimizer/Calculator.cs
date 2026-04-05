@@ -207,6 +207,11 @@ public static class Calculator
         return BigDouble.floor(enemyPower * 5 * pct / 100) * 100;
     }
 
+    public static int GetMaxBlueprintLevel(int machineLevel)
+    {
+        return 5 + (machineLevel / 5 * 5);
+    }
+
     // ── Private helpers ───────────────────────────────────────────────────────
 
     private static BigDouble ArtifactBonus(IReadOnlyList<Artifact> artifacts, ArtifactStat stat)

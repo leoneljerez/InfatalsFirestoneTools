@@ -246,6 +246,9 @@
   <data name="CalculateStrangeDustNeeded" xml:space="preserve">
     <value>Calculate Strange Dust Needed</value>
   </data>
+  <data name="CalculatingSuggestions" xml:space="preserve">
+    <value>Calculating suggestions...</value>
+  </data>
   <data name="Campaign" xml:space="preserve">
     <value>Campaign</value>
   </data>
@@ -495,6 +498,9 @@
   <data name="HeroWeights" xml:space="preserve">
     <value>Hero Weights</value>
   </data>
+  <data name="HideSuggestions" xml:space="preserve">
+    <value>Hide Suggestions</value>
+  </data>
   <data name="HighestClear" xml:space="preserve">
     <value>Highest Clear</value>
   </data>
@@ -564,6 +570,9 @@
   <data name="LevelMustBeOneToNine" xml:space="preserve">
     <value>Level must be 1-9</value>
   </data>
+  <data name="Levels" xml:space="preserve">
+    <value>levels</value>
+  </data>
   <data name="LevelShort" xml:space="preserve">
     <value>Lv.</value>
   </data>
@@ -602,6 +611,9 @@
   </data>
   <data name="MigratedSave" xml:space="preserve">
     <value>Migrated save from old format.</value>
+  </data>
+  <data name="Mission" xml:space="preserve">
+    <value>Mission</value>
   </data>
   <data name="MollyLabel" xml:space="preserve">
     <value>Molly</value>
@@ -894,6 +906,9 @@
   <data name="Tank" xml:space="preserve">
     <value>Tank</value>
   </data>
+  <data name="TargetMission" xml:space="preserve">
+    <value>Target Mission:</value>
+  </data>
   <data name="TargetPosition" xml:space="preserve">
     <value>Target Position</value>
   </data>
@@ -932,6 +947,18 @@
   </data>
   <data name="UnknownSaveVersion" xml:space="preserve">
     <value>Unknown save version</value>
+  </data>
+  <data name="UpgradeSuggestionNoChanges" xml:space="preserve">
+    <value>Your team already meets the power requirement for the next mission. Run the optimizer again to see if your team is able to finish the mission.</value>
+  </data>
+  <data name="UpgradeSuggestionNoDPS" xml:space="preserve">
+    <value>Your formation has no DPS machines. For best results your two highest power machines should be one tank and one DPS.</value>
+  </data>
+  <data name="UpgradeSuggestionNoTank" xml:space="preserve">
+    <value>Your formation has no tanks. For best results your two highest power machines should be one tank and one DPS.</value>
+  </data>
+  <data name="UpgradeSuggestions" xml:space="preserve">
+    <value>Upgrade Suggestions</value>
   </data>
   <data name="ValeriusLabel" xml:space="preserve">
     <value>Valerius</value>

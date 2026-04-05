@@ -94,6 +94,16 @@
         <BbCard>
             <BbCardHeader class="flex flex-row items-center justify-between flex-wrap gap-2">
                 <BbCardTitle>@L["Formation"]</BbCardTitle>
+                @if (!Result.IsArena && Data is not null)
+                {
+                    <BbButton Variant="ButtonVariant.Outline"
+                              Size="ButtonSize.Small"
+                              OnClick="ToggleSuggestions">
+                        <LucideIcon Name="@(_showSuggestions ? "x" : "lightbulb")"
+                                    Size="14" Class="mr-1.5" />
+                        @(_showSuggestions ? L["HideSuggestions"] : L["UpgradeSuggestions"])
+                    </BbButton>
+                }
                 <BbToggleGroup TValue="string" Value="_statsMode" ValueChanged="OnStatsModeChanged" Type="ToggleGroupType.Single">
                     <BbToggleGroupItem Value="@("battle")">
                         @L["BattleStats"]
@@ -104,6 +114,18 @@
                 </BbToggleGroup>
             </BbCardHeader>
             <BbCardContent>
+                @* Upgrade suggestions panel *@
+                @if (_showSuggestions && Data is not null)
+                {
+                    <div class="mb-6">
+                        <BbSeparator Class="mb-4" />
+                        <UpgradeSuggestionPanel Result="Result"
+                                                Data="Data"
+                                                OnDismiss="() => _showSuggestions = false" />
+                        <BbSeparator Class="mt-4" />
+                    </div>
+                }
+
                 @{
                     var formation = Result?.Formation ?? new List<ComputedMachine>();
 
@@ -151,8 +173,10 @@
 @code {
     [Parameter] public OptimizationResult? Result { get; set; }
     [Parameter] public bool IsLoading { get; set; }
+    [Parameter] public OptimizerData? Data { get; set; }
 
     private string _statsMode = "battle";
+    private bool _showSuggestions;
 
     private static readonly int _maxStarsPerDifficulty = 90;
     private static readonly int _maxStars = _maxStarsPerDifficulty * Enum.GetValues<CampaignDifficulty>().Length;
@@ -183,6 +207,11 @@
                 .FirstOrDefault();
             return highest ?? CampaignDifficulty.Easy;
         }
+    }
+
+    private void ToggleSuggestions()
+    {
+        _showSuggestions = !_showSuggestions;
     }
 
     private void OnStatsModeChanged(string? mode)

@@ -448,6 +448,15 @@ namespace InfatalsFirestoneTools.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Calculating suggestions....
+        /// </summary>
+        public static string CalculatingSuggestions {
+            get {
+                return ResourceManager.GetString("CalculatingSuggestions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Campaign.
         /// </summary>
         public static string Campaign {
@@ -1195,6 +1204,15 @@ namespace InfatalsFirestoneTools.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hide Suggestions.
+        /// </summary>
+        public static string HideSuggestions {
+            get {
+                return ResourceManager.GetString("HideSuggestions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Highest Clear.
         /// </summary>
         public static string HighestClear {
@@ -1402,6 +1420,15 @@ namespace InfatalsFirestoneTools.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to levels.
+        /// </summary>
+        public static string Levels {
+            get {
+                return ResourceManager.GetString("Levels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Lv..
         /// </summary>
         public static string LevelShort {
@@ -1515,6 +1542,15 @@ namespace InfatalsFirestoneTools.Resources {
         public static string MigratedSave {
             get {
                 return ResourceManager.GetString("MigratedSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mission.
+        /// </summary>
+        public static string Mission {
+            get {
+                return ResourceManager.GetString("Mission", resourceCulture);
             }
         }
         
@@ -2392,6 +2428,15 @@ namespace InfatalsFirestoneTools.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Target Mission:.
+        /// </summary>
+        public static string TargetMission {
+            get {
+                return ResourceManager.GetString("TargetMission", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Target Position.
         /// </summary>
         public static string TargetPosition {
@@ -2505,6 +2550,42 @@ namespace InfatalsFirestoneTools.Resources {
         public static string UnknownSaveVersion {
             get {
                 return ResourceManager.GetString("UnknownSaveVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your team already meets the power requirement for the next mission. Run the optimizer again to see if your team is able to finish the mission..
+        /// </summary>
+        public static string UpgradeSuggestionNoChanges {
+            get {
+                return ResourceManager.GetString("UpgradeSuggestionNoChanges", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your formation has no DPS machines. For best results your two highest power machines should be one tank and one DPS..
+        /// </summary>
+        public static string UpgradeSuggestionNoDPS {
+            get {
+                return ResourceManager.GetString("UpgradeSuggestionNoDPS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your formation has no tanks. For best results your two highest power machines should be one tank and one DPS..
+        /// </summary>
+        public static string UpgradeSuggestionNoTank {
+            get {
+                return ResourceManager.GetString("UpgradeSuggestionNoTank", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upgrade Suggestions.
+        /// </summary>
+        public static string UpgradeSuggestions {
+            get {
+                return ResourceManager.GetString("UpgradeSuggestions", resourceCulture);
             }
         }
         

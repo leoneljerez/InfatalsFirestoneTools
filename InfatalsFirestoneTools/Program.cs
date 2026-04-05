@@ -1,6 +1,7 @@
 using BlazorBlueprint.Components;
 using InfatalsFirestoneTools;
 using InfatalsFirestoneTools.Services;
+using InfatalsFirestoneTools.Services.Optimizer;
 using Magic.IndexedDb;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -23,6 +24,7 @@ builder.Services.AddSingleton<AppState>();
 //builder.Services.AddScoped<ThemeService>();
 builder.Services.AddScoped<ProfileService>();
 builder.Services.AddScoped<OptimizerService>();
+builder.Services.AddScoped<UpgradeSuggestionService>();
 
 // Language Detection / UI
 builder.Services.AddLocalization();
