@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy-to-github-pages:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     permissions: write-all
     steps:
       - uses: actions/checkout@v6
@@ -29,10 +29,14 @@ jobs:
         run: dotnet publish InfatalsFirestoneTools/InfatalsFirestoneTools.csproj -c Release -o release
 
       - name: Add .nojekyll file
-        run: type nul > release/wwwroot/.nojekyll
+        run: touch release/wwwroot/.nojekyll
 
       - name: Commit wwwroot to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4.8.0
         with:
           branch: gh-pages
           folder: release/wwwroot
+          force: true
+          clean: true
+          clean-exclude: | 
+            .nojekyll
