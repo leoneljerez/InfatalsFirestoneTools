@@ -10,6 +10,12 @@ public static class PatchNotes
     /// </summary>
     public static readonly IReadOnlyList<PatchNote> All =
     [
+        new("1.1.2", new DateOnly(2026, 4, 9),
+        [
+            "More efficient sorting in Machine and Hero tab",
+            "Added upgrade suggestion feature from old website",
+            "Minor cleaning and improvements",
+        ]),
         new("1.1.1", new DateOnly(2026, 3, 27),
         [
             "Added bulk edit view for Machines and Heroes tabs",
