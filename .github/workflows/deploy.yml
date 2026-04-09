@@ -20,7 +20,7 @@ jobs:
           git config --global core.eol lf
           
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v5.1
         with:
           dotnet-version: '10.0.x'
           
