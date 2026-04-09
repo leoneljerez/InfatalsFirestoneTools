@@ -7,12 +7,17 @@ on:
 
 jobs:
   deploy-to-github-pages:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     permissions: write-all
     steps:
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
+
+      - name: Prevent Git Line Ending Conversion
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
           
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v5
@@ -25,14 +30,11 @@ jobs:
       - name: Restore packages
         run: dotnet restore
 
-      - name: Clean .NET Core Project
-        run: dotnet clean InfatalsFirestoneTools/InfatalsFirestoneTools.csproj -c Release
-
       - name: Publish .NET Core Project
         run: dotnet publish InfatalsFirestoneTools/InfatalsFirestoneTools.csproj -c Release -o release
 
       - name: Add .nojekyll file
-        run: New-Item -Path release/wwwroot/.nojekyll -ItemType File
+        run: touch release/wwwroot/.nojekyll
 
       - name: Commit wwwroot to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4.8.0
