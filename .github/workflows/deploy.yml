@@ -36,7 +36,6 @@ jobs:
         with:
           branch: gh-pages
           folder: release/wwwroot
-          force: true
+          single-commit: true
           clean: true
-          clean-exclude: | 
-            .nojekyll
+          force: true
