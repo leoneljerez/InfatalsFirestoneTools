@@ -5,7 +5,6 @@
 @inject IStringLocalizer<LanguageResource> L
 
 <div class="grid gap-4">
-
     <BbCard Class="bg-primary/5 border-primary/20">
         <BbCardHeader>
             <BbCardTitle>@L["GlobalBonuses"]</BbCardTitle>
@@ -13,22 +12,30 @@
         <BbCardContent Class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="space-y-2">
                 <BbLabel>@L["EngineerLevel"]</BbLabel>
-                <BbNumericInput TValue="int" Min="0" Step="1" AllowNegative="false" ShowButtons="true" Value="@Data.EngineerLevel" ValueChanged="async v => { Data.EngineerLevel = v; await OnChanged.InvokeAsync(); }" DebounceInterval="500" Class="w-full" />
+                <BbNumericInput TValue="int" Min="0" Step="1" AllowNegative="false" ShowButtons="true"
+                                Value="@Data.EngineerLevel"
+                                ValueChanged="async v => { Data.EngineerLevel = v; await OnChanged.InvokeAsync(); }"
+                                DebounceInterval="500" Class="w-full" />
             </div>
             <div class="space-y-2">
                 <BbLabel>@L["ScarabLevel"]</BbLabel>
-                <BbNumericInput TValue="int" Min="0" Step="1" AllowNegative="false" ShowButtons="true" Value="@Data.ScarabLevel" ValueChanged="async v => { Data.ScarabLevel = v; await OnChanged.InvokeAsync(); }" DebounceInterval="500" Class="w-full" />
+                <BbNumericInput TValue="int" Min="0" Step="1" AllowNegative="false" ShowButtons="true"
+                                Value="@Data.ScarabLevel"
+                                ValueChanged="async v => { Data.ScarabLevel = v; await OnChanged.InvokeAsync(); }"
+                                DebounceInterval="500" Class="w-full" />
             </div>
             <div class="sm:col-span-2 space-y-2">
                 <BbLabel>@L["ChaosRiftRank"]</BbLabel>
-                <BbSelect TValue="ChaosRiftRank" Value="@Data.ChaosRiftRank" ValueChanged="async v => { Data.ChaosRiftRank = v; await OnChanged.InvokeAsync(); }" Class="w-full">
+                <BbSelect TValue="ChaosRiftRank" Value="@Data.ChaosRiftRank"
+                          ValueChanged="async v => { Data.ChaosRiftRank = v; await OnChanged.InvokeAsync(); }"
+                          Class="w-full">
                     <BbSelectTrigger Class="w-full">
                         <BbSelectValue Placeholder="@L["SelectRiftRank"]" />
                     </BbSelectTrigger>
                     <BbSelectContent>
                         @foreach (var rank in Enum.GetValues<ChaosRiftRank>())
                         {
-                            <BbSelectItem Value="@rank">@L[rank.ToString()]</BbSelectItem>
+                            <BbSelectItem Value="@rank" Text="@L[rank.ToString()]">@L[rank.ToString()]</BbSelectItem>
                         }
                     </BbSelectContent>
                 </BbSelect>
@@ -59,21 +66,25 @@
                     </BbCardHeader>
                     <BbCardContent Class="p-0">
                         <div class="p-3 border-b space-y-2">
-                            <BbInput Placeholder="@L["Search"]" Value="@_search" class="w-full" @oninput="e => _search = e.Value?.ToString() ?? string.Empty" />
+                            <BbInput Placeholder="@L["Search"]" Value="@_search" class="w-full"
+                                     @oninput="e => SetSearch(e.Value?.ToString() ?? string.Empty)" />
                             <div class="flex gap-2">
-                                <BbSelect TValue="SortOptionsMachine" @bind-Value="_detailSort" Class="flex-1">
+                                <BbSelect TValue="SortOptionsMachine" Value="@_detailSort"
+                                          ValueChanged="SetDetailSort" Class="flex-1">
                                     <BbSelectTrigger Class="h-8 text-xs flex-1">
                                         <BbSelectValue Placeholder="@L["SortBy"]" />
                                     </BbSelectTrigger>
                                     <BbSelectContent>
                                         @foreach (var opt in Enum.GetValues<SortOptionsMachine>())
                                         {
-                                            <BbSelectItem Value="@opt">@L[opt.ToString()]</BbSelectItem>
+                                            <BbSelectItem Value="@opt" Text="@L[opt.ToString()]">@L[opt.ToString()]</BbSelectItem>
                                         }
                                     </BbSelectContent>
                                 </BbSelect>
                                 <div class="relative">
-                                    <BbButton Variant="@(_hasDetailFilter? ButtonVariant.Default: ButtonVariant.Outline)" Size="ButtonSize.Small" Class="h-8 px-2 gap-1" OnClick="() => _detailFilterOpen = !_detailFilterOpen">
+                                    <BbButton Variant="@(_hasDetailFilter? ButtonVariant.Default: ButtonVariant.Outline)"
+                                              Size="ButtonSize.Small" Class="h-8 px-2 gap-1"
+                                              OnClick="() => _detailFilterOpen = !_detailFilterOpen">
                                         <LucideIcon Name="sliders-horizontal" Size="14" />
                                     </BbButton>
                                     @if (_detailFilterOpen)
@@ -82,35 +93,38 @@
                                             rounded-md border bg-popover shadow-md p-3 space-y-3">
                                             <div class="space-y-1">
                                                 <p class="text-xs font-medium">@L["Specialization"]</p>
-                                                <BbSelect TValue="MachineSpecialization?" Value="@_filterSpec" ValueChanged="v => _filterSpec = v" Class="w-full">
+                                                <BbSelect TValue="MachineSpecialization?" Value="@_filterSpec"
+                                                          ValueChanged="SetDetailFilterSpec" Class="w-full">
                                                     <BbSelectTrigger Class="h-8 text-xs w-full">
                                                         <BbSelectValue Placeholder="@L["All"]" />
                                                     </BbSelectTrigger>
                                                     <BbSelectContent>
-                                                        <BbSelectItem Value="@((MachineSpecialization?)null)">@L["All"]</BbSelectItem>
+                                                        <BbSelectItem Value="@((MachineSpecialization?)null)" Text="@L["All"]">@L["All"]</BbSelectItem>
                                                         @foreach (var s in Enum.GetValues<MachineSpecialization>())
                                                         {
-                                                            <BbSelectItem Value="@((MachineSpecialization?)s)">@L[s.ToString()]</BbSelectItem>
+                                                            <BbSelectItem Value="@((MachineSpecialization?)s)" Text="@L[s.ToString()]">@L[s.ToString()]</BbSelectItem>
                                                         }
                                                     </BbSelectContent>
                                                 </BbSelect>
                                             </div>
                                             <div class="space-y-1">
                                                 <p class="text-xs font-medium">@L["TargetType"]</p>
-                                                <BbSelect TValue="MachineTargetType?" Value="@_filterTarget" ValueChanged="v => _filterTarget = v" Class="w-full">
+                                                <BbSelect TValue="MachineTargetType?" Value="@_filterTarget"
+                                                          ValueChanged="SetDetailFilterTarget" Class="w-full">
                                                     <BbSelectTrigger Class="h-8 text-xs w-full">
                                                         <BbSelectValue Placeholder="@L["All"]" />
                                                     </BbSelectTrigger>
                                                     <BbSelectContent>
-                                                        <BbSelectItem Value="@((MachineTargetType?)null)">@L["All"]</BbSelectItem>
+                                                        <BbSelectItem Value="@((MachineTargetType?)null)" Text="@L["All"]">@L["All"]</BbSelectItem>
                                                         @foreach (var t in Enum.GetValues<MachineTargetType>())
                                                         {
-                                                            <BbSelectItem Value="@((MachineTargetType?)t)">@L[t.ToString()]</BbSelectItem>
+                                                            <BbSelectItem Value="@((MachineTargetType?)t)" Text="@L[t.ToString()]">@L[t.ToString()]</BbSelectItem>
                                                         }
                                                     </BbSelectContent>
                                                 </BbSelect>
                                             </div>
-                                            <button class="text-xs text-muted-foreground hover:text-foreground" @onclick="() => { _filterSpec = null; _filterTarget = null; }">
+                                            <button class="text-xs text-muted-foreground hover:text-foreground"
+                                                    @onclick="ClearDetailFilters">
                                                 @L["ClearFilters"]
                                             </button>
                                         </div>
@@ -120,17 +134,17 @@
                             </div>
                         </div>
                         <div class="overflow-y-auto" style="max-height: 480px;">
-                            @foreach (var m in SortedFilteredDetailMachines)
+                            @foreach (var m in _detailMachines)
                             {
                                 var mStatic = StaticOf(m);
                                 if (mStatic is null) continue;
-
                                 <button class="@MachineItemClass(m)" @onclick="() => _selected = m">
                                     <picture>
                                         <source type="image/jxl" srcset="@($"{mStatic.Image}.jxl")" />
                                         <source type="image/avif" srcset="@($"{mStatic.Image}.avif")" />
                                         <source type="image/webp" srcset="@($"{mStatic.Image}.webp")" />
-                                        <img src="@($"{mStatic.Image}.png")" alt="@L[mStatic.Name]" class="w-10 h-10 object-scale-down rounded shrink-0" />
+                                        <img src="@($"{mStatic.Image}.png")" alt="@L[mStatic.Name]"
+                                             class="w-10 h-10 object-scale-down rounded shrink-0" />
                                     </picture>
                                     <div class="flex-1 min-w-0 text-left">
                                         <p class="text-sm font-medium truncate">@L[mStatic.Name]</p>
@@ -173,9 +187,12 @@
         <BbCard>
             <BbCardContent Class="p-0">
                 <div class="flex items-center gap-2 p-3 border-b flex-wrap">
-                    <BbInput Placeholder="@L["Search"]" Value="@_bulkSearch" class="flex-1 min-w-40" @oninput="e => _bulkSearch = e.Value?.ToString() ?? string.Empty" />
+                    <BbInput Placeholder="@L["Search"]" Value="@_bulkSearch" class="flex-1 min-w-40"
+                             @oninput="e => SetBulkSearch(e.Value?.ToString() ?? string.Empty)" />
                     <div class="relative">
-                        <BbButton Variant="@(_hasBulkFilter? ButtonVariant.Default: ButtonVariant.Outline)" Size="ButtonSize.Small" Class="h-9 px-3 gap-1.5" OnClick="() => _bulkFilterOpen = !_bulkFilterOpen">
+                        <BbButton Variant="@(_hasBulkFilter? ButtonVariant.Default: ButtonVariant.Outline)"
+                                  Size="ButtonSize.Small" Class="h-9 px-3 gap-1.5"
+                                  OnClick="() => _bulkFilterOpen = !_bulkFilterOpen">
                             <LucideIcon Name="sliders-horizontal" Size="14" />
                             <span class="text-xs">@L["Filters"]</span>
                         </BbButton>
@@ -185,40 +202,42 @@
                                 rounded-md border bg-popover shadow-md p-3 space-y-3">
                                 <div class="space-y-1">
                                     <p class="text-xs font-medium">@L["Specialization"]</p>
-                                    <BbSelect TValue="MachineSpecialization?" Value="@_bulkFilterSpec" ValueChanged="v => _bulkFilterSpec = v" Class="w-full">
+                                    <BbSelect TValue="MachineSpecialization?" Value="@_bulkFilterSpec"
+                                              ValueChanged="SetBulkFilterSpec" Class="w-full">
                                         <BbSelectTrigger Class="h-8 text-xs w-full">
                                             <BbSelectValue Placeholder="@L["All"]" />
                                         </BbSelectTrigger>
                                         <BbSelectContent>
-                                            <BbSelectItem Value="@((MachineSpecialization?)null)">@L["All"]</BbSelectItem>
+                                            <BbSelectItem Value="@((MachineSpecialization?)null)" Text="@L["All"]">@L["All"]</BbSelectItem>
                                             @foreach (var s in Enum.GetValues<MachineSpecialization>())
                                             {
-                                                <BbSelectItem Value="@((MachineSpecialization?)s)">@L[s.ToString()]</BbSelectItem>
+                                                <BbSelectItem Value="@((MachineSpecialization?)s)" Text="@L[s.ToString()]">@L[s.ToString()]</BbSelectItem>
                                             }
                                         </BbSelectContent>
                                     </BbSelect>
                                 </div>
                                 <div class="space-y-1">
                                     <p class="text-xs font-medium">@L["TargetType"]</p>
-                                    <BbSelect TValue="MachineTargetType?" Value="@_bulkFilterTarget" ValueChanged="v => _bulkFilterTarget = v" Class="w-full">
+                                    <BbSelect TValue="MachineTargetType?" Value="@_bulkFilterTarget"
+                                              ValueChanged="SetBulkFilterTarget" Class="w-full">
                                         <BbSelectTrigger Class="h-8 text-xs w-full">
                                             <BbSelectValue Placeholder="@L["All"]" />
                                         </BbSelectTrigger>
                                         <BbSelectContent>
-                                            <BbSelectItem Value="@((MachineTargetType?)null)">@L["All"]</BbSelectItem>
+                                            <BbSelectItem Value="@((MachineTargetType?)null)" Text="@L["All"]">@L["All"]</BbSelectItem>
                                             @foreach (var t in Enum.GetValues<MachineTargetType>())
                                             {
-                                                <BbSelectItem Value="@((MachineTargetType?)t)">@L[t.ToString()]</BbSelectItem>
+                                                <BbSelectItem Value="@((MachineTargetType?)t)" Text="@L[t.ToString()]">@L[t.ToString()]</BbSelectItem>
                                             }
                                         </BbSelectContent>
                                     </BbSelect>
                                 </div>
-                                <button class="text-xs text-muted-foreground hover:text-foreground" @onclick="() => { _bulkFilterSpec = null; _bulkFilterTarget = null; }">
+                                <button class="text-xs text-muted-foreground hover:text-foreground"
+                                        @onclick="ClearBulkFilters">
                                     @L["ClearFilters"]
                                 </button>
                             </div>
-                            <div class="fixed inset-0 z-40"
-                                 @onclick="() => _bulkFilterOpen = false"></div>
+                            <div class="fixed inset-0 z-40" @onclick="() => _bulkFilterOpen = false"></div>
                         }
                     </div>
                 </div>
@@ -227,48 +246,54 @@
                         <thead class="border-b bg-muted/50">
                             <tr>
                                 <th class="px-3 py-2 text-left w-44">
-                                    <button class="flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground transition-colors" @onclick="() => ToggleBulkSort(SortOptionsMachine.NameAtoZ, SortOptionsMachine.NameZtoA)">
+                                    <button class="flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground transition-colors"
+                                            @onclick="() => ToggleBulkSort(SortOptionsMachine.NameAtoZ, SortOptionsMachine.NameZtoA)">
                                         @L["Machine"] @ColIcon(SortOptionsMachine.NameAtoZ, SortOptionsMachine.NameZtoA)
                                     </button>
                                 </th>
                                 <th class="px-3 py-2 text-left w-36">
-                                    <button class="flex items-center gap-1 font-medium  hover:text-foreground transition-colors" @onclick="() => ToggleBulkSort(SortOptionsMachine.RarityHighToLow, SortOptionsMachine.RarityLowToHigh)">
+                                    <button class="flex items-center gap-1 font-medium hover:text-foreground transition-colors"
+                                            @onclick="() => ToggleBulkSort(SortOptionsMachine.RarityHighToLow, SortOptionsMachine.RarityLowToHigh)">
                                         @L["Rarity"] @ColIcon(SortOptionsMachine.RarityHighToLow, SortOptionsMachine.RarityLowToHigh)
                                     </button>
                                 </th>
                                 <th class="px-3 py-2 text-left w-24">
-                                    <button class="flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground transition-colors" @onclick="() => ToggleBulkSort(SortOptionsMachine.LevelHighToLow, SortOptionsMachine.LevelLowToHigh)">
+                                    <button class="flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground transition-colors"
+                                            @onclick="() => ToggleBulkSort(SortOptionsMachine.LevelHighToLow, SortOptionsMachine.LevelLowToHigh)">
                                         @L["Level"] @ColIcon(SortOptionsMachine.LevelHighToLow, SortOptionsMachine.LevelLowToHigh)
                                     </button>
                                 </th>
                                 <th class="px-3 py-2 text-left w-24">
-                                    <button class="flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground transition-colors" @onclick="() => ToggleBulkSort(SortOptionsMachine.DamageBPHighToLow, SortOptionsMachine.DamageBPLowToHigh)">
+                                    <button class="flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground transition-colors"
+                                            @onclick="() => ToggleBulkSort(SortOptionsMachine.DamageBPHighToLow, SortOptionsMachine.DamageBPLowToHigh)">
                                         @L["BP_Damage"] @ColIcon(SortOptionsMachine.DamageBPHighToLow, SortOptionsMachine.DamageBPLowToHigh)
                                     </button>
                                 </th>
                                 <th class="px-3 py-2 text-left w-24">
-                                    <button class="flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground transition-colors" @onclick="() => ToggleBulkSort(SortOptionsMachine.HealthBPHighToLow, SortOptionsMachine.HealthBPLowToHigh)">
+                                    <button class="flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground transition-colors"
+                                            @onclick="() => ToggleBulkSort(SortOptionsMachine.HealthBPHighToLow, SortOptionsMachine.HealthBPLowToHigh)">
                                         @L["BP_Health"] @ColIcon(SortOptionsMachine.HealthBPHighToLow, SortOptionsMachine.HealthBPLowToHigh)
                                     </button>
                                 </th>
                                 <th class="px-3 py-2 text-left w-24">
-                                    <button class="flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground transition-colors" @onclick="() => ToggleBulkSort(SortOptionsMachine.ArmorBPHighToLow, SortOptionsMachine.ArmorBPLowToHigh)">
+                                    <button class="flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground transition-colors"
+                                            @onclick="() => ToggleBulkSort(SortOptionsMachine.ArmorBPHighToLow, SortOptionsMachine.ArmorBPLowToHigh)">
                                         @L["BP_Armor"] @ColIcon(SortOptionsMachine.ArmorBPHighToLow, SortOptionsMachine.ArmorBPLowToHigh)
                                     </button>
                                 </th>
                                 <th class="px-3 py-2 w-8" title="@L["Configured"]">
-                                    <button class="flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground transition-colors" @onclick="() => ToggleBulkSort(SortOptionsMachine.ConfiguredFirst, SortOptionsMachine.UnconfiguredFirst)">
+                                    <button class="flex items-center gap-1 font-medium text-muted-foreground hover:text-foreground transition-colors"
+                                            @onclick="() => ToggleBulkSort(SortOptionsMachine.ConfiguredFirst, SortOptionsMachine.UnconfiguredFirst)">
                                         @ColIcon(SortOptionsMachine.ConfiguredFirst, SortOptionsMachine.UnconfiguredFirst)
                                     </button>
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var m in SortedFilteredBulkMachines)
+                            @foreach (var m in _bulkMachines)
                             {
                                 var mStatic = StaticOf(m);
                                 if (mStatic is null) continue;
-
                                 <tr class="border-b last:border-b-0 hover:bg-muted/20 transition-colors">
                                     <td class="px-3 py-2">
                                         <div class="flex items-center gap-2">
@@ -276,35 +301,50 @@
                                                 <source type="image/jxl" srcset="@($"{mStatic.Image}.jxl")" />
                                                 <source type="image/avif" srcset="@($"{mStatic.Image}.avif")" />
                                                 <source type="image/webp" srcset="@($"{mStatic.Image}.webp")" />
-                                                <img src="@($"{mStatic.Image}.png")" alt="@L[mStatic.Name]" class="w-8 h-8 object-scale-down rounded shrink-0" />
+                                                <img src="@($"{mStatic.Image}.png")" alt="@L[mStatic.Name]"
+                                                     class="w-8 h-8 object-scale-down rounded shrink-0" />
                                             </picture>
                                             <span class="font-medium truncate">@L[mStatic.Name]</span>
                                         </div>
                                     </td>
                                     <td class="px-3 py-2">
-                                        <BbSelect TValue="MachineRarity" Value="@m.Rarity" ValueChanged="async v => { m.Rarity = v; await OnChanged.InvokeAsync(); }" Class="w-full">
+                                        <BbSelect TValue="MachineRarity" Value="@m.Rarity"
+                                                  ValueChanged="async v => { m.Rarity = v; await OnChanged.InvokeAsync(); }"
+                                                  Class="w-full">
                                             <BbSelectTrigger Class="h-8 text-xs w-full">
                                                 <BbSelectValue />
                                             </BbSelectTrigger>
                                             <BbSelectContent>
                                                 @foreach (var r in Enum.GetValues<MachineRarity>())
                                                 {
-                                                    <BbSelectItem Value="@r">@L[r.ToString()]</BbSelectItem>
+                                                    <BbSelectItem Value="@r" Text="@L[r.ToString()]">@L[r.ToString()]</BbSelectItem>
                                                 }
                                             </BbSelectContent>
                                         </BbSelect>
                                     </td>
                                     <td class="px-3 py-2">
-                                        <BbNumericInput TValue="int" Min="0" Step="1" AllowNegative="false" ShowButtons="false" Value="@m.Level" ValueChanged="async v => { m.Level = v; await OnChanged.InvokeAsync(); }" DebounceInterval="500" Class="w-full h-8 text-xs" />
+                                        <BbNumericInput TValue="int" Min="0" Step="1" AllowNegative="false"
+                                                        ShowButtons="false" Value="@m.Level"
+                                                        ValueChanged="async v => { m.Level = v; await OnChanged.InvokeAsync(); }"
+                                                        DebounceInterval="500" Class="w-full h-8 text-xs" />
                                     </td>
                                     <td class="px-3 py-2">
-                                        <BbNumericInput TValue="int" Min="0" Step="1" AllowNegative="false" ShowButtons="false" Value="@m.DamageBlueprint" ValueChanged="async v => { m.DamageBlueprint = v; await OnChanged.InvokeAsync(); }" DebounceInterval="500" Class="w-full h-8 text-xs" />
+                                        <BbNumericInput TValue="int" Min="0" Step="1" AllowNegative="false"
+                                                        ShowButtons="false" Value="@m.DamageBlueprint"
+                                                        ValueChanged="async v => { m.DamageBlueprint = v; await OnChanged.InvokeAsync(); }"
+                                                        DebounceInterval="500" Class="w-full h-8 text-xs" />
                                     </td>
                                     <td class="px-3 py-2">
-                                        <BbNumericInput TValue="int" Min="0" Step="1" AllowNegative="false" ShowButtons="false" Value="@m.HealthBlueprint" ValueChanged="async v => { m.HealthBlueprint = v; await OnChanged.InvokeAsync(); }" DebounceInterval="500" Class="w-full h-8 text-xs" />
+                                        <BbNumericInput TValue="int" Min="0" Step="1" AllowNegative="false"
+                                                        ShowButtons="false" Value="@m.HealthBlueprint"
+                                                        ValueChanged="async v => { m.HealthBlueprint = v; await OnChanged.InvokeAsync(); }"
+                                                        DebounceInterval="500" Class="w-full h-8 text-xs" />
                                     </td>
                                     <td class="px-3 py-2">
-                                        <BbNumericInput TValue="int" Min="0" Step="1" AllowNegative="false" ShowButtons="false" Value="@m.ArmorBlueprint" ValueChanged="async v => { m.ArmorBlueprint = v; await OnChanged.InvokeAsync(); }" DebounceInterval="500" Class="w-full h-8 text-xs" />
+                                        <BbNumericInput TValue="int" Min="0" Step="1" AllowNegative="false"
+                                                        ShowButtons="false" Value="@m.ArmorBlueprint"
+                                                        ValueChanged="async v => { m.ArmorBlueprint = v; await OnChanged.InvokeAsync(); }"
+                                                        DebounceInterval="500" Class="w-full h-8 text-xs" />
                                     </td>
                                     <td class="px-3 py-2 text-center">
                                         @if (IsConfigured(m))
@@ -320,29 +360,37 @@
             </BbCardContent>
         </BbCard>
     }
-
 </div>
 
 @code {
     [Parameter, EditorRequired] public OptimizerData Data { get; set; } = null!;
     [Parameter, EditorRequired] public EventCallback OnChanged { get; set; }
 
+    // ── View state ────────────────────────────────────────────────────────────
+
     private string _viewMode = "detail";
-    private string _search = string.Empty;
-    private string _bulkSearch = string.Empty;
-    private bool _detailFilterOpen = false;
-    private bool _bulkFilterOpen = false;
     private Machine? _selected;
 
+    // Detail view
+    private string _search = string.Empty;
     private SortOptionsMachine _detailSort = SortOptionsMachine.Default;
-    private SortOptionsMachine _bulkSort = SortOptionsMachine.Default;
-    private MachineSpecialization? _filterSpec = null;
-    private MachineTargetType? _filterTarget = null;
-    private MachineSpecialization? _bulkFilterSpec = null;
-    private MachineTargetType? _bulkFilterTarget = null;
+    private MachineSpecialization? _filterSpec;
+    private MachineTargetType? _filterTarget;
+    private bool _detailFilterOpen;
 
-    private bool _hasDetailFilter => _filterSpec is not null || _filterTarget is not null;
-    private bool _hasBulkFilter => _bulkFilterSpec is not null || _bulkFilterTarget is not null;
+    // Bulk view
+    private string _bulkSearch = string.Empty;
+    private SortOptionsMachine _bulkSort = SortOptionsMachine.Default;
+    private MachineSpecialization? _bulkFilterSpec;
+    private MachineTargetType? _bulkFilterTarget;
+    private bool _bulkFilterOpen;
+
+    // ── Cached lists ──────────────────────────────────────────────────────────
+
+    private List<Machine> _detailMachines = [];
+    private List<Machine> _bulkMachines = [];
+
+    // ── Lifecycle ─────────────────────────────────────────────────────────────
 
     protected override void OnParametersSet()
     {
@@ -350,7 +398,96 @@
             ? Data.Machines.FirstOrDefault()
             : Data.Machines.FirstOrDefault(m => m.Id == _selected.Id)
               ?? Data.Machines.FirstOrDefault();
+
+        RefreshLists();
     }
+
+    // ── State mutators — each calls RefreshLists() ────────────────────────────
+
+    private void SetSearch(string value) { _search = value; RefreshLists(); }
+    private void SetBulkSearch(string value) { _bulkSearch = value; RefreshLists(); }
+    private void SetDetailSort(SortOptionsMachine v) { _detailSort = v; RefreshLists(); }
+    private void SetDetailFilterSpec(MachineSpecialization? v) { _filterSpec = v; RefreshLists(); }
+    private void SetDetailFilterTarget(MachineTargetType? v) { _filterTarget = v; RefreshLists(); }
+    private void SetBulkFilterSpec(MachineSpecialization? v) { _bulkFilterSpec = v; RefreshLists(); }
+    private void SetBulkFilterTarget(MachineTargetType? v) { _bulkFilterTarget = v; RefreshLists(); }
+
+    private void ClearDetailFilters()
+    {
+        _filterSpec = null;
+        _filterTarget = null;
+        RefreshLists();
+    }
+
+    private void ClearBulkFilters()
+    {
+        _bulkFilterSpec = null;
+        _bulkFilterTarget = null;
+        RefreshLists();
+    }
+
+    private void ToggleBulkSort(SortOptionsMachine asc, SortOptionsMachine desc)
+    {
+        _bulkSort = _bulkSort == asc ? desc : asc;
+        RefreshLists();
+    }
+
+    // ── List computation ──────────────────────────────────────────────────────
+
+    private void RefreshLists()
+    {
+        _detailMachines = Sort(Filter(Data.Machines, _search, _filterSpec, _filterTarget), _detailSort);
+        _bulkMachines = Sort(Filter(Data.Machines, _bulkSearch, _bulkFilterSpec, _bulkFilterTarget), _bulkSort);
+    }
+
+    private List<Machine> Filter(
+        IEnumerable<Machine> source,
+        string search,
+        MachineSpecialization? spec,
+        MachineTargetType? target)
+    {
+        if (!string.IsNullOrWhiteSpace(search))
+            source = source.Where(m => NameOf(m).Contains(search, StringComparison.OrdinalIgnoreCase));
+
+        if (spec is not null)
+            source = source.Where(m => StaticOf(m)?.Specialization == spec);
+
+        if (target is not null)
+            source = source.Where(m => StaticOf(m)?.TargetType == target);
+
+        return source.ToList();
+    }
+
+    private List<Machine> Sort(List<Machine> source, SortOptionsMachine sort)
+    {
+        if (sort is SortOptionsMachine.NameAtoZ or SortOptionsMachine.NameZtoA)
+        {
+            var names = source.ToDictionary(m => m.Id, m => L[NameOf(m)].Value);
+            return sort == SortOptionsMachine.NameAtoZ
+                ? [.. source.OrderBy(m => names[m.Id], StringComparer.CurrentCulture)]
+                : [.. source.OrderByDescending(m => names[m.Id], StringComparer.CurrentCulture)];
+        }
+
+        return sort switch
+        {
+            SortOptionsMachine.Default => source,
+            SortOptionsMachine.LevelHighToLow => [.. source.OrderByDescending(m => m.Level)],
+            SortOptionsMachine.LevelLowToHigh => [.. source.OrderBy(m => m.Level)],
+            SortOptionsMachine.RarityHighToLow => [.. source.OrderByDescending(m => (int)m.Rarity)],
+            SortOptionsMachine.RarityLowToHigh => [.. source.OrderBy(m => (int)m.Rarity)],
+            SortOptionsMachine.DamageBPHighToLow => [.. source.OrderByDescending(m => m.DamageBlueprint)],
+            SortOptionsMachine.DamageBPLowToHigh => [.. source.OrderBy(m => m.DamageBlueprint)],
+            SortOptionsMachine.HealthBPHighToLow => [.. source.OrderByDescending(m => m.HealthBlueprint)],
+            SortOptionsMachine.HealthBPLowToHigh => [.. source.OrderBy(m => m.HealthBlueprint)],
+            SortOptionsMachine.ArmorBPHighToLow => [.. source.OrderByDescending(m => m.ArmorBlueprint)],
+            SortOptionsMachine.ArmorBPLowToHigh => [.. source.OrderBy(m => m.ArmorBlueprint)],
+            SortOptionsMachine.ConfiguredFirst => [.. source.OrderByDescending(IsConfigured)],
+            SortOptionsMachine.UnconfiguredFirst => [.. source.OrderBy(IsConfigured)],
+            _ => [.. source.OrderBy(m => m.Id)],
+        };
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
 
     private static bool IsConfigured(Machine m) =>
         m.Level > 0 || m.DamageBlueprint > 0 || m.HealthBlueprint > 0 ||
@@ -359,64 +496,22 @@
     private MachineStatic? StaticOf(Machine m) =>
         MachineService.Machines.FirstOrDefault(s => s.Id == m.Id);
 
-    private string NameOf(Machine m) => StaticOf(m)?.Name ?? string.Empty;
+    private string NameOf(Machine m) =>
+        StaticOf(m)?.Name ?? string.Empty;
 
-    private IEnumerable<Machine> SortedFilteredDetailMachines =>
-        ApplySort(ApplyDetailFilters(Data.Machines), _detailSort);
+    private bool _hasDetailFilter => _filterSpec is not null || _filterTarget is not null;
+    private bool _hasBulkFilter => _bulkFilterSpec is not null || _bulkFilterTarget is not null;
 
-    private IEnumerable<Machine> SortedFilteredBulkMachines =>
-        ApplySort(ApplyBulkFilters(Data.Machines), _bulkSort);
-
-    private IEnumerable<Machine> ApplyDetailFilters(IEnumerable<Machine> src)
-    {
-        if (!string.IsNullOrWhiteSpace(_search))
-        {
-            var s = _search;
-            src = src.Where(m => NameOf(m).Contains(s, StringComparison.OrdinalIgnoreCase));
-        }
-        if (_filterSpec is not null) src = src.Where(m => StaticOf(m)?.Specialization == _filterSpec);
-        if (_filterTarget is not null) src = src.Where(m => StaticOf(m)?.TargetType == _filterTarget);
-        return src;
-    }
-
-    private IEnumerable<Machine> ApplyBulkFilters(IEnumerable<Machine> src)
-    {
-        if (!string.IsNullOrWhiteSpace(_bulkSearch))
-        {
-            var s = _bulkSearch;
-            src = src.Where(m => NameOf(m).Contains(s, StringComparison.OrdinalIgnoreCase));
-        }
-        if (_bulkFilterSpec is not null) src = src.Where(m => StaticOf(m)?.Specialization == _bulkFilterSpec);
-        if (_bulkFilterTarget is not null) src = src.Where(m => StaticOf(m)?.TargetType == _bulkFilterTarget);
-        return src;
-    }
-
-    private IEnumerable<Machine> ApplySort(IEnumerable<Machine> src, SortOptionsMachine sort) => sort switch
-    {
-        SortOptionsMachine.Default => src,
-        SortOptionsMachine.NameZtoA => src.OrderByDescending(NameOf),
-        SortOptionsMachine.LevelHighToLow => src.OrderByDescending(m => m.Level),
-        SortOptionsMachine.LevelLowToHigh => src.OrderBy(m => m.Level),
-        SortOptionsMachine.RarityHighToLow => src.OrderByDescending(m => (int)m.Rarity),
-        SortOptionsMachine.RarityLowToHigh => src.OrderBy(m => (int)m.Rarity),
-        SortOptionsMachine.DamageBPHighToLow => src.OrderByDescending(m => m.DamageBlueprint),
-        SortOptionsMachine.DamageBPLowToHigh => src.OrderBy(m => m.DamageBlueprint),
-        SortOptionsMachine.HealthBPHighToLow => src.OrderByDescending(m => m.HealthBlueprint),
-        SortOptionsMachine.HealthBPLowToHigh => src.OrderBy(m => m.HealthBlueprint),
-        SortOptionsMachine.ArmorBPHighToLow => src.OrderByDescending(m => m.ArmorBlueprint),
-        SortOptionsMachine.ArmorBPLowToHigh => src.OrderBy(m => m.ArmorBlueprint),
-        SortOptionsMachine.ConfiguredFirst => src.OrderByDescending(IsConfigured),
-        SortOptionsMachine.UnconfiguredFirst => src.OrderBy(IsConfigured),
-        _ => src.OrderBy(NameOf),
-    };
-
-    private void ToggleBulkSort(SortOptionsMachine asc, SortOptionsMachine desc) =>
-        _bulkSort = _bulkSort == asc ? desc : asc;
+    private string MachineItemClass(Machine m) =>
+        m == _selected
+            ? "flex items-center gap-3 w-full px-3 py-2 bg-accent text-accent-foreground"
+            : "flex items-center gap-3 w-full px-3 py-2 hover:bg-accent/50 transition-colors";
 
     private RenderFragment ColIcon(SortOptionsMachine asc, SortOptionsMachine desc) => __builder =>
     {
-        var active = _bulkSort == asc || _bulkSort == desc;
-        var isAsc = _bulkSort == asc;
+        bool active = _bulkSort == asc || _bulkSort == desc;
+        bool isAsc = _bulkSort == asc;
+
         if (!active)
         {
             <svg class="w-3 h-3 opacity-30 inline" xmlns="http://www.w3.org/2000/svg"
@@ -439,9 +534,4 @@
             </svg>
         }
     };
-
-    private string MachineItemClass(Machine m) =>
-        m == _selected
-            ? "flex items-center gap-3 w-full px-3 py-2 bg-accent text-accent-foreground"
-            : "flex items-center gap-3 w-full px-3 py-2 hover:bg-accent/50 transition-colors";
 }
