@@ -1,5 +1,6 @@
 ﻿using BreakEternity;
 using InfatalsFirestoneTools.Models;
+using System.Collections.Frozen;
 
 namespace InfatalsFirestoneTools.Services.Optimizer;
 
@@ -9,18 +10,19 @@ public static class Calculator
 
     private static readonly BigDouble Base = new(1.05);
 
-    private static readonly double[] RiftBonuses =
+    private static readonly FrozenDictionary<ChaosRiftRank, double> RiftBonuses =
+    new Dictionary<ChaosRiftRank, double>
     {
-        0.00, // Bronze
-        0.00, // Silver
-        0.00, // Gold
-        0.00, // Pearl
-        0.01, // Sapphire
-        0.02, // Emerald
-        0.03, // Ruby
-        0.04, // Platinum
-        0.05  // Diamond
-    };
+        [ChaosRiftRank.Bronze] = 0.00,
+        [ChaosRiftRank.Silver] = 0.00,
+        [ChaosRiftRank.Gold] = 0.00,
+        [ChaosRiftRank.Pearl] = 0.00,
+        [ChaosRiftRank.Sapphire] = 0.01,
+        [ChaosRiftRank.Emerald] = 0.02,
+        [ChaosRiftRank.Ruby] = 0.03,
+        [ChaosRiftRank.Platinum] = 0.04,
+        [ChaosRiftRank.Diamond] = 0.05,
+    }.ToFrozenDictionary();
 
     // Power formula weights
     private const double PowerDmgWeight = 10.0;
@@ -55,7 +57,40 @@ public static class Calculator
     };
 
     // Enemy stat cache — avoids recomputing the same mission/difficulty repeatedly
-    private static readonly Dictionary<(int mission, CampaignDifficulty difficulty, double milestone), MachineStats> EnemyCache = [];
+    private static readonly FrozenDictionary<(int Mission, CampaignDifficulty Difficulty, double MilestoneBase), MachineStats>
+    EnemyCache = BuildEnemyCache();
+
+    private static FrozenDictionary<(int, CampaignDifficulty, double), MachineStats> BuildEnemyCache()
+    {
+        Dictionary<(int, CampaignDifficulty, double), MachineStats> dict = new();
+        double[] milestoneBases = [MilestoneScaleFactor, PowerRequirementMilestoneFactor];
+
+        foreach (double mb in milestoneBases)
+            foreach (CampaignDifficulty diff in Enum.GetValues<CampaignDifficulty>())
+                for (int m = 1; m <= 90; m++)
+                    dict[(m, diff, mb)] = ComputeEnemyStats(m, diff, mb);
+
+        return dict.ToFrozenDictionary();
+    }
+
+    // Rename the old implementation body to ComputeEnemyStats (private, no cache):
+    private static MachineStats ComputeEnemyStats(int mission, CampaignDifficulty difficulty, double milestoneBase)
+    {
+        BigDouble diffMult = DifficultyMultipliers[(int)difficulty];
+        int missionIdx = mission - 1;
+        int milestoneCount = missionIdx / 10;
+
+        BigDouble total = diffMult
+            * BigDouble.pow(MissionScaleFactor, missionIdx)
+            * BigDouble.pow(milestoneBase, milestoneCount);
+
+        return new MachineStats
+        {
+            Damage = new BigDouble(260) * total,
+            Health = new BigDouble(1560) * total,
+            Armor = new BigDouble(30) * total,
+        };
+    }
     // ── Public lookups ────────────────────────────────────────────────────────
 
     public static int GetGlobalRarityLevels(IReadOnlyList<Machine> machines)
@@ -110,7 +145,7 @@ public static class Calculator
             BigDouble.max(new BigDouble(Math.Floor((scarabLevel - 3.0) / 2.0) + 1), BigDouble.dZero) * 0.002,
             BigDouble.dOne);
 
-        BigDouble riftBonus = new(RiftBonuses[(int)riftRank]);
+        BigDouble riftBonus = new(RiftBonuses[riftRank]);
         BigDouble mechFuryBonus = BigDouble.pow(Base, globalRarityLevels) - 1;
         BigDouble total = (1 + mechFuryBonus) * (1 + scarabBonus) * (1 + riftBonus);
 
@@ -171,27 +206,7 @@ public static class Calculator
 
     public static MachineStats EnemyStats(int mission, CampaignDifficulty difficulty, double milestoneBase = MilestoneScaleFactor)
     {
-        (int mission, CampaignDifficulty difficulty, double milestoneBase) key = (mission, difficulty, milestoneBase);
-        if (EnemyCache.TryGetValue(key, out MachineStats? cached))
-            return cached;
-
-        BigDouble diffMult = DifficultyMultipliers[(int)difficulty];
-        int missionIdx = mission - 1;
-        int milestoneCount = missionIdx / 10;
-
-        BigDouble total = diffMult
-            * BigDouble.pow(MissionScaleFactor, missionIdx)
-            * BigDouble.pow(milestoneBase, milestoneCount);
-
-        MachineStats stats = new()
-        {
-            Damage = new BigDouble(260) * total,
-            Health = new BigDouble(1560) * total,
-            Armor = new BigDouble(30) * total,
-        };
-
-        EnemyCache[key] = stats;
-        return stats;
+        return EnemyCache[(mission, difficulty, milestoneBase)];
     }
 
     public static BigDouble RequiredPower(int mission, CampaignDifficulty difficulty)

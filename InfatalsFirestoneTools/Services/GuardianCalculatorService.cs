@@ -2,6 +2,7 @@
 
 using InfatalsFirestoneTools.Models;
 using InfatalsFirestoneTools.Resources;
+using System.Diagnostics;
 
 public static class GuardianCalculatorService
 {
@@ -172,8 +173,8 @@ public static class GuardianCalculatorService
 
     public static int ExpForLevel(GuardianEvolution evolution, GuardianRank rank, int level)
     {
-        if (level is < 1 or > 9)
-            throw new ArgumentOutOfRangeException(nameof(level), LanguageResource.LevelMustBeOneToNine);
+        Debug.Assert(level is >= 1 and <= 9, $"{LanguageResource.LevelMustBeOneToNine} {level}");
+        level = Math.Clamp(level, 1, 9);
 
         int rankIdx = (int)rank;
 
