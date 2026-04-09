@@ -67,6 +67,6 @@
 *.wasm binary
 *.blat binary
 *.dat binary
-*.js text eol=lf
-*.css text eol=lf
-*.html text eol=lf
+*.js binary
+*.css binary
+*.html binary
