@@ -4,6 +4,7 @@
 @using InfatalsFirestoneTools.Services
 @using InfatalsFirestoneTools.Services.Optimizer
 @using System.Text.RegularExpressions
+@using System.Globalization
 @inject IStringLocalizer<LanguageResource> L
 
 <div class="space-y-4">
@@ -227,6 +228,13 @@
     private static string FormatPower(BigDouble value)
     {
         var returnedString = value.toExponential(2);
-        return Regex.Replace(returnedString, @"([eE][\+\-])0+(\d)", "$1$2");
+
+        // removes the + and 0's from the beginning of a number like 1.1e+01 > 1.1e1
+        var cleanedString = Regex.Replace(returnedString, @"([eE])\+?(-?)0+(\d+)", "$1$2$3");
+
+        // uses , or . depending on the culture
+        var localSeparator = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+
+        return cleanedString.Replace(".", localSeparator);
     }
 }
