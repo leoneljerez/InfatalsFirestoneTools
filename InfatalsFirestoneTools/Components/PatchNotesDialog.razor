@@ -1,5 +1,6 @@
 ﻿@using InfatalsFirestoneTools.Models
 @using InfatalsFirestoneTools.Resources
+@using System.Globalization
 @inject IStringLocalizer<LanguageResource> L
 
 <div class="space-y-6 py-2 max-h-[30vh] overflow-y-auto">
@@ -11,7 +12,7 @@
                     @($"v{note.Version}")
                 </BbBadge>
                 <span class="text-xs text-muted-foreground">
-                    @note.Date.ToString("MMMM d, yyyy")
+                    @note.Date.ToString("D", CultureInfo.CurrentUICulture)
                 </span>
                 @if (index == 0)
                 {

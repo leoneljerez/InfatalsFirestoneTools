@@ -10,6 +10,11 @@ public static class PatchNotes
     /// </summary>
     public static readonly IReadOnlyList<PatchNote> All =
     [
+        new("1.1.3", new DateOnly(2026, 4, 9),
+        [
+            "Add locale formatting for Date in Patch Notes",
+            "Add locale formatting for numbers in Results",
+        ]),
         new("1.1.2", new DateOnly(2026, 4, 9),
         [
             "More efficient sorting in Machine and Hero tab",
