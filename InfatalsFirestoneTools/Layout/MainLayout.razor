@@ -12,7 +12,7 @@
 @inject IStringLocalizer<LanguageResource> L
 
 <BbSidebarProvider>
-    <BbSidebar>
+    <BbSidebar class="flex flex-col h-screen">
 
         <BbSidebarHeader>
             <BbSidebarMenu>
@@ -29,7 +29,7 @@
             </BbSidebarMenu>
         </BbSidebarHeader>
 
-        <BbSidebarContent>
+        <BbSidebarContent class="flex-1 overflow-y-auto">
             <BbSidebarGroup>
                 <BbSidebarGroupLabel>@L["Machine"]</BbSidebarGroupLabel>
                 <BbSidebarMenu>
@@ -54,7 +54,7 @@
             </BbSidebarGroup>
         </BbSidebarContent>
 
-        <BbSidebarFooter>
+        <BbSidebarFooter class="shrink-0">
             <BbSidebarMenu>
                 <BbSidebarMenuItem>
                     <BbSidebarMenuButton Tooltip="Save / Load" OnClick="() => _saveLoadOpen = true">
@@ -86,7 +86,7 @@
     </BbSidebar>
 
     <BbSidebarInset>
-        <header class="flex h-12 items-center gap-2 px-4 shrink-0">
+        <header class="sticky top-0 z-10 flex h-12 items-center gap-2 px-4 shrink-0">
             <BbSidebarTrigger Class="-ml-1" />
         </header>
         <main class="flex-1 p-6">

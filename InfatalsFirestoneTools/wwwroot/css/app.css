@@ -301,6 +301,9 @@
   .z-3 {
     z-index: 3;
   }
+  .z-10 {
+    z-index: 10;
+  }
   .z-40 {
     z-index: 40;
   }
@@ -651,6 +654,9 @@
   }
   .h-full {
     height: 100%;
+  }
+  .h-screen {
+    height: 100vh;
   }
   .max-h-72 {
     max-height: calc(var(--spacing) * 72);
