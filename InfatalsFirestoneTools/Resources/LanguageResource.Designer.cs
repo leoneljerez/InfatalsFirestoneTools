@@ -367,6 +367,15 @@ namespace InfatalsFirestoneTools.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Blueprint max levels update automatically based on machine level (increases every 5 levels).
+        /// </summary>
+        public static string BlueprintLevelFormulaExplanation {
+            get {
+                return ResourceManager.GetString("BlueprintLevelFormulaExplanation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Blueprint Levels.
         /// </summary>
         public static string BlueprintLevels {
@@ -633,6 +642,15 @@ namespace InfatalsFirestoneTools.Resources {
         public static string CurrentExp {
             get {
                 return ResourceManager.GetString("CurrentExp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current max blueprint level:.
+        /// </summary>
+        public static string CurrentMaxBlueprintLevel {
+            get {
+                return ResourceManager.GetString("CurrentMaxBlueprintLevel", resourceCulture);
             }
         }
         

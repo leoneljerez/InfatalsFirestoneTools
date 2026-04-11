@@ -219,6 +219,9 @@
   <data name="BlazeLabel" xml:space="preserve">
     <value>Blaze</value>
   </data>
+  <data name="BlueprintLevelFormulaExplanation" xml:space="preserve">
+    <value>Blueprint max levels update automatically based on machine level (increases every 5 levels)</value>
+  </data>
   <data name="BlueprintLevels" xml:space="preserve">
     <value>Blueprint Levels</value>
   </data>
@@ -308,6 +311,9 @@
   </data>
   <data name="CurrentExp" xml:space="preserve">
     <value>Current Exp</value>
+  </data>
+  <data name="CurrentMaxBlueprintLevel" xml:space="preserve">
+    <value>Current max blueprint level:</value>
   </data>
   <data name="CurrentPosition" xml:space="preserve">
     <value>Current Position</value>
