@@ -524,7 +524,7 @@
 
         return sort switch
         {
-            SortOptionsHero.Default => [.. source.OrderBy(h => (int)(StaticOf(h)?.Type ?? HeroType.Hero)).ThenBy(h => h.Id)],
+            SortOptionsHero.Default => [.. source.OrderBy(h => (int)(StaticOf(h)?.Type ?? HeroType.Hero))],
             SortOptionsHero.DamageHighToLow => [.. source.OrderByDescending(h => h.DamagePercentage)],
             SortOptionsHero.DamageLowToHigh => [.. source.OrderBy(h => h.DamagePercentage)],
             SortOptionsHero.HealthHighToLow => [.. source.OrderByDescending(h => h.HealthPercentage)],
