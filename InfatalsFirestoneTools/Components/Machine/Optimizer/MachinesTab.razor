@@ -317,7 +317,18 @@
                                             <BbSelectContent>
                                                 @foreach (var r in Enum.GetValues<MachineRarity>())
                                                 {
-                                                    <BbSelectItem Value="@r" Disabled="@(r > GetMaxRarity(m.Level))" Text="@L[r.ToString()]">@L[r.ToString()]</BbSelectItem>
+                                                    var maxRarity = GetMaxRarity(m.Level);
+                                                    var isDisabled = r > maxRarity;
+
+                                                    <BbSelectItem Value="@r"
+                                                                  Disabled="@isDisabled"
+                                                                  Text="@(isDisabled
+                                                                                                ? $"{L[r.ToString()]} ( Level ≥ {GetRequiredLevel(r)} )"
+                                                                                                : L[r.ToString()])">
+                                                        @(isDisabled
+                                                            ? $"{L[r.ToString()]} ( Level ≥ {GetRequiredLevel(r)} )"
+                                                            : L[r.ToString()])
+                                                    </BbSelectItem>
                                                 }
                                             </BbSelectContent>
                                         </BbSelect>
@@ -571,5 +582,21 @@
             default:
                 return MachineRarity.Common;
         }
+    }
+
+    private int GetRequiredLevel(MachineRarity rarity)
+    {
+        return rarity switch
+        {
+            MachineRarity.Celestial => 500,
+            MachineRarity.Angel => 400,
+            MachineRarity.Titan => 310,
+            MachineRarity.Mythic => 230,
+            MachineRarity.Legendary => 160,
+            MachineRarity.Epic => 100,
+            MachineRarity.Rare => 50,
+            MachineRarity.Uncommon => 10,
+            _ => 0
+        };
     }
 }

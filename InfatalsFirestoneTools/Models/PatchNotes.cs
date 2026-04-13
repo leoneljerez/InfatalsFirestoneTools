@@ -10,6 +10,12 @@ public static class PatchNotes
     /// </summary>
     public static readonly IReadOnlyList<PatchNote> All =
     [
+        new("1.1.4", new DateOnly(2026, 4, 13),
+        [
+            "Add max blueprint for current machine level",
+            "Add max rarity for current machine level",
+            "Change order of mercenaries to align with wiki",
+        ]),
         new("1.1.3", new DateOnly(2026, 4, 9),
         [
             "Add locale formatting for Date in Patch Notes",

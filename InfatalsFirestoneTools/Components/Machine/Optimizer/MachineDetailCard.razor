@@ -57,7 +57,18 @@
                         <BbSelectContent>
                             @foreach (var rarity in Enum.GetValues<MachineRarity>())
                             {
-                                <BbSelectItem Value="@rarity" Disabled="@(rarity > GetMaxRarity(Machine.Level))" Text="@L[rarity.ToString()]">@L[rarity.ToString()]</BbSelectItem>
+                                var maxRarity = GetMaxRarity(Machine.Level);
+                                var isDisabled = rarity > maxRarity;
+
+                                <BbSelectItem Value="@rarity"
+                                              Disabled="@isDisabled"
+                                              Text="@(isDisabled
+                                                                            ? $"{L[rarity.ToString()]} ( Level ≥ {GetRequiredLevel(rarity)} )"
+                                                                            : L[rarity.ToString()])">
+                                    @(isDisabled
+                                        ? $"{L[rarity.ToString()]} ( Level ≥ {GetRequiredLevel(rarity)} )"
+                                        : L[rarity.ToString()])
+                                </BbSelectItem>
                             }
                         </BbSelectContent>
                     </BbSelect>
@@ -160,5 +171,21 @@
             default:
                 return MachineRarity.Common;
         }
+    }
+
+    private int GetRequiredLevel(MachineRarity rarity)
+    {
+        return rarity switch
+        {
+            MachineRarity.Celestial => 500,
+            MachineRarity.Angel => 400,
+            MachineRarity.Titan => 310,
+            MachineRarity.Mythic => 230,
+            MachineRarity.Legendary => 160,
+            MachineRarity.Epic => 100,
+            MachineRarity.Rare => 50,
+            MachineRarity.Uncommon => 10,
+            _ => 0
+        };
     }
 }
