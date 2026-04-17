@@ -10,6 +10,10 @@ public static class PatchNotes
     /// </summary>
     public static readonly IReadOnlyList<PatchNote> All =
     [
+        new("1.1.5", new DateOnly(2026, 4, 17),
+        [
+            "Change Hero stats to align with new patch (9.0.7a)",
+        ]),
         new("1.1.4", new DateOnly(2026, 4, 13),
         [
             "Add max blueprint for current machine level",
