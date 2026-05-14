@@ -10,6 +10,10 @@ public static class PatchNotes
     /// </summary>
     public static readonly IReadOnlyList<PatchNote> All =
     [
+        new("1.1.6", new DateOnly(2026, 5, 14),
+        [
+            "Package updates which includes bug fixes",
+        ]),
         new("1.1.5", new DateOnly(2026, 4, 17),
         [
             "Change Hero stats to align with new patch (9.0.7a)",
