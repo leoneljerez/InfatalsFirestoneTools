@@ -10,6 +10,11 @@ public static class PatchNotes
     /// </summary>
     public static readonly IReadOnlyList<PatchNote> All =
     [
+        new("1.1.7", new DateOnly(2026, 5, 15),
+        [
+            "Fixed issue with certain Machine Rank Images",
+            "Added green text to blueprints when max value is reached",
+        ]),
         new("1.1.6", new DateOnly(2026, 5, 14),
         [
             "Package updates which includes bug fixes",

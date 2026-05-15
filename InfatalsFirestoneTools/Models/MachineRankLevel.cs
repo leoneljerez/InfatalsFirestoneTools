@@ -75,7 +75,7 @@ namespace InfatalsFirestoneTools.Models
             (MachineLevelRankType.Wings, MachineLevelRankTier.Gold) => "wings23Gold",
             (MachineLevelRankType.Wings, MachineLevelRankTier.Platinum) => "wings24Platinum",
             (MachineLevelRankType.Wings, MachineLevelRankTier.Ruby) => "wings25Ruby",
-            (MachineLevelRankType.Wings, MachineLevelRankTier.Sapphire) => "wings26Sapphire",
+            (MachineLevelRankType.Wings, MachineLevelRankTier.Sapphire) => "wings26Sepphire",
             (MachineLevelRankType.Wings, MachineLevelRankTier.Pearl) => "wings27Pearl",
             (MachineLevelRankType.Wings, MachineLevelRankTier.Diamond) => "wings28Diamond",
             (MachineLevelRankType.Wings, MachineLevelRankTier.Starlight) => "wings29Starlight",

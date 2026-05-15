@@ -343,19 +343,19 @@
                                         <BbNumericInput TValue="int" Min="0" Max="GetMaxBlueprint(m.Level)" Step="1" AllowNegative="false"
                                                         ShowButtons="false" Value="@m.DamageBlueprint"
                                                         ValueChanged="async v => { m.DamageBlueprint = v; await OnChanged.InvokeAsync(); }"
-                                                        DebounceInterval="500" Class="w-full h-8 text-xs" />
+                                                        DebounceInterval="500" Class="@GetBlueprintClass(m.DamageBlueprint, m.Level)" />
                                     </td>
                                     <td class="px-3 py-2">
                                         <BbNumericInput TValue="int" Min="0" Max="GetMaxBlueprint(m.Level)" Step="1" AllowNegative="false"
                                                         ShowButtons="false" Value="@m.HealthBlueprint"
                                                         ValueChanged="async v => { m.HealthBlueprint = v; await OnChanged.InvokeAsync(); }"
-                                                        DebounceInterval="500" Class="w-full h-8 text-xs" />
+                                                        DebounceInterval="500" Class="@GetBlueprintClass(m.HealthBlueprint, m.Level)" />
                                     </td>
                                     <td class="px-3 py-2">
                                         <BbNumericInput TValue="int" Min="0" Max="GetMaxBlueprint(m.Level)" Step="1" AllowNegative="false"
                                                         ShowButtons="false" Value="@m.ArmorBlueprint"
                                                         ValueChanged="async v => { m.ArmorBlueprint = v; await OnChanged.InvokeAsync(); }"
-                                                        DebounceInterval="500" Class="w-full h-8 text-xs" />
+                                                        DebounceInterval="500" Class="@GetBlueprintClass(m.ArmorBlueprint, m.Level)" />
                                     </td>
                                     <td class="px-3 py-2 text-center">
                                         @if (IsConfigured(m))
@@ -557,6 +557,15 @@
     private int GetMaxBlueprint(int level)
     {
         return 5 + (level / 5 * 5);
+    }
+
+    private string GetBlueprintClass(int value, int level)
+    {
+        var max = GetMaxBlueprint(level);
+
+        return value >= max
+       ? "w-full h-8 text-xs text-green-600"
+       : "w-full h-8 text-xs";
     }
 
     private MachineRarity GetMaxRarity(int level)

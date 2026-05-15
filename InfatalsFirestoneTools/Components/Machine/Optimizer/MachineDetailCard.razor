@@ -84,15 +84,15 @@
                 <div class="grid grid-cols-3 gap-3">
                     <div class="space-y-2">
                         <BbLabel Class="text-xs">@L["Damage"]</BbLabel>
-                        <BbNumericInput TValue="int" Min="0" Max="GetMaxBlueprint(Machine.Level)" Step="1" AllowNegative="false" ShowButtons="true" Value="@Machine.DamageBlueprint" ValueChanged="HandleDamageBlueprintChanged" DebounceInterval="300" Class="w-full" />
+                         <BbNumericInput TValue="int" Min="0" Max="GetMaxBlueprint(Machine.Level)" Step="1" AllowNegative="false" ShowButtons="true" Value="@Machine.DamageBlueprint" ValueChanged="HandleDamageBlueprintChanged" DebounceInterval="300" Class="@GetBlueprintClass(Machine.DamageBlueprint, Machine.Level)" />                  
                     </div>
                     <div class="space-y-2">
                         <BbLabel Class="text-xs">@L["Health"]</BbLabel>
-                        <BbNumericInput TValue="int" Min="0" Max="GetMaxBlueprint(Machine.Level)" Step="1" AllowNegative="false" ShowButtons="true" Value="@Machine.HealthBlueprint" ValueChanged="HandleHealthBlueprintChanged" DebounceInterval="300" Class="w-full" />
+                        <BbNumericInput TValue="int" Min="0" Max="GetMaxBlueprint(Machine.Level)" Step="1" AllowNegative="false" ShowButtons="true" Value="@Machine.HealthBlueprint" ValueChanged="HandleHealthBlueprintChanged" DebounceInterval="300" Class="@GetBlueprintClass(Machine.HealthBlueprint, Machine.Level)" />                       
                     </div>
                     <div class="space-y-2">
                         <BbLabel Class="text-xs">@L["Armor"]</BbLabel>
-                        <BbNumericInput TValue="int" Min="0" Max="GetMaxBlueprint(Machine.Level)" Step="1" AllowNegative="false" ShowButtons="true" Value="@Machine.ArmorBlueprint" ValueChanged="HandleArmorBlueprintChanged" DebounceInterval="300" Class="w-full" />
+                        <BbNumericInput TValue="int" Min="0" Max="GetMaxBlueprint(Machine.Level)" Step="1" AllowNegative="false" ShowButtons="true" Value="@Machine.ArmorBlueprint" ValueChanged="HandleArmorBlueprintChanged" DebounceInterval="300" Class="@GetBlueprintClass(Machine.ArmorBlueprint, Machine.Level)" />                            
                     </div>
                 </div>
             </div>
@@ -146,6 +146,15 @@
     private int GetMaxBlueprint(int level)
     {
         return 5 + (level / 5 * 5);
+    }
+
+    private string GetBlueprintClass(int value, int level)
+    {
+        var max = GetMaxBlueprint(level);
+
+        return value >= max
+       ? "w-full text-green-600"
+       : "w-full";
     }
 
     private MachineRarity GetMaxRarity(int level)
