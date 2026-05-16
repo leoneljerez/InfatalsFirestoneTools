@@ -44,19 +44,19 @@
     </BbCard>
 
     <div class="flex items-center gap-1 rounded-lg border bg-muted p-1 w-fit">
-        <BbToggleGroup TValue="string" @bind-Value="_viewMode" Type="ToggleGroupType.Single">
-            <BbToggleGroupItem Value="@("detail")">
+        <BbToggleGroup TValue="bool" @bind-Value="ViewModeToggle" Type="ToggleGroupType.Single">
+            <BbToggleGroupItem Value="true">
                 <LucideIcon Name="layout-panel-left" Size="14" Class="mr-1.5" />
                 @L["Detail"]
             </BbToggleGroupItem>
-            <BbToggleGroupItem Value="@("bulk")">
+            <BbToggleGroupItem Value="false">
                 <LucideIcon Name="table" Size="14" Class="mr-1.5" />
                 @L["BulkEdit"]
             </BbToggleGroupItem>
         </BbToggleGroup>
     </div>
 
-    @if (_viewMode == "detail")
+    @if (ViewMode)
     {
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div class="lg:col-span-1">
@@ -383,11 +383,11 @@
 
 @code {
     [Parameter, EditorRequired] public OptimizerData Data { get; set; } = null!;
+    [Parameter, EditorRequired] public bool ViewMode { get; set; }
     [Parameter, EditorRequired] public EventCallback OnChanged { get; set; }
+    [Parameter] public EventCallback<bool> ViewModeChanged { get; set; }
 
     // ── View state ────────────────────────────────────────────────────────────
-
-    private string _viewMode = "detail";
     private Machine? _selected;
 
     // Detail view
@@ -419,6 +419,19 @@
               ?? Data.Machines.FirstOrDefault();
 
         RefreshLists();
+    }
+
+    private bool ViewModeToggle
+    {
+        get => ViewMode;
+        set
+        {
+            if (ViewMode == value)
+                return;
+
+            ViewMode = value;
+            ViewModeChanged.InvokeAsync(value);
+        }
     }
 
     // ── State mutators — each calls RefreshLists() ────────────────────────────

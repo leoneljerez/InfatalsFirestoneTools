@@ -31,13 +31,13 @@
                 </BbTabsList>
 
                 <BbTabsContent Value="machines">
-                    <MachinesTab Data="_data" OnChanged="SaveAsync" />
+                    <MachinesTab Data="_data" OnChanged="SaveAsync" @bind-ViewMode="_isDetailedModeMachines" />
                 </BbTabsContent>
                 <BbTabsContent Value="tavern">
                     <TavernTab Data="_data" OnChanged="SaveAsync" />
                 </BbTabsContent>
                 <BbTabsContent Value="heroes">
-                    <HeroesTab Data="_data" OnChanged="SaveAsync" />
+                    <HeroesTab Data="_data" OnChanged="SaveAsync" @bind-ViewMode="_isDetailedModeHeroes" />
                 </BbTabsContent>
                 <BbTabsContent Value="artifacts">
                     <ArtifactsTab Data="_data" OnChanged="SaveAsync" />
@@ -84,6 +84,8 @@
     private string _activeTab = "machines";
     private OptimizeMode _optimizeMode;
     private bool _optimizing;
+    private bool _isDetailedModeHeroes = true;
+    private bool _isDetailedModeMachines = true;
     private OptimizationResult? _result;
 
     protected override async Task OnInitializedAsync()

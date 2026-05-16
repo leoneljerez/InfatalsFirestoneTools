@@ -10,6 +10,10 @@ public static class PatchNotes
     /// </summary>
     public static readonly IReadOnlyList<PatchNote> All =
     [
+        new("1.1.8", new DateOnly(2026, 5, 16),
+        [
+            "Save Detail/BulkEdit toggle state for session",
+        ]),
         new("1.1.7", new DateOnly(2026, 5, 15),
         [
             "Fixed issue with certain Machine Rank Images",
