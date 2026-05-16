@@ -14,6 +14,7 @@ public static class PatchNotes
         [
             "Fixed issue with certain Machine Rank Images",
             "Added green text to blueprints when max value is reached",
+            "Upgraded Tailwind to 4.3.0"
         ]),
         new("1.1.6", new DateOnly(2026, 5, 14),
         [
