@@ -33,7 +33,7 @@
                                      @oninput="e => SetSearch(e.Value?.ToString() ?? string.Empty)" />
                             <div class="flex gap-2">
                                 <BbSelect TValue="SortOptionsHero" Value="@_detailSort"
-                                          ValueChanged="SetDetailSort" Class="flex-1">
+                                          ValueChanged="SetDetailSort" Class="flex-1" DisplayTextSelector="@((SortOptionsHero opt) => L[opt.ToString()])">
                                     <BbSelectTrigger Class="h-8 text-xs flex-1">
                                         <BbSelectValue Placeholder="@L["SortBy"]" />
                                     </BbSelectTrigger>
@@ -405,7 +405,7 @@
 
     // Detail view
     private string _search = string.Empty;
-    private SortOptionsHero _detailSort = SortOptionsHero.Default;
+    private SortOptionsHero _detailSort = SortOptionsHero.ConfiguredFirst;
     private HeroType? _filterType;
     private HeroClass? _filterClass;
     private HeroAttackStyle? _filterAttackStyle;
@@ -415,7 +415,7 @@
 
     // Bulk view
     private string _bulkSearch = string.Empty;
-    private SortOptionsHero _bulkSort = SortOptionsHero.Default;
+    private SortOptionsHero _bulkSort = SortOptionsHero.ConfiguredFirst;
     private HeroType? _bulkFilterType;
     private HeroClass? _bulkFilterClass;
     private HeroAttackStyle? _bulkFilterAttackStyle;

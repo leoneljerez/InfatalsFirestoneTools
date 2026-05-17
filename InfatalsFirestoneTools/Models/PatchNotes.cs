@@ -10,6 +10,10 @@ public static class PatchNotes
     /// </summary>
     public static readonly IReadOnlyList<PatchNote> All =
     [
+        new("1.1.9", new DateOnly(2026, 5, 17),
+        [
+            "Default to the Configured sorting value",
+        ]),
         new("1.1.8", new DateOnly(2026, 5, 16),
         [
             "Save Detail/BulkEdit toggle state for session",

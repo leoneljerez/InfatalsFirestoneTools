@@ -70,7 +70,7 @@
                                      @oninput="e => SetSearch(e.Value?.ToString() ?? string.Empty)" />
                             <div class="flex gap-2">
                                 <BbSelect TValue="SortOptionsMachine" Value="@_detailSort"
-                                          ValueChanged="SetDetailSort" Class="flex-1">
+                                          ValueChanged="SetDetailSort" Class="flex-1" DisplayTextSelector="@((SortOptionsMachine opt) => L[opt.ToString()])">
                                     <BbSelectTrigger Class="h-8 text-xs flex-1">
                                         <BbSelectValue Placeholder="@L["SortBy"]" />
                                     </BbSelectTrigger>
@@ -392,14 +392,14 @@
 
     // Detail view
     private string _search = string.Empty;
-    private SortOptionsMachine _detailSort = SortOptionsMachine.Default;
+    private SortOptionsMachine _detailSort = SortOptionsMachine.ConfiguredFirst;
     private MachineSpecialization? _filterSpec;
     private MachineTargetType? _filterTarget;
     private bool _detailFilterOpen;
 
     // Bulk view
     private string _bulkSearch = string.Empty;
-    private SortOptionsMachine _bulkSort = SortOptionsMachine.Default;
+    private SortOptionsMachine _bulkSort = SortOptionsMachine.ConfiguredFirst;
     private MachineSpecialization? _bulkFilterSpec;
     private MachineTargetType? _bulkFilterTarget;
     private bool _bulkFilterOpen;
