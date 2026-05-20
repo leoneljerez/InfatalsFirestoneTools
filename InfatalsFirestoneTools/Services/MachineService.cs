@@ -5,13 +5,14 @@ namespace InfatalsFirestoneTools.Services
 {
     public class MachineService
     {
-        public IReadOnlyList<MachineStatic> Machines { get; }
+        public FrozenDictionary<int, MachineStatic> Machines { get; }
+        public IReadOnlyList<MachineStatic> MachinesRaw { get; }
 
         public MachineService(AbilityService abilityService)
         {
             FrozenDictionary<string, Ability> ab = abilityService.Abilities;
 
-            Machines =
+            MachinesRaw =
             [
                 new MachineStatic{ Id = 1, Name = "AegisLabel", Specialization = MachineSpecialization.Damage, TargetType = MachineTargetType.Single, Image = "img/machines/aegis164", AbilityKey = "dmg_1x_160", BaseDamage = 890, BaseHealth = 5100, BaseArmor = 115 },
                 new MachineStatic{ Id = 2, Name = "CloudfistLabel", Specialization = MachineSpecialization.Damage, TargetType = MachineTargetType.Single, Image = "img/machines/baloon164", AbilityKey = "dmg_1x_200", BaseDamage = 880, BaseHealth = 6500, BaseArmor = 125 },
@@ -29,10 +30,12 @@ namespace InfatalsFirestoneTools.Services
             ];
 
             // Attach abilities — create new records with Ability set
-            Machines = Machines
+            MachinesRaw = MachinesRaw
                 .Select(m => m with { Ability = ab.GetValueOrDefault(m.AbilityKey) })
                 .ToList()
                 .AsReadOnly();
+
+            Machines = MachinesRaw.ToFrozenDictionary(m => m.Id);
         }
     }
 }

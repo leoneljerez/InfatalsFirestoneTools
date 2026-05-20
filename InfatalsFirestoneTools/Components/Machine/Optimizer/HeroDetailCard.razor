@@ -94,7 +94,7 @@
 
     protected override void OnParametersSet()
     {
-        _static = HeroService.Heroes.FirstOrDefault(s => s.Id == Hero.Id);
+        _static = HeroService.Heroes.GetValueOrDefault(Hero.Id);
     }
 
     private BadgeVariant SpecBadgeVariant => _static?.Specialization switch

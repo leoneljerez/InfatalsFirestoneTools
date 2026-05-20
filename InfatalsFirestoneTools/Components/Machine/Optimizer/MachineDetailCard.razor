@@ -117,7 +117,7 @@
 
     protected override void OnParametersSet()
     {
-        _static = MachineService.Machines.FirstOrDefault(s => s.Id == Machine.Id);
+        _static = MachineService.Machines.GetValueOrDefault(Machine.Id);
     }
 
     private BadgeVariant SpecBadgeVariant => _static?.Specialization switch

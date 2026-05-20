@@ -281,10 +281,10 @@ namespace InfatalsFirestoneTools.Services
             List<Machine> machines = machineService.Machines
                 .Select(s =>
                 {
-                    _ = machineMap.TryGetValue(s.Id, out ProfileMachine? row);
+                    _ = machineMap.TryGetValue(s.Key, out ProfileMachine? row);
                     return new Machine
                     {
-                        Id = s.Id,
+                        Id = s.Key,
                         Rarity = row?.Rarity ?? MachineRarity.Common,
                         Level = row?.Level ?? 0,
                         DamageBlueprint = row?.DamageBlueprint ?? 0,
@@ -299,10 +299,10 @@ namespace InfatalsFirestoneTools.Services
             List<Hero> heroes = heroService.Heroes
                 .Select(s =>
                 {
-                    _ = heroMap.TryGetValue(s.Id, out ProfileHero? row);
+                    _ = heroMap.TryGetValue(s.Key, out ProfileHero? row);
                     return new Hero
                     {
-                        Id = s.Id,
+                        Id = s.Key,
                         DamagePercentage = row?.DamagePercentage ?? 0,
                         HealthPercentage = row?.HealthPercentage ?? 0,
                         ArmorPercentage = row?.ArmorPercentage ?? 0,

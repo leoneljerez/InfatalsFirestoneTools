@@ -149,7 +149,7 @@
                             {
                                 var hStatic = StaticOf(h);
                                 if (hStatic is null) continue;
-                                <button class="@HeroItemClass(h)" @onclick="() => _selected = h">
+                                <button @key="h.Id" class="@HeroItemClass(h)" @onclick="() => _selected = h">
                                     <picture>
                                         <source type="image/jxl" srcset="@($"{hStatic.Image}.jxl")" />
                                         <source type="image/avif" srcset="@($"{hStatic.Image}.avif")" />
@@ -341,7 +341,7 @@
                             {
                                 var hStatic = StaticOf(h);
                                 if (hStatic is null) continue;
-                                <tr class="border-b last:border-b-0 hover:bg-muted/20 transition-colors">
+                                <tr @key="h.Id" class="border-b last:border-b-0 hover:bg-muted/20 transition-colors">
                                     <td class="px-3 py-2">
                                         <div class="flex items-center gap-2">
                                             <picture>
@@ -556,7 +556,7 @@
         h.DamagePercentage > 0 || h.HealthPercentage > 0 || h.ArmorPercentage > 0;
 
     private HeroStatic? StaticOf(Hero h) =>
-        HeroService.Heroes.FirstOrDefault(s => s.Id == h.Id);
+        HeroService.Heroes.GetValueOrDefault(h.Id);
 
     private string NameOf(Hero h) =>
         StaticOf(h)?.Name ?? string.Empty;

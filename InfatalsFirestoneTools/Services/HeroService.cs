@@ -1,8 +1,11 @@
 ﻿using InfatalsFirestoneTools.Models;
+using System.Collections.Frozen;
 
 public class HeroService
 {
-    public IReadOnlyList<HeroStatic> Heroes { get; } =
+    public FrozenDictionary<int, HeroStatic> Heroes { get; }
+
+    public IReadOnlyList<HeroStatic> HeroesRaw { get; } =
     [
         new HeroStatic{ Id = 1, Name = "BorisLabel", Type = HeroType.Hero, Class = HeroClass.Warrior, AttackStyle = HeroAttackStyle.Melee, Specialization = HeroSpecialization.Tank, Resource = HeroResource.Rage, Image = "img/heroes/avatarBoris164", BaseDamage = 62, BaseHealth = 3150, BaseArmor = 26, AttackSpeed = 2.3, CriticalChance = 0.02, CriticalDamage = 0.5, DodgeChance = 0.13 },
         new HeroStatic{ Id = 2, Name = "BurtLabel", Type = HeroType.Hero, Class = HeroClass.Rogue, AttackStyle = HeroAttackStyle.Ranged, Specialization = HeroSpecialization.Damage, Resource = HeroResource.Energy, Image = "img/heroes/avatarBurt164", BaseDamage = 82, BaseHealth = 1650, BaseArmor = 12, AttackSpeed = 1.5, CriticalChance = 0.15, CriticalDamage = 1.4, DodgeChance = 0.04 },
@@ -42,4 +45,9 @@ public class HeroService
         new HeroStatic{ Id = 36, Name = "KramatakLabel", Type = HeroType.God, Class = HeroClass.God, AttackStyle = HeroAttackStyle.Ranged, Specialization = HeroSpecialization.Damage, Resource = HeroResource.Energy, Image = "img/heroes/avatarKramatak164", BaseDamage = 111, BaseHealth = 2460, BaseArmor = 16, AttackSpeed = 1.5, CriticalChance = 0.18, CriticalDamage = 1.7, DodgeChance = 0.06 },
         new HeroStatic{ Id = 37, Name = "ArvieLabel", Type = HeroType.Mercenary, Class = HeroClass.Rogue, AttackStyle = HeroAttackStyle.Ranged, Specialization = HeroSpecialization.Damage, Resource = HeroResource.Energy, Image = "img/heroes/avatarArvie164", BaseDamage = 83, BaseHealth = 1650, BaseArmor = 12, AttackSpeed = 1.5, CriticalChance = 0.15, CriticalDamage = 1.6, DodgeChance = 0.04 },
     ];
+
+    public HeroService()
+    {
+        Heroes = HeroesRaw.ToFrozenDictionary(h => h.Id);
+    }
 }

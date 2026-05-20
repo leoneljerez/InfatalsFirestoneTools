@@ -10,7 +10,12 @@ public static class PatchNotes
     /// </summary>
     public static readonly IReadOnlyList<PatchNote> All =
     [
-        new("1.2.0", new DateOnly(2026, 5, 17),
+        new("1.2.1", new DateOnly(2026, 5, 20),
+        [
+            "Part 2 of Optimizations",
+            "O(1) lookups for hero/machine static data with FrozenDictionary"
+        ]),
+        new("1.2.0", new DateOnly(2026, 5, 20),
         [
             "Part 1 of Optimizations",
             "Improved performancee on non-WASM optimizer calculations"

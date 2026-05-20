@@ -144,7 +144,7 @@ namespace InfatalsFirestoneTools.Services.Optimizer
                 Machine original = data.Machines.First(m => m.Id == target.Id);
                 Machine sim = simulatedMachines[target.Id];
                 MachineStatic? staticData = machineService.Machines
-                    .FirstOrDefault(s => s.Id == target.Id);
+                    .GetValueOrDefault(target.Id);
 
                 if (staticData is null) continue;
 
@@ -246,7 +246,7 @@ namespace InfatalsFirestoneTools.Services.Optimizer
             foreach (ComputedMachine m in formation)
             {
                 Machine sim = simulatedMachines.TryGetValue(m.Id, out Machine? s) ? s : data.Machines.First(x => x.Id == m.Id);
-                MachineStatic? staticData = machineService.Machines.FirstOrDefault(x => x.Id == m.Id);
+                MachineStatic? staticData = machineService.Machines.GetValueOrDefault(m.Id);
                 if (staticData is null) continue;
 
                 ComputedMachine computed = new(staticData, sim);

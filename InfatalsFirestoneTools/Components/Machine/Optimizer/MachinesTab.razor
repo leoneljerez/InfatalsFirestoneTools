@@ -526,7 +526,7 @@
         m.ArmorBlueprint > 0 || m.Rarity is not MachineRarity.Common;
 
     private MachineStatic? StaticOf(Machine m) =>
-        MachineService.Machines.FirstOrDefault(s => s.Id == m.Id);
+        MachineService.Machines.GetValueOrDefault(m.Id);
 
     private string NameOf(Machine m) =>
         StaticOf(m)?.Name ?? string.Empty;

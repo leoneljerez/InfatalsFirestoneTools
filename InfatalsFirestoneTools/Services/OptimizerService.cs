@@ -57,7 +57,7 @@ public sealed class OptimizerService(
     private ComputedMachine JoinMachine(Machine dynamic)
     {
         MachineStatic staticData = machineService.Machines
-            .FirstOrDefault(s => s.Id == dynamic.Id)
+            .GetValueOrDefault(dynamic.Id)
             ?? new MachineStatic
             {
                 Id = dynamic.Id,
@@ -77,7 +77,7 @@ public sealed class OptimizerService(
     private ComputedHero JoinHero(Hero dynamic)
     {
         HeroStatic staticData = heroService.Heroes
-            .FirstOrDefault(s => s.Id == dynamic.Id)
+            .GetValueOrDefault(dynamic.Id)
             ?? new HeroStatic
             {
                 Id = dynamic.Id,
@@ -106,7 +106,7 @@ public sealed class OptimizerService(
     {
         var machines = data.Machines.Select(m =>
         {
-            MachineStatic? s = machineService.Machines.FirstOrDefault(x => x.Id == m.Id);
+            MachineStatic? s = machineService.Machines.GetValueOrDefault(m.Id);
             return new
             {
                 id = m.Id,

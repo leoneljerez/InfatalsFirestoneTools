@@ -8,8 +8,8 @@ namespace InfatalsFirestoneTools.Services
         {
             return new()
             {
-                Machines = machineService.Machines.Select(m => new Machine { Id = m.Id }).ToList(),
-                Heroes = heroService.Heroes.Select(h => new Hero { Id = h.Id }).ToList(),
+                Machines = machineService.MachinesRaw.Select(m => new Machine { Id = m.Id }).ToList(),
+                Heroes = heroService.HeroesRaw.Select(h => new Hero { Id = h.Id }).ToList(),
                 Artifacts = artifactService.CreateArtifacts(),
                 HeroWeights = new HeroWeights(),
             };
