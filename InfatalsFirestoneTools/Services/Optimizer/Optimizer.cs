@@ -1,5 +1,6 @@
 ﻿using BreakEternity;
 using InfatalsFirestoneTools.Models;
+using System.Runtime.CompilerServices;
 
 namespace InfatalsFirestoneTools.Services.Optimizer;
 
@@ -59,6 +60,11 @@ public sealed class Optimizer
         Dictionary<CampaignDifficulty, int> lastCleared = DifficultyOrder.ToDictionary(k => k, _ => 0);
         ComputedMachine[] lastWinners = [];
 
+        XorShiftState rng = new((uint)Environment.TickCount); // instead of using the built in random number gen, we are making our own with xor shifting for speedups
+
+        Span<BattleMember> initialPlayers = stackalloc BattleMember[FormationSize];
+        Span<BattleMember> initialEnemies = stackalloc BattleMember[FormationSize];
+
         for (int mission = 1; mission <= MaxMissions; mission++)
         {
             if (best is null || mission - lastOptimized >= ReoptimizeEvery)
@@ -77,7 +83,17 @@ public sealed class Optimizer
                 if (Calculator.SquadPower(arranged, arena: false).lessThan(Calculator.RequiredPower(mission, diff)))
                     break;
 
-                if (_battle.Run(arranged, enemyTeam).PlayerWon)
+                // Fill our baseline structures
+                Span<BattleMember> playersSpan = initialPlayers[..arranged.Length];
+                for (int i = 0; i < arranged.Length; i++)
+                    playersSpan[i] = CreateBattleMember(arranged[i], arranged[i].BattleStats, true);
+
+                Span<BattleMember> enemiesSpan = initialEnemies[..enemyTeam.Length];
+                for (int i = 0; i < enemyTeam.Length; i++)
+                    enemiesSpan[i] = CreateBattleMember(null, enemyTeam[i], false);
+
+                // Just run a single simulation check for normal progression
+                if (_battle.RunBatch(playersSpan, enemiesSpan, runs: 1, ref rng))
                 {
                     totalStars++;
                     anyCleared = true;
@@ -90,15 +106,11 @@ public sealed class Optimizer
             if (!anyCleared && mission > 1) break;
         }
 
-        (int extraStars, Dictionary<CampaignDifficulty, int>? finalCleared) = MonteCarloStars(lastWinners, lastCleared);
+        // Pass the existing active rng state into the Monte Carlo loop to continue the stream
+        (int extraStars, Dictionary<CampaignDifficulty, int>? finalCleared) = MonteCarloStars(lastWinners, lastCleared, ref rng);
         totalStars += extraStars;
 
-        return new CampaignResult(
-            lastWinners,
-            Calculator.SquadPower(lastWinners, arena: false),
-            Calculator.SquadPower(lastWinners, arena: true),
-            totalStars,
-            finalCleared);
+        return new CampaignResult(lastWinners, Calculator.SquadPower(lastWinners, false), Calculator.SquadPower(lastWinners, true), totalStars, finalCleared);
     }
 
     public ArenaResult OptimizeArena()
@@ -342,13 +354,16 @@ public sealed class Optimizer
 
     // ── Monte Carlo ───────────
 
-    private (int ExtraStars, Dictionary<CampaignDifficulty, int> LastCleared) MonteCarloStars(ComputedMachine[] formation, Dictionary<CampaignDifficulty, int> lastCleared)
+    private (int ExtraStars, Dictionary<CampaignDifficulty, int> LastCleared) MonteCarloStars(ComputedMachine[] formation, Dictionary<CampaignDifficulty, int> lastCleared, ref XorShiftState rng)
     {
         if (formation.Length == 0) return (0, lastCleared);
 
         int extra = 0;
         Dictionary<CampaignDifficulty, int> updated = new(lastCleared);
         BigDouble power = Calculator.SquadPower(formation, arena: false);
+
+        Span<BattleMember> initialPlayers = stackalloc BattleMember[FormationSize];
+        Span<BattleMember> initialEnemies = stackalloc BattleMember[FormationSize];
 
         foreach (CampaignDifficulty diff in DifficultyOrder)
         {
@@ -360,22 +375,55 @@ public sealed class Optimizer
                 ComputedMachine[] arranged = ArrangeByRole(formation, mission, diff);
                 MachineStats[] enemyTeam = BuildEnemyTeam(mission, diff);
 
-                bool won = false;
-                for (int i = 0; i < MonteCarloRuns; i++)
-                {
-                    if (_battle.Run(arranged, enemyTeam).PlayerWon)
-                    {
-                        won = true;
-                        break;
-                    }
-                }
+                Span<BattleMember> playersSpan = initialPlayers[..arranged.Length];
+                for (int i = 0; i < arranged.Length; i++)
+                    playersSpan[i] = CreateBattleMember(arranged[i], arranged[i].BattleStats, true);
 
-                if (won) { extra++; updated[diff] = mission; }
+                Span<BattleMember> enemiesSpan = initialEnemies[..enemyTeam.Length];
+                for (int i = 0; i < enemyTeam.Length; i++)
+                    enemiesSpan[i] = CreateBattleMember(null, enemyTeam[i], false);
+
+                if (_battle.RunBatch(playersSpan, enemiesSpan, MonteCarloRuns, ref rng))
+                {
+                    extra++;
+                    updated[diff] = mission;
+                }
                 else break;
             }
         }
 
         return (extra, updated);
+    }
+
+    private static BattleMember CreateBattleMember(ComputedMachine? source, MachineStats stats, bool isPlayer)
+    {
+        BattleMember member = new()
+        {
+            Hp = ToLog(stats.Health),
+            MaxHp = ToLog(stats.Health),
+            Dmg = ToLog(stats.Damage),
+            Arm = ToLog(stats.Armor),
+            IsDead = false
+        };
+
+        if (isPlayer && source?.Ability != null)
+        {
+            Ability a = source.Ability;
+            member.HasAbility = true;
+            member.OverdriveChance = Calculator.CalculateOverdrive(source);
+            member.Effect = a.Effect;
+            member.TargetType = a.TargetType;
+            member.TargetPosition = a.TargetPosition;
+            member.NumTargets = a.NumTargets;
+            member.ScaleStat = a.ScaleStat;
+            member.MultiplierLog = a.Multiplier > 0 ? Math.Log10(a.Multiplier) : double.NegativeInfinity;
+        }
+        else
+        {
+            member.HasAbility = false;
+        }
+
+        return member;
     }
 
     // ── Stat computation helpers ──────────────────────────────────────────────
@@ -410,6 +458,12 @@ public sealed class Optimizer
     private static bool IsTank(ComputedMachine m)
     {
         return m.Specialization == MachineSpecialization.Tank;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static double ToLog(BigDouble value)
+    {
+        return value > 0 ? value.log10().toDouble() : double.NegativeInfinity;
     }
 }
 

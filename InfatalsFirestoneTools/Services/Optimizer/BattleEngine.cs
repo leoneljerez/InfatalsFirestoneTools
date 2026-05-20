@@ -1,6 +1,4 @@
-﻿using BreakEternity;
-using InfatalsFirestoneTools.Models;
-using System.Buffers;
+﻿using InfatalsFirestoneTools.Models;
 using System.Runtime.CompilerServices;
 
 namespace InfatalsFirestoneTools.Services.Optimizer;
@@ -13,61 +11,85 @@ public sealed class BattleEngine
     private static ReadOnlySpan<int> AttackOrder => [0, 1, 2, 4, 3];
 
     // ── Public API ────────────────────────────────────────────────────────────
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static double ToLog(BigDouble value)
+    public bool RunBatch(
+        ReadOnlySpan<BattleMember> initialPlayers,
+        ReadOnlySpan<BattleMember> initialEnemies,
+        int runs,
+        ref XorShiftState rng)
     {
-        return value > 0 ? value.log10().toDouble() : double.NegativeInfinity;
+        // Allocate the stack buffers once for this execution frame
+        Span<BattleMember> players = stackalloc BattleMember[initialPlayers.Length];
+        Span<BattleMember> enemies = stackalloc BattleMember[initialEnemies.Length];
+
+        for (int i = 0; i < runs; i++)
+        {
+            // Reset the stage instantly via SIMD block copies before each battle
+            initialPlayers.CopyTo(players);
+            initialEnemies.CopyTo(enemies);
+
+            // Execute the core simulation
+            if (RunSimulation(players, enemies, ref rng).PlayerWon)
+            {
+                // Optimization: If we only care if a victory is possible to advance,
+                // we can return true early the second we see a single win!
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    public BattleResult Run(IReadOnlyList<ComputedMachine> playerTeam, IReadOnlyList<MachineStats> enemyStats, bool enableAbilities = true)
+    private BattleResult RunSimulation(Span<BattleMember> players, Span<BattleMember> enemies, ref XorShiftState rng)
     {
-        BattleMember[] playerArr = ArrayPool<BattleMember>.Shared.Rent(playerTeam.Count);
-        BattleMember[] enemyArr = ArrayPool<BattleMember>.Shared.Rent(enemyStats.Count);
+        int alivePlayers = players.Length;
+        int aliveEnemies = enemies.Length;
+        int round = 0;
 
-        try
+        Span<int> targetBuffer = stackalloc int[5];
+
+        while (round < MaxRounds && alivePlayers > 0 && aliveEnemies > 0)
         {
-            Span<BattleMember> players = playerArr.AsSpan(0, playerTeam.Count);
-            Span<BattleMember> enemies = enemyArr.AsSpan(0, enemyStats.Count);
+            AttackPhase(players, enemies, ref aliveEnemies, true, ref rng, targetBuffer);
+            if (aliveEnemies <= 0) break;
 
-            // Initialize members
-            for (int i = 0; i < players.Length; i++)
-            {
-                MachineStats stats = playerTeam[i].BattleStats;
-                players[i] = new BattleMember(playerTeam[i], ToLog(stats.Health), ToLog(stats.Damage), ToLog(stats.Armor));
-            }
-
-            for (int i = 0; i < enemies.Length; i++)
-            {
-                MachineStats stats = enemyStats[i];
-                enemies[i] = new BattleMember(null, ToLog(stats.Health), ToLog(stats.Damage), ToLog(stats.Armor));
-            }
-
-            int alivePlayers = players.Length;
-            int aliveEnemies = enemies.Length;
-            int round = 0;
-
-            while (round < MaxRounds && alivePlayers > 0 && aliveEnemies > 0)
-            {
-                AttackPhase(players, enemies, ref aliveEnemies, enableAbilities);
-                if (aliveEnemies <= 0) break;
-
-                AttackPhase(enemies, players, ref alivePlayers, false);
-                round++;
-            }
-
-            return new BattleResult(aliveEnemies <= 0 && alivePlayers > 0, round);
+            AttackPhase(enemies, players, ref alivePlayers, false, ref rng, targetBuffer);
+            round++;
         }
-        finally
+
+        return new BattleResult(aliveEnemies <= 0 && alivePlayers > 0, round);
+    }
+
+
+    public BattleResult Run(ReadOnlySpan<BattleMember> initialPlayers, ReadOnlySpan<BattleMember> initialEnemies, ref XorShiftState rng)
+    {
+        Span<BattleMember> players = stackalloc BattleMember[initialPlayers.Length];
+        Span<BattleMember> enemies = stackalloc BattleMember[initialEnemies.Length];
+
+        initialPlayers.CopyTo(players);
+        initialEnemies.CopyTo(enemies);
+
+        int alivePlayers = players.Length;
+        int aliveEnemies = enemies.Length;
+        int round = 0;
+
+        Span<int> targetBuffer = stackalloc int[5];
+
+        while (round < MaxRounds && alivePlayers > 0 && aliveEnemies > 0)
         {
-            ArrayPool<BattleMember>.Shared.Return(playerArr);
-            ArrayPool<BattleMember>.Shared.Return(enemyArr);
+            AttackPhase(players, enemies, ref aliveEnemies, true, ref rng, targetBuffer);
+            if (aliveEnemies <= 0) break;
+
+            AttackPhase(enemies, players, ref alivePlayers, false, ref rng, targetBuffer);
+            round++;
         }
+
+        return new BattleResult(aliveEnemies <= 0 && alivePlayers > 0, round);
     }
 
     // ── Attack phase ──────────────────────────────────────────────────────────
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static void AttackPhase(Span<BattleMember> attackers, Span<BattleMember> defenders, ref int aliveDefenders, bool enableAbilities)
+    private static void AttackPhase(Span<BattleMember> attackers, Span<BattleMember> defenders, ref int aliveDefenders, bool enableAbilities, ref XorShiftState rng, Span<int> targetBuffer)
     {
         for (int i = 0; i < AttackOrder.Length; i++)
         {
@@ -85,10 +107,10 @@ public sealed class BattleEngine
             if (Damage(ref defender, DamageTaken(attacker.Dmg, defender.Arm)))
                 aliveDefenders--;
 
-            if (enableAbilities && attacker.Source?.Ability is { } ability)
+            if (enableAbilities && attacker.HasAbility)
             {
-                if (Random.Shared.NextDouble() < Calculator.CalculateOverdrive(attacker.Source))
-                    ExecuteAbility(slot, ref attacker, attackers, defenders, ability, ref aliveDefenders);
+                if (rng.NextDouble() < attacker.OverdriveChance)
+                    ExecuteAbility(slot, ref attacker, attackers, defenders, ref aliveDefenders, ref rng, targetBuffer);
             }
         }
     }
@@ -96,39 +118,34 @@ public sealed class BattleEngine
     // ── Ability execution ────────────
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static void ExecuteAbility(int casterIndex, ref BattleMember caster, Span<BattleMember> playerTeam, Span<BattleMember> enemyTeam, Ability ability, ref int aliveEnemies)
+    private static void ExecuteAbility(int casterIndex, ref BattleMember caster, Span<BattleMember> playerTeam, Span<BattleMember> enemyTeam, ref int aliveEnemies, ref XorShiftState rng, Span<int> targetBuffer)
     {
-        Span<BattleMember> targets = ability.TargetType == AbilityTargetType.Enemy ? enemyTeam : playerTeam;
+        Span<BattleMember> targets = caster.TargetType == AbilityTargetType.Enemy ? enemyTeam : playerTeam;
 
-        Span<int> selectedIndices = stackalloc int[5];
-        int actualCount = SelectTargets(targets, ability, casterIndex, selectedIndices);
-
+        int actualCount = SelectTargets(targets, ref caster, casterIndex, targetBuffer, ref rng);
         if (actualCount == 0) return;
 
-        // Calculate ability value (Base Stat + Multiplier)
-        double logMult = ability.Multiplier > 0 ? Math.Log10(ability.Multiplier) : double.NegativeInfinity;
-        double baseStat = (ability.ScaleStat == AbilityScaleStat.Health) ? caster.MaxHp : caster.Dmg;
-        double finalValue = baseStat + logMult;
+        double baseStat = (caster.ScaleStat == AbilityScaleStat.Health) ? caster.MaxHp : caster.Dmg;
+        double finalValue = baseStat + caster.MultiplierLog;
 
-        if (ability.Effect == AbilityEffect.Heal)
+        if (caster.Effect == AbilityEffect.Heal)
         {
             for (int i = 0; i < actualCount; i++)
-                Heal(ref targets[selectedIndices[i]], finalValue);
+                Heal(ref targets[targetBuffer[i]], finalValue);
         }
-        else // Damage
+        else
         {
             for (int i = 0; i < actualCount; i++)
             {
-                ref BattleMember t = ref targets[selectedIndices[i]];
+                ref BattleMember t = ref targets[targetBuffer[i]];
                 if (Damage(ref t, DamageTaken(finalValue, t.Arm)))
                     aliveEnemies--;
             }
         }
     }
 
-    private static int SelectTargets(Span<BattleMember> team, Ability ability, int casterIndex, Span<int> output)
+    private static int SelectTargets(Span<BattleMember> team, ref BattleMember caster, int casterIndex, Span<int> output, ref XorShiftState rng)
     {
-        // Filter alive units into a temporary stack-allocated buffer
         Span<int> aliveIndices = stackalloc int[team.Length];
         int aliveCount = 0;
         for (int i = 0; i < team.Length; i++)
@@ -139,18 +156,16 @@ public sealed class BattleEngine
 
         if (aliveCount == 0) return 0;
 
-        int numToTake = Math.Min(ability.NumTargets, aliveCount);
+        int numToTake = Math.Min(caster.NumTargets, aliveCount);
 
-        switch (ability.TargetPosition)
+        switch (caster.TargetPosition)
         {
             case AbilityTargetPosition.Self:
                 output[0] = casterIndex;
                 return 1;
-
             case AbilityTargetPosition.All:
                 aliveIndices[..aliveCount].CopyTo(output);
                 return aliveCount;
-
             case AbilityTargetPosition.Lowest:
                 int lowest = aliveIndices[0];
                 for (int i = 1; i < aliveCount; i++)
@@ -160,23 +175,19 @@ public sealed class BattleEngine
                 }
                 output[0] = lowest;
                 return 1;
-
             case AbilityTargetPosition.Last:
-                // Backline priority: Pick from the end of the alive list
                 for (int i = 0; i < numToTake; i++)
                     output[i] = aliveIndices[aliveCount - 1 - i];
                 return numToTake;
-
             case AbilityTargetPosition.Random:
-                // Fisher-Yates shuffle
+                // Fisher-Yates using custom RNG
                 for (int i = 0; i < numToTake; i++)
                 {
-                    int j = Random.Shared.Next(i, aliveCount);
+                    int j = rng.Next(i, aliveCount);
                     (aliveIndices[i], aliveIndices[j]) = (aliveIndices[j], aliveIndices[i]);
                     output[i] = aliveIndices[i];
                 }
                 return numToTake;
-
             default:
                 return 0;
         }
@@ -249,20 +260,5 @@ public sealed class BattleEngine
 }
 
 // ── Supporting types ──────────────────────────────────────────────────────────
-
-/// <summary>
-/// Mutable battle state for one slot — lives only inside a Run call.
-/// Struct keeps the team arrays inline (no per-slot heap allocation).
-/// </summary>
-internal struct BattleMember(ComputedMachine? source, double hp, double dmg, double arm)
-{
-    public readonly ComputedMachine? Source = source;
-    public bool IsDead = false;
-
-    public double Hp = hp;
-    public double MaxHp = hp;
-    public double Dmg = dmg;
-    public double Arm = arm;
-}
 
 public sealed record BattleResult(bool PlayerWon, int Rounds);
