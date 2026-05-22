@@ -1,6 +1,6 @@
 ﻿namespace InfatalsFirestoneTools.Models
 {
-    public class Ability
+    public sealed record Ability
     {
         public string Description { get; init; } = string.Empty;
         public AbilityEffect Effect { get; init; }
