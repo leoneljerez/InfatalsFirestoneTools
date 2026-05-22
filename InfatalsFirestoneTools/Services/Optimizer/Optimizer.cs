@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace InfatalsFirestoneTools.Services.Optimizer;
 
-public sealed class Optimizer
+public sealed class Optimizer(OptimizerInput input)
 {
     // ── Game constants (private) ──────────────────────────────────────────────
 
@@ -20,7 +20,7 @@ public sealed class Optimizer
     // [campaign/arena][tank/dps] → (damage weight, health weight, armor weight)
     private (double Dmg, double Hp, double Arm) GetHeroWeights(bool arena, bool tank)
     {
-        HeroWeights w = _input.HeroWeights;
+        HeroWeights w = input.HeroWeights;
         return (arena, tank) switch
         {
             (false, true) => (w.CampaignTankDamage, w.CampaignTankHealth, w.CampaignTankArmor),
@@ -37,20 +37,13 @@ public sealed class Optimizer
     // ── Instance state ────────────────────────────────────────────────────────
 
     private readonly BattleEngine _battle = new();
-    private readonly OptimizerInput _input;
-    private readonly int _maxSlots;
-
-    public Optimizer(OptimizerInput input)
-    {
-        _input = input;
-        _maxSlots = CrewSlots.First(t => input.EngineerLevel >= t.MinLevel).Slots;
-    }
+    private readonly int _maxSlots = CrewSlots.First(t => input.EngineerLevel >= t.MinLevel).Slots;
 
     // ── Entry points ──────────────────────────────────────────────────────────
 
     public CampaignResult OptimizeCampaign()
     {
-        if (_input.Machines.Count == 0)
+        if (input.Machines.Count == 0)
             return new CampaignResult([], BigDouble.dZero, BigDouble.dZero, 0,
                 DifficultyOrder.ToDictionary(k => k, _ => 0));
 
@@ -115,7 +108,7 @@ public sealed class Optimizer
 
     public ArenaResult OptimizeArena()
     {
-        if (_input.Machines.Count == 0)
+        if (input.Machines.Count == 0)
             return new ArenaResult([], BigDouble.dZero, BigDouble.dZero);
 
         ComputedMachine[] formation = ArrangeByRole(
@@ -132,7 +125,7 @@ public sealed class Optimizer
 
     private ComputedMachine[] SelectBestFive(bool arena)
     {
-        return _input.Machines
+        return [.. input.Machines
             .Select(m =>
             {
                 ComputeStats(m, []);
@@ -140,13 +133,12 @@ public sealed class Optimizer
             })
             .OrderByDescending(x => x.Power.toDouble())
             .Take(FormationSize)
-            .Select(x => x.Machine)
-            .ToArray();
+            .Select(x => x.Machine)];
     }
 
     // ── Role arrangement ─────────────────
 
-    private ComputedMachine[] ArrangeByRole(ComputedMachine[] team, int mission, CampaignDifficulty difficulty)
+    private static ComputedMachine[] ArrangeByRole(ComputedMachine[] team, int mission, CampaignDifficulty difficulty)
     {
         if (team.Length == 0) return [];
 
@@ -178,17 +170,15 @@ public sealed class Optimizer
 
         // Goliath always anchors the center tank slot
         ComputedMachine? goliath = tanks.FirstOrDefault(m => m.Name == "Goliath");
-        List<ComputedMachine> otherTanks = tanks.Where(m => m.Name != "Goliath").ToList();
+        List<ComputedMachine> otherTanks = [.. tanks.Where(m => m.Name != "Goliath")];
 
         // Tanks that can pierce enemy armor go after those that can't
-        List<ComputedMachine> canHit = otherTanks
+        List<ComputedMachine> canHit = [.. otherTanks
             .Where(m => Calculator.DamageTaken(m.BattleStats.Damage, enemy.Armor) > BigDouble.dZero)
-            .OrderByDescending(m => m.BattleStats.Health.toDouble())
-            .ToList();
-        List<ComputedMachine> cannotHit = otherTanks
+            .OrderByDescending(m => m.BattleStats.Health.toDouble())];
+        List<ComputedMachine> cannotHit = [.. otherTanks
             .Where(m => Calculator.DamageTaken(m.BattleStats.Damage, enemy.Armor) == BigDouble.dZero)
-            .OrderByDescending(m => m.BattleStats.Health.toDouble())
-            .ToList();
+            .OrderByDescending(m => m.BattleStats.Health.toDouble())];
 
         // Sort DPS ascending by damage — strongest is pulled out to the protected slot (second-to-last)
         dps.Sort((a, b) => a.BattleStats.Damage.CompareTo(b.BattleStats.Damage));
@@ -219,10 +209,9 @@ public sealed class Optimizer
 
     private ComputedMachine[] AssignCrew(ComputedMachine[] machines, bool arena)
     {
-        ComputedHero[] ownedHeroes = _input.Heroes
+        ComputedHero[] ownedHeroes = [.. input.Heroes
             .Where(h => h.DamagePercentage > 0 || h.HealthPercentage > 0 || h.ArmorPercentage > 0)
-            .OrderByDescending(h => h.DamagePercentage + h.HealthPercentage)
-            .ToArray();
+            .OrderByDescending(h => h.DamagePercentage + h.HealthPercentage)];
 
         if (ownedHeroes.Length == 0 || machines.Length == 0)
         {
@@ -234,9 +223,7 @@ public sealed class Optimizer
         foreach (ComputedMachine m in machines) ComputeStats(m, []);
 
         // Expand each machine into _maxSlots individual slots for the assignment matrix
-        ComputedMachine[] slots = machines
-            .SelectMany(m => Enumerable.Repeat(m, _maxSlots))
-            .ToArray();
+        ComputedMachine[] slots = [.. machines.SelectMany(m => Enumerable.Repeat(m, _maxSlots))];
 
         int n = ownedHeroes.Length;
         int m_ = slots.Length;
@@ -433,18 +420,18 @@ public sealed class Optimizer
         (BigDouble dmg, BigDouble hp, BigDouble arm) = Calculator.CalculateBattleAttributes(
             machine,
             crew,
-            _input.GlobalRarityLevels,
-            _input.Artifacts,
-            _input.EngineerLevel);
+            input.GlobalRarityLevels,
+            input.Artifacts,
+            input.EngineerLevel);
 
         machine.BattleStats = new MachineStats { Damage = dmg, Health = hp, Armor = arm };
 
         machine.ArenaStats = Calculator.CalculateArenaAttributes(
             machine,
             machine.BattleStats,
-            _input.GlobalRarityLevels,
-            _input.ScarabLevel,
-            _input.RiftRank);
+            input.GlobalRarityLevels,
+            input.ScarabLevel,
+            input.RiftRank);
     }
 
     private static MachineStats[] BuildEnemyTeam(int mission, CampaignDifficulty difficulty)

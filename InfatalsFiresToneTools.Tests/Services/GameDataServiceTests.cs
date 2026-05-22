@@ -21,14 +21,14 @@ public class MachineServiceTests
     [Fact]
     public void Machines_AllHaveUniqueIds()
     {
-        List<int> ids = _sut.Machines.Select(m => m.Id).ToList();
+        List<int> ids = [.. _sut.Machines.Select(m => m.Key)];
         Assert.Equal(ids.Count, ids.Distinct().Count());
     }
 
     [Fact]
     public void Machines_AllHaveNonEmptyNames()
     {
-        Assert.All(_sut.Machines, m => Assert.NotEmpty(m.Name));
+        Assert.All(_sut.Machines, m => Assert.NotEmpty(m.Value.Name));
     }
 
     [Fact]
@@ -36,9 +36,9 @@ public class MachineServiceTests
     {
         Assert.All(_sut.Machines, m =>
         {
-            Assert.True(m.BaseDamage > 0, $"{m.Name} has zero base damage");
-            Assert.True(m.BaseHealth > 0, $"{m.Name} has zero base health");
-            Assert.True(m.BaseArmor > 0, $"{m.Name} has zero base armor");
+            Assert.True(m.Value.BaseDamage > 0, $"{m.Value.Name} has zero base damage");
+            Assert.True(m.Value.BaseHealth > 0, $"{m.Value.Name} has zero base health");
+            Assert.True(m.Value.BaseArmor > 0, $"{m.Value.Name} has zero base armor");
         });
     }
 
@@ -46,13 +46,13 @@ public class MachineServiceTests
     public void Machines_AbilitiesAreAttached()
     {
         Assert.All(_sut.Machines, m =>
-            Assert.NotNull(m.Ability));
+            Assert.NotNull(m.Value.Ability));
     }
 
     [Fact]
     public void Machines_ContainsTanksAndDpsAndHealers()
     {
-        List<MachineSpecialization> specs = _sut.Machines.Select(m => m.Specialization).Distinct().ToList();
+        List<MachineSpecialization> specs = [.. _sut.Machines.Select(m => m.Value.Specialization).Distinct()];
         Assert.Contains(MachineSpecialization.Tank, specs);
         Assert.Contains(MachineSpecialization.Damage, specs);
         Assert.Contains(MachineSpecialization.Healer, specs);
@@ -61,13 +61,13 @@ public class MachineServiceTests
     [Fact]
     public void Machines_GoliathExists()
     {
-        Assert.Contains(_sut.Machines, m => m.Name == "GoliathLabel");
+        Assert.Contains(_sut.Machines, m => m.Value.Name == "GoliathLabel");
     }
 
     [Fact]
     public void Machines_GoliathIsTank()
     {
-        MachineStatic goliath = _sut.Machines.First(m => m.Name == "GoliathLabel");
+        MachineStatic goliath = _sut.Machines.Values.First(m => m.Name == "GoliathLabel");
         Assert.Equal(MachineSpecialization.Tank, goliath.Specialization);
     }
 
@@ -76,8 +76,8 @@ public class MachineServiceTests
     {
         Assert.All(_sut.Machines, m =>
         {
-            Assert.NotEmpty(m.Image);
-            Assert.StartsWith("img/", m.Image);
+            Assert.NotEmpty(m.Value.Image);
+            Assert.StartsWith("img/", m.Value.Image);
         });
     }
 }
@@ -95,14 +95,14 @@ public class HeroServiceTests
     [Fact]
     public void Heroes_AllHaveUniqueIds()
     {
-        List<int> ids = _sut.Heroes.Select(h => h.Id).ToList();
+        List<int> ids = [.. _sut.Heroes.Select(h => h.Key)];
         Assert.Equal(ids.Count, ids.Distinct().Count());
     }
 
     [Fact]
     public void Heroes_AllHaveNonEmptyNames()
     {
-        Assert.All(_sut.Heroes, h => Assert.NotEmpty(h.Name));
+        Assert.All(_sut.Heroes, h => Assert.NotEmpty(h.Value.Name));
     }
 
     [Fact]
@@ -110,16 +110,16 @@ public class HeroServiceTests
     {
         Assert.All(_sut.Heroes, h =>
         {
-            Assert.True(h.BaseDamage > 0, $"{h.Name} has zero damage");
-            Assert.True(h.BaseHealth > 0, $"{h.Name} has zero health");
-            Assert.True(h.BaseArmor > 0, $"{h.Name} has zero armor");
+            Assert.True(h.Value.BaseDamage > 0, $"{h.Value.Name} has zero damage");
+            Assert.True(h.Value.BaseHealth > 0, $"{h.Value.Name} has zero health");
+            Assert.True(h.Value.BaseArmor > 0, $"{h.Value.Name} has zero armor");
         });
     }
 
     [Fact]
     public void Heroes_ContainAllSpecializations()
     {
-        List<HeroSpecialization> specs = _sut.Heroes.Select(h => h.Specialization).Distinct().ToList();
+        List<HeroSpecialization> specs = [.. _sut.Heroes.Select(h => h.Value.Specialization).Distinct()];
         Assert.Contains(HeroSpecialization.Tank, specs);
         Assert.Contains(HeroSpecialization.Damage, specs);
         Assert.Contains(HeroSpecialization.Healer, specs);
@@ -128,7 +128,7 @@ public class HeroServiceTests
     [Fact]
     public void Heroes_ContainAllTypes()
     {
-        List<HeroType> types = _sut.Heroes.Select(h => h.Type).Distinct().ToList();
+        List<HeroType> types = [.. _sut.Heroes.Select(h => h.Value.Type).Distinct()];
         Assert.Contains(HeroType.Hero, types);
         Assert.Contains(HeroType.Mercenary, types);
         Assert.Contains(HeroType.God, types);
@@ -137,7 +137,7 @@ public class HeroServiceTests
     [Fact]
     public void Heroes_GodHeroesUseGodClass()
     {
-        List<HeroStatic> gods = _sut.Heroes.Where(h => h.Type == HeroType.God).ToList();
+        List<HeroStatic> gods = [.. _sut.Heroes.Values.Where(h => h.Type.Equals(HeroType.God))];
         Assert.NotEmpty(gods);
         Assert.All(gods, h => Assert.Equal(HeroClass.God, h.Class));
     }
@@ -147,8 +147,8 @@ public class HeroServiceTests
     {
         Assert.All(_sut.Heroes, h =>
         {
-            Assert.NotEmpty(h.Image);
-            Assert.StartsWith("img/", h.Image);
+            Assert.NotEmpty(h.Value.Image);
+            Assert.StartsWith("img/", h.Value.Image);
         });
     }
 
@@ -156,7 +156,7 @@ public class HeroServiceTests
     public void Heroes_CriticalChancesAreInValidRange()
     {
         Assert.All(_sut.Heroes, h =>
-            Assert.InRange(h.CriticalChance, 0.0, 1.0));
+            Assert.InRange(h.Value.CriticalChance, 0.0, 1.0));
     }
 }
 

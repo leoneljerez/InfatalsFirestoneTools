@@ -39,8 +39,8 @@ public class CalculatorTests
     [Fact]
     public void CalculateBattleAttributes_Level1NoBonus_ReturnsBaseStats()
     {
-        var machine = MakeMachine(level: 1, baseDmg: 1000, baseHp: 10000, baseArm: 200);
-        var (dmg, hp, arm) = Calculator.CalculateBattleAttributes(
+        ComputedMachine machine = MakeMachine(level: 1, baseDmg: 1000, baseHp: 10000, baseArm: 200);
+        (BigDouble dmg, BigDouble hp, BigDouble arm) = Calculator.CalculateBattleAttributes(
             machine, [], 0, [], engineerLevel: 1);
 
         // At level 1, engineer 1, rarity 0, no blueprints: multiplier = 1^0 = 1
@@ -53,11 +53,11 @@ public class CalculatorTests
     [Fact]
     public void CalculateBattleAttributes_HigherLevel_YieldsHigherStats()
     {
-        var machine1 = MakeMachine(level: 1);
-        var machine50 = MakeMachine(level: 50);
+        ComputedMachine machine1 = MakeMachine(level: 1);
+        ComputedMachine machine50 = MakeMachine(level: 50);
 
-        var (dmg1, hp1, arm1) = Calculator.CalculateBattleAttributes(machine1, [], 0, [], 1);
-        var (dmg50, hp50, arm50) = Calculator.CalculateBattleAttributes(machine50, [], 0, [], 1);
+        (BigDouble dmg1, BigDouble hp1, BigDouble arm1) = Calculator.CalculateBattleAttributes(machine1, [], 0, [], 1);
+        (BigDouble dmg50, BigDouble hp50, BigDouble arm50) = Calculator.CalculateBattleAttributes(machine50, [], 0, [], 1);
 
         Assert.True(dmg50 > dmg1);
         Assert.True(hp50 > hp1);
@@ -67,11 +67,11 @@ public class CalculatorTests
     [Fact]
     public void CalculateBattleAttributes_HigherRarity_YieldsHigherStats()
     {
-        var common = MakeMachine(rarity: MachineRarity.Common);
-        var legendary = MakeMachine(rarity: MachineRarity.Legendary);
+        ComputedMachine common = MakeMachine(rarity: MachineRarity.Common);
+        ComputedMachine legendary = MakeMachine(rarity: MachineRarity.Legendary);
 
-        var (dmgC, _, _) = Calculator.CalculateBattleAttributes(common, [], 0, [], 1);
-        var (dmgL, _, _) = Calculator.CalculateBattleAttributes(legendary, [], 0, [], 1);
+        (BigDouble dmgC, BigDouble _, BigDouble _) = Calculator.CalculateBattleAttributes(common, [], 0, [], 1);
+        (BigDouble dmgL, BigDouble _, BigDouble _) = Calculator.CalculateBattleAttributes(legendary, [], 0, [], 1);
 
         Assert.True(dmgL > dmgC);
     }
@@ -79,7 +79,7 @@ public class CalculatorTests
     [Fact]
     public void CalculateBattleAttributes_CrewBonus_IncreasesDamage()
     {
-        var machine = MakeMachine();
+        ComputedMachine machine = MakeMachine();
         HeroStatic heroStatic = new()
         {
             Id = 1,
@@ -91,13 +91,13 @@ public class CalculatorTests
             Resource = HeroResource.Rage,
             Image = "img/hero"
         };
-        List<ComputedHero> crew = new()
-        {
+        List<ComputedHero> crew =
+        [
             new(heroStatic, new Hero { Id = 1, DamagePercentage = 100 })
-        };
+        ];
 
-        var (dmgNoCrew, _, _) = Calculator.CalculateBattleAttributes(machine, [], 0, [], 1);
-        var (dmgWithCrew, _, _) = Calculator.CalculateBattleAttributes(machine, crew, 0, [], 1);
+        (BigDouble dmgNoCrew, BigDouble _, BigDouble _) = Calculator.CalculateBattleAttributes(machine, [], 0, [], 1);
+        (BigDouble dmgWithCrew, BigDouble _, BigDouble _) = Calculator.CalculateBattleAttributes(machine, crew, 0, [], 1);
 
         Assert.True(dmgWithCrew > dmgNoCrew);
     }
@@ -125,22 +125,21 @@ public class CalculatorTests
     [Fact]
     public void SquadPower_EmptyList_ReturnsZero()
     {
-        var power = Calculator.SquadPower([], arena: false);
+        BigDouble power = Calculator.SquadPower([], arena: false);
         Assert.True(power == BigDouble.dZero);
     }
 
     [Fact]
     public void SquadPower_FiveMachines_IsGreaterThanOneMachine()
     {
-        List<ComputedMachine> machines = Enumerable.Range(1, 5).Select(i =>
+        List<ComputedMachine> machines = [.. Enumerable.Range(1, 5).Select(i =>
         {
-            var m = MakeMachine(level: 10);
+            ComputedMachine m = MakeMachine(level: 10);
             m.BattleStats = new MachineStats { Damage = 1000, Health = 10000, Armor = 200 };
             return m;
-        }).ToList();
+        })];
 
-        List<ComputedMachine> single = new()
-        { machines[0] };
+        List<ComputedMachine> single = [machines[0]];
         Assert.True(Calculator.SquadPower(machines, false) > Calculator.SquadPower(single, false));
     }
 
@@ -149,7 +148,7 @@ public class CalculatorTests
     [Fact]
     public void EnemyStats_Mission1Easy_ReturnsPositiveStats()
     {
-        var stats = Calculator.EnemyStats(1, CampaignDifficulty.Easy);
+        MachineStats stats = Calculator.EnemyStats(1, CampaignDifficulty.Easy);
         Assert.True(stats.Damage > BigDouble.dZero);
         Assert.True(stats.Health > BigDouble.dZero);
         Assert.True(stats.Armor > BigDouble.dZero);
@@ -158,16 +157,16 @@ public class CalculatorTests
     [Fact]
     public void EnemyStats_LaterMissions_AreStronger()
     {
-        var m1 = Calculator.EnemyStats(1, CampaignDifficulty.Easy);
-        var m10 = Calculator.EnemyStats(10, CampaignDifficulty.Easy);
+        MachineStats m1 = Calculator.EnemyStats(1, CampaignDifficulty.Easy);
+        MachineStats m10 = Calculator.EnemyStats(10, CampaignDifficulty.Easy);
         Assert.True(m10.Damage > m1.Damage);
     }
 
     [Fact]
     public void EnemyStats_HarderDifficulties_AreStronger()
     {
-        var easy = Calculator.EnemyStats(1, CampaignDifficulty.Easy);
-        var nightmare = Calculator.EnemyStats(1, CampaignDifficulty.Nightmare);
+        MachineStats easy = Calculator.EnemyStats(1, CampaignDifficulty.Easy);
+        MachineStats nightmare = Calculator.EnemyStats(1, CampaignDifficulty.Nightmare);
         Assert.True(nightmare.Damage > easy.Damage);
     }
 
@@ -176,15 +175,15 @@ public class CalculatorTests
     [Fact]
     public void RequiredPower_IsPositive()
     {
-        var power = Calculator.RequiredPower(1, CampaignDifficulty.Easy);
+        BigDouble power = Calculator.RequiredPower(1, CampaignDifficulty.Easy);
         Assert.True(power > BigDouble.dZero);
     }
 
     [Fact]
     public void RequiredPower_LaterMissions_RequireMore()
     {
-        var p1 = Calculator.RequiredPower(1, CampaignDifficulty.Normal);
-        var p50 = Calculator.RequiredPower(50, CampaignDifficulty.Normal);
+        BigDouble p1 = Calculator.RequiredPower(1, CampaignDifficulty.Normal);
+        BigDouble p50 = Calculator.RequiredPower(50, CampaignDifficulty.Normal);
         Assert.True(p50 > p1);
     }
 
@@ -193,23 +192,23 @@ public class CalculatorTests
     [Fact]
     public void GetGlobalRarityLevels_AllCommon_Returns0()
     {
-        List<Machine> machines = new()
-        {
+        List<Machine> machines =
+        [
             new() { Rarity = MachineRarity.Common },
             new() { Rarity = MachineRarity.Common },
-        };
+        ];
         Assert.Equal(0, Calculator.GetGlobalRarityLevels(machines));
     }
 
     [Fact]
     public void GetGlobalRarityLevels_SumsRarityValues()
     {
-        List<Machine> machines = new()
-        {
+        List<Machine> machines =
+        [
             new() { Rarity = MachineRarity.Rare },       // 2
             new() { Rarity = MachineRarity.Epic },       // 3
             new() { Rarity = MachineRarity.Legendary },  // 4
-        };
+        ];
         Assert.Equal(9, Calculator.GetGlobalRarityLevels(machines));
     }
 
@@ -218,7 +217,7 @@ public class CalculatorTests
     [Fact]
     public void CalculateOverdrive_CommonRarity_Returns25Percent()
     {
-        var machine = MakeMachine(rarity: MachineRarity.Common);
+        ComputedMachine machine = MakeMachine(rarity: MachineRarity.Common);
         double overdrive = Calculator.CalculateOverdrive(machine);
         Assert.Equal(0.25, overdrive, precision: 5);
     }
@@ -226,8 +225,8 @@ public class CalculatorTests
     [Fact]
     public void CalculateOverdrive_HigherRarity_ReturnsHigherChance()
     {
-        var common = MakeMachine(rarity: MachineRarity.Common);
-        var legendary = MakeMachine(rarity: MachineRarity.Legendary);
+        ComputedMachine common = MakeMachine(rarity: MachineRarity.Common);
+        ComputedMachine legendary = MakeMachine(rarity: MachineRarity.Legendary);
 
         Assert.True(Calculator.CalculateOverdrive(legendary) > Calculator.CalculateOverdrive(common));
     }
@@ -237,7 +236,7 @@ public class CalculatorTests
     [Fact]
     public void CalculateArenaAttributes_ReturnsPositiveStats()
     {
-        var machine = MakeMachine(level: 50, rarity: MachineRarity.Epic);
+        ComputedMachine machine = MakeMachine(level: 50, rarity: MachineRarity.Epic);
         MachineStats battleStats = new()
         {
             Damage = new BigDouble(1e9),
@@ -245,7 +244,7 @@ public class CalculatorTests
             Armor = new BigDouble(1e8),
         };
 
-        var arenaStats = Calculator.CalculateArenaAttributes(
+        MachineStats arenaStats = Calculator.CalculateArenaAttributes(
             machine, battleStats, globalRarityLevels: 10,
             scarabLevel: 0, riftRank: ChaosRiftRank.Bronze);
 

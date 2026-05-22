@@ -84,7 +84,7 @@ namespace InfatalsFirestoneTools.Services
 
             OptimizerData defaults = optimizerDataFactory.Create();
 
-            List<ProfileMachine> machines = defaults.Machines
+            List<ProfileMachine> machines = [.. defaults.Machines
                 .Select(m => new ProfileMachine
                 {
                     ProfileId = saved.Id,
@@ -96,10 +96,9 @@ namespace InfatalsFirestoneTools.Services
                     ArmorBlueprint = m.ArmorBlueprint,
                     InscriptionLevel = m.InscriptionLevel,
                     SacredLevel = m.SacredLevel,
-                })
-                .ToList();
+                })];
 
-            List<ProfileHero> heroes = defaults.Heroes
+            List<ProfileHero> heroes = [.. defaults.Heroes
                 .Select(h => new ProfileHero
                 {
                     ProfileId = saved.Id,
@@ -107,18 +106,16 @@ namespace InfatalsFirestoneTools.Services
                     DamagePercentage = h.DamagePercentage,
                     HealthPercentage = h.HealthPercentage,
                     ArmorPercentage = h.ArmorPercentage,
-                })
-                .ToList();
+                })];
 
-            List<ProfileArtifact> artifacts = defaults.Artifacts
+            List<ProfileArtifact> artifacts = [.. defaults.Artifacts
                 .Select(a => new ProfileArtifact
                 {
                     ProfileId = saved.Id,
                     Stat = a.Stat,
                     Percentage = a.Percentage,
                     Count = a.Count,
-                })
-                .ToList();
+                })];
 
             await Task.WhenAll(
                 (await Machines()).AddRangeAsync(machines),
@@ -278,7 +275,7 @@ namespace InfatalsFirestoneTools.Services
             Dictionary<int, ProfileHero> heroMap =
                 heroesTask.Result.ToDictionary(x => x.HeroId);
 
-            List<Machine> machines = machineService.Machines
+            List<Machine> machines = [.. machineService.Machines
                 .Select(s =>
                 {
                     _ = machineMap.TryGetValue(s.Key, out ProfileMachine? row);
@@ -293,10 +290,9 @@ namespace InfatalsFirestoneTools.Services
                         InscriptionLevel = row?.InscriptionLevel ?? 0,
                         SacredLevel = row?.SacredLevel ?? 0,
                     };
-                })
-                .ToList();
+                })];
 
-            List<Hero> heroes = heroService.Heroes
+            List<Hero> heroes = [.. heroService.Heroes
                 .Select(s =>
                 {
                     _ = heroMap.TryGetValue(s.Key, out ProfileHero? row);
@@ -307,17 +303,15 @@ namespace InfatalsFirestoneTools.Services
                         HealthPercentage = row?.HealthPercentage ?? 0,
                         ArmorPercentage = row?.ArmorPercentage ?? 0,
                     };
-                })
-                .ToList();
+                })];
 
-            List<Artifact> artifacts = artifactsTask.Result
+            List<Artifact> artifacts = [.. artifactsTask.Result
                 .Select(a => new Artifact
                 {
                     Stat = a.Stat,
                     Percentage = a.Percentage,
                     Count = a.Count,
-                })
-                .ToList();
+                })];
 
             return new OptimizerData
             {

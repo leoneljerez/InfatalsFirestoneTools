@@ -44,7 +44,7 @@ namespace InfatalsFirestoneTools.Services
                         ArenaDpsArmor = data.HeroWeights.ArenaDpsArmor,
                     }
                 },
-                Machines = data.Machines.Select(m => new SaveMachine
+                Machines = [.. data.Machines.Select(m => new SaveMachine
                 {
                     Id = m.Id,
                     Rarity = m.Rarity,
@@ -54,20 +54,20 @@ namespace InfatalsFirestoneTools.Services
                     ArmorBlueprint = m.ArmorBlueprint,
                     InscriptionLevel = m.InscriptionLevel,
                     SacredLevel = m.SacredLevel,
-                }).ToList(),
-                Heroes = data.Heroes.Select(h => new SaveHero
+                })],
+                Heroes = [.. data.Heroes.Select(h => new SaveHero
                 {
                     Id = h.Id,
                     DamagePercentage = h.DamagePercentage,
                     HealthPercentage = h.HealthPercentage,
                     ArmorPercentage = h.ArmorPercentage,
-                }).ToList(),
-                Artifacts = data.Artifacts.Select(a => new SaveArtifact
+                })],
+                Artifacts = [.. data.Artifacts.Select(a => new SaveArtifact
                 {
                     Stat = a.Stat,
                     Percentage = a.Percentage,
                     Count = a.Count,
-                }).ToList(),
+                })],
             };
 
             return JsonSerializer.Serialize(save, JsonOptions);
@@ -159,8 +159,7 @@ namespace InfatalsFirestoneTools.Services
                     x.Stat == a.Stat &&
                     x.Percentage == a.Percentage);
 
-                if (artifact is not null)
-                    artifact.Count = a.Count;
+                _ = (artifact?.Count = a.Count);
             }
 
             return ImportResult.Ok();
@@ -255,8 +254,7 @@ namespace InfatalsFirestoneTools.Services
                         a.Stat == stat &&
                         a.Percentage == pct);
 
-                    if (artifact is not null)
-                        artifact.Count = count;
+                    _ = (artifact?.Count = count);
                 }
             }
         }

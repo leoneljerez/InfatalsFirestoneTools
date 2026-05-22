@@ -28,7 +28,7 @@ public class ArtifactServiceTests
     public void CreateArtifacts_ContainsAllStats()
     {
         List<Artifact> artifacts = _sut.CreateArtifacts();
-        var stats = artifacts.Select(a => a.Stat).Distinct().ToList();
+        List<ArtifactStat> stats = artifacts.Select(a => a.Stat).Distinct().ToList();
 
         Assert.Contains(ArtifactStat.Damage, stats);
         Assert.Contains(ArtifactStat.Health, stats);
@@ -39,7 +39,7 @@ public class ArtifactServiceTests
     public void CreateArtifacts_ContainsAllTiers()
     {
         List<Artifact> artifacts = _sut.CreateArtifacts();
-        var percentages = artifacts.Select(a => a.Percentage).Distinct().OrderBy(x => x).ToList();
+        List<int> percentages = artifacts.Select(a => a.Percentage).Distinct().OrderBy(x => x).ToList();
 
         Assert.Equal(ArtifactService.Tiers, percentages);
     }
@@ -51,7 +51,7 @@ public class ArtifactServiceTests
 
         foreach (ArtifactStat stat in Enum.GetValues<ArtifactStat>())
         {
-            var forStat = artifacts.Where(a => a.Stat == stat).Select(a => a.Percentage).OrderBy(x => x).ToList();
+            List<int> forStat = artifacts.Where(a => a.Stat == stat).Select(a => a.Percentage).OrderBy(x => x).ToList();
             Assert.Equal(ArtifactService.Tiers, forStat);
         }
     }
@@ -62,7 +62,7 @@ public class ArtifactServiceTests
     public void GetByStat_Damage_ReturnsOnlyDamageArtifacts()
     {
         List<Artifact> artifacts = _sut.CreateArtifacts();
-        var damage = ArtifactService.GetByStat(artifacts, ArtifactStat.Damage).ToList();
+        List<Artifact> damage = ArtifactService.GetByStat(artifacts, ArtifactStat.Damage).ToList();
 
         Assert.Equal(ArtifactService.Tiers.Length, damage.Count);
         Assert.All(damage, a => Assert.Equal(ArtifactStat.Damage, a.Stat));

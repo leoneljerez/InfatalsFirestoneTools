@@ -197,8 +197,8 @@ public sealed class OptimizerService(
 
     private OptimizationResult RunCSharp(OptimizerData data)
     {
-        List<ComputedMachine> machines = data.Machines.Select(JoinMachine).ToList();
-        List<ComputedHero> heroes = data.Heroes.Select(JoinHero).ToList();
+        List<ComputedMachine> machines = [.. data.Machines.Select(JoinMachine)];
+        List<ComputedHero> heroes = [.. data.Heroes.Select(JoinHero)];
 
         OptimizerInput input = new()
         {
@@ -273,7 +273,7 @@ public sealed class OptimizerService(
 
     private OptimizationResult MapWasmResult(JsonElement json, OptimizerData data)
     {
-        List<ComputedMachine> formation = json.GetProperty("formation")
+        List<ComputedMachine> formation = [.. json.GetProperty("formation")
             .EnumerateArray()
             .Select(m =>
             {
@@ -293,7 +293,7 @@ public sealed class OptimizerService(
                     Health = DecimalDtoToBigDouble(m.GetProperty("arena_health")),
                     Armor = DecimalDtoToBigDouble(m.GetProperty("arena_armor")),
                 };
-                computed.Crew = m.GetProperty("assigned_hero_ids")
+                computed.Crew = [.. m.GetProperty("assigned_hero_ids")
                     .EnumerateArray()
                     .Select(x =>
                     {
@@ -301,12 +301,10 @@ public sealed class OptimizerService(
                         Hero heroDynamic = data.Heroes.FirstOrDefault(h => h.Id == heroId)
                             ?? new Hero { Id = heroId };
                         return JoinHero(heroDynamic);
-                    })
-                    .ToList();
+                    })];
 
                 return computed;
-            })
-            .ToList();
+            })];
 
         Dictionary<CampaignDifficulty, int> lastCleared = [];
         if (json.TryGetProperty("last_cleared", out JsonElement lc))

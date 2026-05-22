@@ -72,7 +72,7 @@ public class SaveLoadServiceTests
         OptimizerData original = BuildTestData();
         string json = SaveLoadService.Export(original);
 
-        var loaded = new OptimizerData
+        OptimizerData loaded = new()
         {
             Machines = [new Machine { Id = 1 }, new Machine { Id = 2 }],
             Heroes = [new Hero { Id = 1 }, new Hero { Id = 2 }],
@@ -98,7 +98,7 @@ public class SaveLoadServiceTests
         OptimizerData original = BuildTestData();
         string json = SaveLoadService.Export(original);
 
-        var loaded = new OptimizerData
+        OptimizerData loaded = new()
         {
             Machines = [new Machine { Id = 1 }, new Machine { Id = 2 }],
             Heroes = [],
@@ -119,7 +119,7 @@ public class SaveLoadServiceTests
         OptimizerData original = BuildTestData();
         string json = SaveLoadService.Export(original);
 
-        var loaded = new OptimizerData
+        OptimizerData loaded = new()
         {
             Machines = [],
             Heroes = [new Hero { Id = 1 }, new Hero { Id = 2 }],
@@ -139,7 +139,7 @@ public class SaveLoadServiceTests
         OptimizerData original = BuildTestData();
         string json = SaveLoadService.Export(original);
 
-        var loaded = new OptimizerData
+        OptimizerData loaded = new()
         {
             Machines = [],
             Heroes = [],
@@ -161,7 +161,7 @@ public class SaveLoadServiceTests
     {
         OptimizerData original = BuildTestData();
         string json = SaveLoadService.Export(original);
-        var loaded = new OptimizerData { Machines = [], Heroes = [], Artifacts = [] };
+        OptimizerData loaded = new() { Machines = [], Heroes = [], Artifacts = [] };
 
         _ = SaveLoadService.Import(json, loaded);
 
@@ -175,7 +175,7 @@ public class SaveLoadServiceTests
     [Fact]
     public void Import_EmptyString_ReturnsFailure()
     {
-        var data = new OptimizerData { Machines = [], Heroes = [], Artifacts = [] };
+        OptimizerData data = new() { Machines = [], Heroes = [], Artifacts = [] };
         ImportResult result = SaveLoadService.Import("", data);
         Assert.False(result.Success);
     }
@@ -183,7 +183,7 @@ public class SaveLoadServiceTests
     [Fact]
     public void Import_InvalidJson_ReturnsFailure()
     {
-        var data = new OptimizerData { Machines = [], Heroes = [], Artifacts = [] };
+        OptimizerData data = new() { Machines = [], Heroes = [], Artifacts = [] };
         ImportResult result = SaveLoadService.Import("{ not valid json !", data);
         Assert.False(result.Success);
     }
@@ -191,7 +191,7 @@ public class SaveLoadServiceTests
     [Fact]
     public void Import_WhitespaceOnly_ReturnsFailure()
     {
-        var data = new OptimizerData { Machines = [], Heroes = [], Artifacts = [] };
+        OptimizerData data = new() { Machines = [], Heroes = [], Artifacts = [] };
         ImportResult result = SaveLoadService.Import("   ", data);
         Assert.False(result.Success);
     }
@@ -199,7 +199,7 @@ public class SaveLoadServiceTests
     [Fact]
     public void Import_UnknownVersion_ReturnsFailure()
     {
-        var data = new OptimizerData { Machines = [], Heroes = [], Artifacts = [] };
+        OptimizerData data = new() { Machines = [], Heroes = [], Artifacts = [] };
         ImportResult result = SaveLoadService.Import("{\"version\":99}", data);
         Assert.False(result.Success);
     }
@@ -218,7 +218,7 @@ public class SaveLoadServiceTests
         }
         """;
 
-        var data = new OptimizerData
+        OptimizerData data = new()
         {
             Machines = [new Machine { Id = 1 }],
             Heroes = [],

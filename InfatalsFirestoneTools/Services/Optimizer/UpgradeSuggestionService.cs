@@ -4,7 +4,7 @@ using InfatalsFirestoneTools.Resources;
 
 namespace InfatalsFirestoneTools.Services.Optimizer
 {
-    public class UpgradeSuggestionService(MachineService machineService, OptimizerService optimizerService)
+    public class UpgradeSuggestionService(MachineService machineService)
     {
         private const int MaxLevelCap = 500;
         private const int LevelStepSize = 1;     // suggest levels in steps of 1
@@ -23,9 +23,7 @@ namespace InfatalsFirestoneTools.Services.Optimizer
             // Sort the entire formation by power descending, then check if the top
             // two are one tank and one non-tank. If not, warn the user.
 
-            List<ComputedMachine> byPower = result.Formation
-                .OrderByDescending(m => Calculator.MachinePower(m.BattleStats).toDouble())
-                .ToList();
+            List<ComputedMachine> byPower = [.. result.Formation.OrderByDescending(m => Calculator.MachinePower(m.BattleStats).toDouble())];
 
             ComputedMachine? first = byPower.ElementAtOrDefault(0);
             ComputedMachine? second = byPower.ElementAtOrDefault(1);
@@ -61,7 +59,7 @@ namespace InfatalsFirestoneTools.Services.Optimizer
 
             // We always suggest on the top tank and top DPS regardless of composition,
             // falling back to the top two by power if one role is missing entirely.
-            List<ComputedMachine> targets = new();
+            List<ComputedMachine> targets = [];
 
             if (topTank is not null)
                 targets.Add(topTank);
@@ -137,7 +135,7 @@ namespace InfatalsFirestoneTools.Services.Optimizer
 
             // ── Build the suggestion records ──────────────────────────────────────
 
-            List<UpgradeSuggestion> suggestions = new();
+            List<UpgradeSuggestion> suggestions = [];
 
             foreach (ComputedMachine target in targets)
             {
@@ -186,7 +184,7 @@ namespace InfatalsFirestoneTools.Services.Optimizer
         private static (int Mission, CampaignDifficulty Difficulty) FindNextTarget(OptimizationResult result)
         {
             // Walk from the highest cleared point and find the first mission that fails
-            CampaignDifficulty[] difficulties = Enum.GetValues<CampaignDifficulty>().OrderBy(d => d).ToArray();
+            CampaignDifficulty[] difficulties = [.. Enum.GetValues<CampaignDifficulty>().OrderBy(d => d)];
 
             // Start from the highest cleared difficulty/mission
             CampaignDifficulty highestDiff = difficulties[0];
@@ -253,7 +251,7 @@ namespace InfatalsFirestoneTools.Services.Optimizer
 
                 (BigDouble dmg, BigDouble hp, BigDouble arm) = Calculator.CalculateBattleAttributes(
                     computed,
-                    m.Crew.Cast<ComputedHero>().ToList(),
+                    [.. m.Crew.Cast<ComputedHero>()],
                     globalRarityLevels,
                     data.Artifacts,
                     data.EngineerLevel);

@@ -48,13 +48,13 @@ public static class Calculator
 
     // Campaign difficulties 
     private static readonly BigDouble[] DifficultyMultipliers =
-    {
+    [
         new(1),                  // Easy
         new(360),               // Normal
         new(2478600),           // Hard
         BigDouble.pow(10, 12) * 5.8,      // Insane
         BigDouble.pow(10, 18) * 2.92      // Nightmare
-    };
+    ];
 
     // Enemy stat cache — avoids recomputing the same mission/difficulty repeatedly
     private static readonly FrozenDictionary<(int Mission, CampaignDifficulty Difficulty, double MilestoneBase), MachineStats>
@@ -62,7 +62,7 @@ public static class Calculator
 
     private static FrozenDictionary<(int, CampaignDifficulty, double), MachineStats> BuildEnemyCache()
     {
-        Dictionary<(int, CampaignDifficulty, double), MachineStats> dict = new();
+        Dictionary<(int, CampaignDifficulty, double), MachineStats> dict = [];
         double[] milestoneBases = [MilestoneScaleFactor, PowerRequirementMilestoneFactor];
 
         foreach (double mb in milestoneBases)

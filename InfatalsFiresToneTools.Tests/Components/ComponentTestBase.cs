@@ -27,7 +27,7 @@ public abstract class ComponentTestBase : BunitContext
             => new(name, string.Format(name, arguments));
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
         {
-            return Enumerable.Empty<LocalizedString>();
+            return [];
         }
     }
 
@@ -38,7 +38,7 @@ public abstract class ComponentTestBase : BunitContext
             => new(name, string.Format(name, arguments));
         public IEnumerable<LocalizedString> GetAllStrings(bool includeParentCultures)
         {
-            return Enumerable.Empty<LocalizedString>();
+            return [];
         }
     }
 

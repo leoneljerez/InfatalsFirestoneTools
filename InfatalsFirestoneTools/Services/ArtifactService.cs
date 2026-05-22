@@ -9,14 +9,14 @@ namespace InfatalsFirestoneTools.Services
 
         public List<Artifact> CreateArtifacts()
         {
-            return Stats.SelectMany(stat =>
+            return [.. Stats.SelectMany(stat =>
                 Tiers.Select(tier => new Artifact
                 {
                     Stat = stat,
                     Percentage = tier,
                     Count = 0
                 })
-            ).ToList();
+            )];
         }
 
         public static IEnumerable<Artifact> GetByStat(List<Artifact> artifacts, ArtifactStat stat)

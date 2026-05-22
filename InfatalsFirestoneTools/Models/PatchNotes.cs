@@ -10,6 +10,11 @@ public static class PatchNotes
     /// </summary>
     public static readonly IReadOnlyList<PatchNote> All =
     [
+        new("1.2.2", new DateOnly(2026, 5, 21),
+        [
+            "Cleanup some code to be simpler",
+            "Package update"
+        ]),
         new("1.2.1", new DateOnly(2026, 5, 20),
         [
             "Part 2 of Optimizations",
@@ -18,7 +23,7 @@ public static class PatchNotes
         new("1.2.0", new DateOnly(2026, 5, 20),
         [
             "Part 1 of Optimizations",
-            "Improved performancee on non-WASM optimizer calculations"
+            "Improved performance on non-WASM optimizer calculations"
         ]),
         new("1.1.9", new DateOnly(2026, 5, 17),
         [
