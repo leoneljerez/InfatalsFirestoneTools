@@ -544,7 +544,10 @@
             SortOptionsHero.HealthLowToHigh => [.. source.OrderBy(h => h.HealthPercentage)],
             SortOptionsHero.ArmorHighToLow => [.. source.OrderByDescending(h => h.ArmorPercentage)],
             SortOptionsHero.ArmorLowToHigh => [.. source.OrderBy(h => h.ArmorPercentage)],
-            SortOptionsHero.ConfiguredFirst => [.. source.OrderByDescending(IsConfigured)],
+            SortOptionsHero.ConfiguredFirst => [.. source
+                    .OrderByDescending(IsConfigured)
+                    .ThenBy(h => (int)(StaticOf(h)?.Type ?? HeroType.Hero))       //to fix arvie position        
+                ],
             SortOptionsHero.UnconfiguredFirst => [.. source.OrderBy(IsConfigured)],
             _ => [.. source.OrderBy(h => h.Id)],
         };

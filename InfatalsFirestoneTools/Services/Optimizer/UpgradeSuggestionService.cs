@@ -17,7 +17,18 @@ namespace InfatalsFirestoneTools.Services.Optimizer
 
             // ── Find the next mission that you need more power for ────────────────
 
-            (int targetMission, CampaignDifficulty targetDifficulty) = FindNextTarget(result);
+            BigDouble teamPower = Calculator.SquadPower(result.Formation, arena: false);
+
+            // ── Find the next target (now looks ahead if overpowered) ───────────────
+            (int targetMission, CampaignDifficulty targetDifficulty) = FindNextTarget(result, teamPower);
+
+            // If they have literally beaten Mission 90 Insane power requirement, 
+            // and are at the end, return null or an empty result because they won the game.
+            BigDouble absoluteMaxPower = Calculator.RequiredPower(90, CampaignDifficulty.Nightmare); // Adjust enum name if needed
+            if (teamPower >= absoluteMaxPower && targetMission == 90)
+            {
+                return null;
+            }
 
             // ── Identify top tank and top DPS by battle power ─────────────────────
             // Sort the entire formation by power descending, then check if the top
@@ -181,7 +192,7 @@ namespace InfatalsFirestoneTools.Services.Optimizer
 
         // ── Helpers ───────────────────────────────────────────────────────────────
 
-        private static (int Mission, CampaignDifficulty Difficulty) FindNextTarget(OptimizationResult result)
+        private static (int Mission, CampaignDifficulty Difficulty) FindNextTarget(OptimizationResult result, BigDouble currentPower)
         {
             // Walk from the highest cleared point and find the first mission that fails
             CampaignDifficulty[] difficulties = [.. Enum.GetValues<CampaignDifficulty>().OrderBy(d => d)];
@@ -216,6 +227,35 @@ namespace InfatalsFirestoneTools.Services.Optimizer
                 {
                     // Already at max — target the last mission of the hardest difficulty
                     return (90, difficulties[^1]);
+                }
+            }
+
+            while (true)
+            {
+                BigDouble requiredPower = Calculator.RequiredPower(nextMission, nextDiff);
+
+                // Stop scanning if the player's power is less than required,
+                // OR if we have officially hit the absolute end of the game.
+                if (currentPower < requiredPower || (nextMission == 90 && nextDiff == difficulties[^1]))
+                {
+                    break;
+                }
+
+                // Otherwise, advance to the next mission
+                nextMission++;
+                if (nextMission > 90)
+                {
+                    int diffIdx = Array.IndexOf(difficulties, nextDiff);
+                    if (diffIdx < difficulties.Length - 1)
+                    {
+                        nextDiff = difficulties[diffIdx + 1];
+                        nextMission = 1;
+                    }
+                    else
+                    {
+                        // Cap it at 90 Insane if they can beat everything
+                        return (90, difficulties[^1]);
+                    }
                 }
             }
 

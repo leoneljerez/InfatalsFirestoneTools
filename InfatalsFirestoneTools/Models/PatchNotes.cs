@@ -10,6 +10,11 @@ public static class PatchNotes
     /// </summary>
     public static readonly IReadOnlyList<PatchNote> All =
     [
+        new("1.2.3", new DateOnly(2026, 6, 15),
+        [
+            "Fix Arvie's position in Bulk Edit",
+            "Try to always give a suggestion unless the campaign is finished"
+        ]),
         new("1.2.2", new DateOnly(2026, 5, 21),
         [
             "Cleanup some code to be simpler",
